@@ -1,4 +1,4 @@
-package com.example.quipswap;
+package com.malikendsley.quipswap;
 
 import org.junit.Test;
 
