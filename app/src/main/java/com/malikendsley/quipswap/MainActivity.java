@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSignupPressed(View view){
-        Intent intent = new Intent(this, SignUp.class);
+        Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
     }
     public void onLoginPressed(){

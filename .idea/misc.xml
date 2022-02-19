@@ -4,12 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/activity_main.xml" value="0.18" />
-        <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/activity_sign_up.xml" value="0.284737067122702" />
-        <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_logged_in_profile.xml" value="0.2509619495510902" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_profile.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_received.xml" value="0.16" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_sent.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/menu/bottom_navigation.xml" value="0.33" />
+        <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/activity_main.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/activity_sign_up.xml" value="0.25" />
+        <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/fragment_logged_in_profile.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/fragment_profile.xml" value="0.18802083333333333" />
       </map>
     </option>
   </component>

@@ -25,8 +25,8 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        emailField = (EditText) getView().findViewById(R.id.editTextEmail);
-        passwordField = (EditText) getView().findViewById(R.id.editTextPassword);
+        emailField = (EditText) getView().findViewById(R.id.signupEmail);
+        passwordField = (EditText) getView().findViewById(R.id.signUpPassword);
         signInButton = (Button) getView().findViewById(R.id.signInButton);
         signUpButton = (Button) getView().findViewById(R.id.signUpButton);
 
