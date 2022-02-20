@@ -10,8 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class SignUpActivity extends AppCompatActivity {
 
+
+    private FirebaseAuth mAuth;
     private EditText email;
     private EditText password;
     private Button signupButton;
@@ -21,6 +25,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        mAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.signupEmail);
         password = findViewById(R.id.signUpPassword);
         signupButton = findViewById(R.id.signUpButton);
@@ -36,9 +41,13 @@ public class SignUpActivity extends AppCompatActivity {
                 Toast.makeText(SignUpActivity.this, "Invalid Email", Toast.LENGTH_SHORT).show();
             } else {
                 //register user
-                Toast.makeText(SignUpActivity.this, "Register User", Toast.LENGTH_LONG).show();
+                registerUser(txt_email, txt_password);
             }
         });
+    }
+
+    private void registerUser(String email, String password) {
+
     }
 
 
