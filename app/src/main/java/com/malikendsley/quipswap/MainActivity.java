@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         }
         //place the selected fragment in the FrameView created under Layouts
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-
         return true;
     };
 
@@ -50,21 +49,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //check user login state
-
         setContentView(R.layout.activity_main);
-
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
-
         if (savedInstanceState == null)
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
     }
 
-    public void onSignupPressed(View view){
-        Intent intent = new Intent(this, SignUpActivity.class);
-        startActivity(intent);
-    }
-    public void onLoginPressed(){
-
-    }
 }

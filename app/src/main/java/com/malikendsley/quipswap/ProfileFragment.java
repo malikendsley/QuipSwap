@@ -1,5 +1,6 @@
 package com.malikendsley.quipswap;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,5 +31,12 @@ public class ProfileFragment extends Fragment {
         signInButton = (Button) getView().findViewById(R.id.signInButton);
         signUpButton = (Button) getView().findViewById(R.id.signUpButton);
 
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SignUpActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
