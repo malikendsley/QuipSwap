@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuipSwap">
         <activity
-            android:name=".SignUpActivity"
+            android:name=".SignupActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity"
             >

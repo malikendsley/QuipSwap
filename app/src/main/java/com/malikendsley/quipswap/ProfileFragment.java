@@ -34,7 +34,7 @@ public class ProfileFragment extends Fragment {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SignUpActivity.class);
+                Intent intent = new Intent(getActivity(), SignupActivity.class);
                 startActivity(intent);
             }
         });

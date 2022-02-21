@@ -3,8 +3,11 @@ package com.malikendsley.quipswap;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +19,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignupActivity extends AppCompatActivity {
 
+    private static final String TAG = "Signup";
 
     private FirebaseAuth mAuth;
     private EditText email;
@@ -42,9 +46,9 @@ public class SignUpActivity extends AppCompatActivity {
                 String txt_password = password.getText().toString();
                 //rudimentary validation, can use onTextChanged() later
                 if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)) {
-                    Toast.makeText(SignUpActivity.this, "Missing Information", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, "Missing Information", Toast.LENGTH_SHORT).show();
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(txt_email).matches()) {
-                    Toast.makeText(SignUpActivity.this, "Invalid Email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, "Invalid Email", Toast.LENGTH_SHORT).show();
                 } else {
                     //register user
                     registerUser(txt_email, txt_password);
@@ -54,13 +58,18 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void registerUser(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(SignUpActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "User registered");
+                    Toast.makeText(SignupActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    intent.putExtra("navPage", 0);
+                    startActivity(intent);
                 } else {
-                    Toast.makeText(SignUpActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "User not registered");
+                    Toast.makeText(SignupActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -16,6 +16,14 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity {
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+    //detect if a particular navPage is desired
+    //check if its present within the intent
+    int navPage = getIntent().getIntExtra("navPage", 0);
+    //TODO: check if we're back from a back button
+
+    //AFAIK those are the two ways you can get here besides launching the app
+
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
         Fragment selectedFragment = null;
         //when a navigation item is selected, set the selected fragment to the one whose ID is a match so that fragment can be displayed
@@ -52,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
+        //TODO: override fragment choice with Intent/Back data
         if (savedInstanceState == null)
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
     }
