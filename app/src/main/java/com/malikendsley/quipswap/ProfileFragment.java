@@ -2,6 +2,7 @@ package com.malikendsley.quipswap;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class ProfileFragment extends Fragment {
+
+    public static final int SIGNUP_REQUEST = 1;
+    private static final String TAG = "Own";
 
     private EditText emailField;
     private EditText passwordField;
@@ -34,9 +38,10 @@ public class ProfileFragment extends Fragment {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SignupActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(getContext(), SignupActivity.class);
+                startActivityForResult(intent, 1);
             }
         });
     }
+
 }
