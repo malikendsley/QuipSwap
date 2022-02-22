@@ -66,8 +66,7 @@ public class SignupActivity extends AppCompatActivity {
                     Toast.makeText(SignupActivity.this, "SignupActivity: Registration Successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getBaseContext(), MainActivity.class);
                     intent.putExtra("navPage", 0);
-                    setResult(Activity.RESULT_OK, intent);
-                    //startActivity(intent);
+                    startActivity(intent);
                     finish();
                 } else {
                     Log.i(TAG, "SignupActivity: User not registered");

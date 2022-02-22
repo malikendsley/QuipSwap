@@ -35,13 +35,14 @@ public class ProfileFragment extends Fragment {
         signInButton = (Button) getView().findViewById(R.id.signInButton);
         signUpButton = (Button) getView().findViewById(R.id.signUpButton);
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), SignupActivity.class);
-                startActivityForResult(intent, 1);
-            }
+        signUpButton.setOnClickListener(signupView -> {
+            Intent intent = new Intent(getContext(), SignupActivity.class);
+            startActivity(intent);
         });
+
+//        signInButton.setOnClickListener(signinView -> {
+//
+//        });
     }
 
 }
