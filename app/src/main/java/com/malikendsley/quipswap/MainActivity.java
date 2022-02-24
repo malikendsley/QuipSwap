@@ -1,11 +1,8 @@
 package com.malikendsley.quipswap;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Patterns;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +14,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
-
-    public static final int SIGNUP_REQUEST = 1;
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private static final String TAG = "Own";
