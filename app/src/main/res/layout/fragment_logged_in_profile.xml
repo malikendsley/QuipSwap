@@ -10,11 +10,17 @@
         android:id="@+id/loggedintext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="144dp"
-        android:layout_marginTop="58dp"
-        android:layout_marginEnd="197dp"
-        android:text="TextView" />
+        android:layout_centerInParent="true"
+        android:text="@string/profile"
+        android:textSize="28sp" />
+
+    <Button
+        android:id="@+id/logOutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loggedintext"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="false"
+        android:layout_marginTop="30dp"
+        android:text="@string/log_out" />
 </RelativeLayout>
