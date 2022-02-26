@@ -101,7 +101,7 @@ public class SignupActivity extends AppCompatActivity {
 
 
                         } else {
-                            String code = ((FirebaseAuthException) regTask.getException()).getErrorCode();
+                            String code = ((FirebaseAuthException) Objects.requireNonNull(regTask.getException())).getErrorCode();
                             Log.i(TAG, "SignupActivity: CreateUserWith failed");
                             Toast.makeText(SignupActivity.this, code, Toast.LENGTH_SHORT).show();
                         }
