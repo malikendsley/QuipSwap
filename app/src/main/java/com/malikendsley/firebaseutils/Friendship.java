@@ -8,10 +8,16 @@ public class Friendship {
 
     @SuppressWarnings("unused")
     public Friendship(){
-
+        //necessary for firebase
     }
 
     public Friendship(String User1, String User2){
+        this.User1 = User1;
+        this.User2 = User2;
+    }
+
+    public Friendship(String key, String User1, String User2){
+        this.key = key;
         this.User1 = User1;
         this.User2 = User2;
     }
