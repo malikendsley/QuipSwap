@@ -8,6 +8,8 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.malikendsley.fingerpainting.PaintView;
 
@@ -20,11 +22,20 @@ public class MakeQuipActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_quip);
 
+        Button shareButton = findViewById(R.id.shareButton);
+        Button clearButton = findViewById(R.id.clearButton);
+
         paintView = (PaintView) findViewById(R.id.paintView);
         //TODO Find out what this does exactly
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
+
+        shareButton.setOnClickListener(view -> {
+            //TODO save the image as a bitmap and pass it to the share screen
+        });
+
+        clearButton.setOnClickListener(view -> paintView.clear());
     }
 
     @Override
@@ -39,9 +50,6 @@ public class MakeQuipActivity extends AppCompatActivity {
         switch(item.getItemId()){
             case R.id.normal:
                 paintView.normal();
-                return true;
-            case R.id.emboss:
-                paintView.emboss();
                 return true;
             case R.id.blur:
                 paintView.blur();
