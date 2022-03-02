@@ -7,10 +7,6 @@
         android:title="Normal"
         app:showAsAction="never" />
     <item
-        android:id="@+id/emboss"
-        android:title="Emboss"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/blur"
         android:title="Blur"
         app:showAsAction="never" />
