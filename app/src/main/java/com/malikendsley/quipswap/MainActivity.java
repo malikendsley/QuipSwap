@@ -1,12 +1,10 @@
 package com.malikendsley.quipswap;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -78,11 +76,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(navListener);
 //        try to run this as late as possible to check whether to display friends tab
         user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null){
-            bottomNav.getMenu().findItem(R.id.nav_friends).setVisible(true);
-        } else {
-            bottomNav.getMenu().findItem(R.id.nav_friends).setVisible(false);
-        }
+        bottomNav.getMenu().findItem(R.id.nav_friends).setVisible(user != null);
         //save tab on screen rotation
         if (savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
@@ -96,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
