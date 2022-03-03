@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 
 import androidx.annotation.NonNull;
@@ -36,15 +38,25 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "Sent selected");
                 selectedFragment = new SentFragment();
                 break;
+            case R.id.nav_friends:
+                Log.i(TAG, "Friends Selected");
+                if (user!= null){
+                    Log.d(TAG, "User Logged In");
+                    selectedFragment = new FriendsFragment();
+                } else {
+                    Log.d(TAG, "This shouldn't be possible");
+                    selectedFragment = new ProfileFragment();
+                }
+                break;
             case R.id.nav_profile:
                 Log.i(TAG, "Profile Selected");
                 //send the right fragment based on whether user is logged in
                 if (user != null) {
                     //User is Logged in
-                    Log.d("Firebase", "onNavigationItemSelected User logged in");
+                    Log.d(TAG, "onNavigationItemSelected User logged in");
                     selectedFragment = new ProfileLoggedInFragment();
                 } else {
-                    Log.d("Firebase", "onNavigationItemSelected No user logged in");
+                    Log.d(TAG, "onNavigationItemSelected No user logged in");
                     //No User is Logged in
                     selectedFragment = new ProfileFragment();
                 }
@@ -56,17 +68,26 @@ public class MainActivity extends AppCompatActivity {
         return true;
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //check user login state
         setContentView(R.layout.activity_main);
+
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
-
+//        try to run this as late as possible to check whether to display friends tab
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null){
+            bottomNav.getMenu().findItem(R.id.nav_friends).setVisible(true);
+        } else {
+            bottomNav.getMenu().findItem(R.id.nav_friends).setVisible(false);
+        }
+        //save tab on screen rotation
         if (savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
         }
+
     }
 
     @Override

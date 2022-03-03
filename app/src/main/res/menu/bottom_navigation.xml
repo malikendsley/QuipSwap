@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-    android:id="@+id/nav_sent_swaps"
-    android:icon="@drawable/ic_baseline_arrow_upward_24"
-    android:title="Sent Swaps" />
+        android:id="@+id/nav_sent_swaps"
+        android:icon="@drawable/ic_baseline_arrow_upward_24"
+        android:title="Sent Swaps"
+        android:visible="true" />
     <item
         android:id="@+id/nav_received_swaps"
         android:icon="@drawable/ic_baseline_arrow_upward_24"
-        android:title="Received Swaps" />
+        android:title="Received Swaps"
+        android:visible="true" />
+    <item
+        android:id="@+id/nav_friends"
+        android:icon="@drawable/ic_baseline_add_reaction_24"
+        android:title="Friends"
+        android:visible="false" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_baseline_person_24"
-        android:title="Profile" />
+        android:title="Profile"
+        android:visible="true" />
 </menu>

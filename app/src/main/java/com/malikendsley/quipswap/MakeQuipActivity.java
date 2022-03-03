@@ -58,8 +58,6 @@ public class MakeQuipActivity extends AppCompatActivity {
                 paintView.clear();
                 return true;
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 }
