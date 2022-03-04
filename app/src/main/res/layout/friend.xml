@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardBackgroundColor="@color/purple_200"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_margin="16dp"
-    android:padding="20dp"
+    android:layout_margin="8dp"
+    android:padding="8dp"
     app:cardElevation="@dimen/cardview_default_elevation"
     app:cardCornerRadius="@dimen/cardview_default_radius"
     android:layout_height="wrap_content">
@@ -13,36 +12,37 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:orientation="vertical"
         >
+
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:padding="8dp">
+            android:padding="4dp">
 
             <TextView
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Friend ID: " />
+                android:text="Friend ID: "
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/friendID"
-                android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="an ID"/>
+                android:layout_marginStart="8dp"
+                android:text="" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:padding="8dp">
+            android:padding="4dp">
 
             <TextView
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Username: " />
@@ -52,7 +52,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="a username"/>
+                android:hint=""/>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

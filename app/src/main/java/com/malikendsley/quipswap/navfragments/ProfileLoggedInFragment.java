@@ -1,4 +1,4 @@
-package com.malikendsley.quipswap;
+package com.malikendsley.quipswap.navfragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.malikendsley.firebaseutils.User;
+import com.malikendsley.quipswap.MainActivity;
+import com.malikendsley.quipswap.R;
 
 import java.util.Objects;
 

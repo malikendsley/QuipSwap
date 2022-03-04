@@ -1,4 +1,4 @@
-package com.malikendsley.quipswap;
+package com.malikendsley.quipswap.navfragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,9 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.malikendsley.quipswap.MainActivity;
+import com.malikendsley.quipswap.R;
+import com.malikendsley.quipswap.SignupActivity;
 
 import java.util.Objects;
 

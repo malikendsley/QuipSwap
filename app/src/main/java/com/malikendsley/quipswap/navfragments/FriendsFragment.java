@@ -1,10 +1,12 @@
-package com.malikendsley.quipswap;
+package com.malikendsley.quipswap.navfragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,8 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.malikendsley.firebaseutils.FriendAdapter;
 import com.malikendsley.firebaseutils.Friendship;
+import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,8 @@ public class FriendsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
         return inflater.inflate(R.layout.fragment_friends, container, false);
     }
 
@@ -44,26 +47,37 @@ public class FriendsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        recyclerView = requireActivity().findViewById(R.id.friendList);
+        //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-        Log.i(TAG, "My UID: " + mAuth.getUid());
+
+        //recycler setup
+        recyclerView = requireActivity().findViewById(R.id.friendList);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         list = new ArrayList<>();
         friendAdapter = new FriendAdapter(getContext(), list);
         recyclerView.setAdapter(friendAdapter);
         Log.i(TAG, "Friends Loaded");
 
+        Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
+
+        addFriendButton.setOnClickListener(view1 -> {
+            Log.i(TAG, "Moving to add friend activity");
+            //TODO Implement add friends
+        });
+
+        //load friendships into the list from database
         mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                     Friendship friend = dataSnapshot.getValue(Friendship.class);
                     list.add(friend);
-                    Log.i(TAG, "Adding friend");
+                    Log.i(TAG, "Loading friend");
                 }
+                //this is okay because the friends list once loaded will not change and can be bound all at once
                 friendAdapter.notifyDataSetChanged();
             }
 

@@ -16,6 +16,11 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.malikendsley.quipswap.navfragments.FriendsFragment;
+import com.malikendsley.quipswap.navfragments.ProfileFragment;
+import com.malikendsley.quipswap.navfragments.ProfileLoggedInFragment;
+import com.malikendsley.quipswap.navfragments.ReceivedFragment;
+import com.malikendsley.quipswap.navfragments.SentFragment;
 
 public class MainActivity extends AppCompatActivity {
 
