@@ -3,8 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
     <TextView
         android:id="@+id/friendsTitleText"
         android:layout_width="wrap_content"
@@ -19,14 +17,34 @@
         android:id="@+id/friendList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/addFriendButton"
-        android:layout_below="@+id/friendsTitleText"/>
+        android:layout_above="@+id/addFriendSection"
+        android:layout_below="@+id/friendsTitleText" />
 
-    <Button
-        android:id="@+id/addFriendButton"
+    <LinearLayout
+        android:id="@+id/addFriendSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:text="Add Friend" />
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:autofillHints="username"
+            android:inputType="text"
+            android:hint="enter username" />
+
+        <Button
+            android:id="@+id/addFriendButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:singleLine="true"
+            android:layout_marginStart="8dp"
+            android:text="Add" />
+
+    </LinearLayout>
+
 </RelativeLayout>

@@ -63,9 +63,16 @@ public class FriendsFragment extends Fragment {
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
 
         addFriendButton.setOnClickListener(view1 -> {
-            Log.i(TAG, "Moving to add friend activity");
+            Log.i(TAG, "Add friend clicked");
             //TODO Implement add friends
+            //check if user exists
+            //create new friend request
+            //maybe update the recycler
         });
+
+        //TODO find a way to display friend requests
+        //likely either in line with friends (expand friendship class to include status?
+        //or on separate menu (more denormalization ugh)
 
         //load friendships into the list from database
         mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -74,16 +81,16 @@ public class FriendsFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                     Friendship friend = dataSnapshot.getValue(Friendship.class);
+                    //TODO this list should probably be saved to disk once populated
+                    //in order to cut down on reads
                     list.add(friend);
                     Log.i(TAG, "Loading friend");
                 }
                 //this is okay because the friends list once loaded will not change and can be bound all at once
                 friendAdapter.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
 
