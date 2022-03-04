@@ -14,11 +14,12 @@
         android:text="Friends"
         android:layout_margin="10dp"
         android:textSize="30sp" />
-    <View
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/friendList"
         android:layout_below="@+id/friendsTitleText"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="match_parent" />
 
 
 </RelativeLayout>

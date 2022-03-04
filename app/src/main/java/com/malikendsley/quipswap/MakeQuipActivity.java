@@ -33,6 +33,7 @@ public class MakeQuipActivity extends AppCompatActivity {
 
         shareButton.setOnClickListener(view -> {
             //TODO save the image as a bitmap and pass it to the share screen
+
         });
 
         clearButton.setOnClickListener(view -> paintView.clear());

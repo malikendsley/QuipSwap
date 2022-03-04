@@ -2,13 +2,28 @@ package com.malikendsley.firebaseutils;
 
 public class User {
 
-    public String username;
-    public String email;
-    public String UID;
+    private String username;
+    private String email;
+    private String UID;
 
     @SuppressWarnings("unused")
     public User(){
+        username = "unset";
+        email = "unset";
+        UID = "unset";
         //necessary for firebase
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUID() {
+        return UID;
     }
 
     public User(String username, String email){

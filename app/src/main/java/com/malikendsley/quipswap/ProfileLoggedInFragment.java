@@ -54,8 +54,8 @@ public class ProfileLoggedInFragment extends Fragment {
                 User user = snapshot.getValue(User.class);
                 Log.i(TAG, "Data retrieved: " + user);
                 assert user != null;
-                username.setText(user.username);
-                email.setText(user.email);
+                username.setText(user.getUsername());
+                email.setText(user.getEmail());
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

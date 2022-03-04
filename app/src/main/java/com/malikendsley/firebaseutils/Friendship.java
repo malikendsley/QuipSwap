@@ -1,25 +1,36 @@
 package com.malikendsley.firebaseutils;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class Friendship {
 
-    private String User1;
-    private String User2;
-    private String key;
+    private String User1 = null;
+    private String User2 = null;
+    private String timestamp = null;
+    private String key = null;
+
+
 
     @SuppressWarnings("unused")
     public Friendship(){
         //necessary for firebase
     }
 
-    public Friendship(String User1, String User2){
-        this.User1 = User1;
-        this.User2 = User2;
+    public String getUser1() {
+        return User1;
     }
 
-    public Friendship(String key, String User1, String User2){
-        this.key = key;
-        this.User1 = User1;
-        this.User2 = User2;
+    public String getUser2() {
+        return User2;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getTimestamp(){
+        return timestamp;
     }
 
     public void setKey(String key){
@@ -27,6 +38,6 @@ public class Friendship {
     }
 
     public String toString(){
-        return("Friendship " + key + ": " + User1 + " - " + User2);
+        return("Friendship w/ key " + key + "\nUser 1: " + User1 + " friends with " + User2);
     }
 }

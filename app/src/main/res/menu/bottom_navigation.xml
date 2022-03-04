@@ -7,7 +7,7 @@
         android:visible="true" />
     <item
         android:id="@+id/nav_received_swaps"
-        android:icon="@drawable/ic_baseline_arrow_upward_24"
+        android:icon="@drawable/ic_baseline_arrow_downward_24"
         android:title="Received Swaps"
         android:visible="true" />
     <item
