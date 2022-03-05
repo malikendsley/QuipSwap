@@ -105,19 +105,25 @@ public class FriendsFragment extends Fragment {
     }
 
     void tryAddFriend(String username){
+        //prevent adding people you're already friends with
+        /*TODO leverage existing friends retrieval as a check against requests since they are on
+          the same screen */
+
         //check if username exists (leverage the existing takenUsernames index in reverse)
         mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(doesExistTask -> {
             if(doesExistTask.isSuccessful()){
                 if (doesExistTask.getResult().getValue() != null) {
                     //user exists, so write a request to the database
                     Log.i(TAG, "User located, creating request in DB");
+                    Toast.makeText(getContext(), "Request Sent", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.i(TAG, "FriendsFragment: No such user");
+                    Toast.makeText(getContext(), "This user does not exist", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Log.i(TAG, "FriendsFragment: Username check failed");
                 Toast.makeText(getContext(), "FriendsFragment: Username check failed", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
-
 }
