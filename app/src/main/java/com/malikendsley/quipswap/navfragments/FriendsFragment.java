@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,20 +63,26 @@ public class FriendsFragment extends Fragment {
         Log.i(TAG, "Friends Loaded");
 
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
+        EditText friendSearch = requireActivity().findViewById(R.id.friendSearchUsername);
 
         addFriendButton.setOnClickListener(view1 -> {
             Log.i(TAG, "Add friend clicked");
             //TODO Implement add friends
-            //check if user exists
+            String username = friendSearch.getText().toString();
+            tryAddFriend(username);
             //create new friend request
-            //maybe update the recycler
         });
 
         //TODO find a way to display friend requests
         //likely either in line with friends (expand friendship class to include status?
-        //or on separate menu (more denormalization ugh)
-
+        //or on separate menu (more de-normalization ugh)
         //load friendships into the list from database
+
+        //TODO An option:
+        //retrofit FriendAdapter to fill the recycler with "cards" which can contain either a friend
+        //or a friend request, then fill them in order with friends at the top instead of
+        //coercing a friend request into the existing friend adapter
+
         mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -95,4 +103,21 @@ public class FriendsFragment extends Fragment {
         });
 
     }
+
+    void tryAddFriend(String username){
+        //check if username exists (leverage the existing takenUsernames index in reverse)
+        mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(doesExistTask -> {
+            if(doesExistTask.isSuccessful()){
+                if (doesExistTask.getResult().getValue() != null) {
+                    //user exists, so write a request to the database
+                    Log.i(TAG, "User located, creating request in DB");
+                }
+            } else {
+                Log.i(TAG, "FriendsFragment: Username check failed");
+                Toast.makeText(getContext(), "FriendsFragment: Username check failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
 }

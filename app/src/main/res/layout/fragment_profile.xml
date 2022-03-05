@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="20dp"
         android:text="@string/you_are_not_signed_in" />
 
     <EditText
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="123dp"
+        android:layout_marginTop="100dp"
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/email"
@@ -40,9 +40,9 @@
         android:id="@+id/signInButton"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileText"
+        android:layout_below="@+id/signUpPassword"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="249dp"
+        android:layout_marginTop="20dp"
         android:elegantTextHeight="true"
         android:maxLines="1"
         android:text="@string/sign_in"
@@ -55,10 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/notAUserFlavor"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:elegantTextHeight="true"
         android:maxLines="1"
-        android:onClick="onSignupPressed"
         android:text="@string/sign_up"
         android:textAlignment="center"
         android:textSize="16sp" />
@@ -83,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/signInButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="@string/not_a_user" />
 
 </RelativeLayout>
