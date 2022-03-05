@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +29,7 @@ import com.malikendsley.firebaseutils.Friendship;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class FriendsFragment extends Fragment {
@@ -101,21 +104,35 @@ public class FriendsFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-
     }
 
     void tryAddFriend(String username){
-        //prevent adding people you're already friends with
-        /*TODO leverage existing friends retrieval as a check against requests since they are on
-          the same screen */
-
-        //check if username exists (leverage the existing takenUsernames index in reverse)
+        /*prevent adding people you're already friends with
+          this may technically not work if a user manages to input a friend they already have added
+          in the time it takes to load a friend, but this is rare and also shouldn't really cause
+          any unrecoverable errors besides an odd friend request */
+        Log.i(TAG, "Current contents of list: \n" + list.toString());
         mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(doesExistTask -> {
             if(doesExistTask.isSuccessful()){
                 if (doesExistTask.getResult().getValue() != null) {
-                    //user exists, so write a request to the database
-                    Log.i(TAG, "User located, creating request in DB");
-                    Toast.makeText(getContext(), "Request Sent", Toast.LENGTH_SHORT).show();
+                    //user exists, check to see if friend is already in friends list
+                    String UID = doesExistTask.getResult().getValue().toString();
+                    Log.i(TAG, "User located, " + UID);
+                    mDatabase.child(Objects.requireNonNull(mAuth.getUid())).child("Friends").child(UID).get().addOnCompleteListener(noDupTask -> {
+                        if(noDupTask.isSuccessful()){
+                            if(noDupTask.getResult().getValue() == null){
+                                Log.i(TAG,"User not already added");
+                                //check if a friend request is already pending
+                                //query for Friend Request where UID matches given
+                            } else {
+                                Log.i(TAG, "FriendsFragment: User already friends");
+                                Toast.makeText(getContext(), "You are already friends with " + username, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Log.i(TAG, "FriendsFragment: Username check failed");
+                            Toast.makeText(getContext(), "FriendsFragment: Username check failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
                     Log.i(TAG, "FriendsFragment: No such user");
                     Toast.makeText(getContext(), "This user does not exist", Toast.LENGTH_SHORT).show();

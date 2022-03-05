@@ -55,7 +55,6 @@ public class ProfileLoggedInFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 Log.i(TAG, "Data retrieved: " + user);
-                assert user != null;
                 username.setText(user.getUsername());
                 email.setText(user.getEmail());
             }
