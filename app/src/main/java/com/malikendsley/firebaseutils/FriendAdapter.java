@@ -40,14 +40,14 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
     @Override
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
-        Log.i("Own", "Binding friend");
+//        Log.i("Own", "Binding friend");
         //get the particular friendship
         Friendship friendship = list.get(position);
         //search the users table for this person
         mDatabase.child("Users").child(friendship.getUser2()).get().addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 //fill their details into the textview
-                Log.i(TAG, "Data Retrieved: " + Objects.requireNonNull(task.getResult().getValue()));
+//                Log.i(TAG, "Data Retrieved: " + Objects.requireNonNull(task.getResult().getValue()));
                 user = task.getResult().getValue(User.class);
                 holder.RID.setText(friendship.getUser2());
                 holder.username.setText(user.getUsername());

@@ -1,26 +1,28 @@
 package com.malikendsley.firebaseutils;
 
+import com.google.firebase.database.PropertyName;
+
 @SuppressWarnings("unused")
 public class FriendRequest {
 
-    private String sender;
-    private String recipient;
+    private String Sender = "";
+    private String Recipient = "";
 
     //necessary for firebase
     public FriendRequest(){
 
     }
 
-    public FriendRequest(String sender, String recipient) {
-        this.sender = sender;
-        this.recipient = recipient;
+    public FriendRequest(String Sender, String Recipient) {
+        this.Sender = Sender;
+        this.Recipient = Recipient;
     }
-
+    @PropertyName("Sender")
     public String getSender() {
-        return sender;
+        return Sender;
     }
-
+    @PropertyName("Recipient")
     public String getRecipient() {
-        return recipient;
+        return Recipient;
     }
 }

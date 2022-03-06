@@ -16,8 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.malikendsley.firebaseutils.FriendAdapter;
+import com.malikendsley.firebaseutils.FriendRequest;
 import com.malikendsley.firebaseutils.Friendship;
 import com.malikendsley.quipswap.R;
 
@@ -43,8 +42,6 @@ public class FriendsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-
         return inflater.inflate(R.layout.fragment_friends, container, false);
     }
 
@@ -63,7 +60,6 @@ public class FriendsFragment extends Fragment {
         list = new ArrayList<>();
         friendAdapter = new FriendAdapter(getContext(), list);
         recyclerView.setAdapter(friendAdapter);
-        Log.i(TAG, "Friends Loaded");
 
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
         EditText friendSearch = requireActivity().findViewById(R.id.friendSearchUsername);
@@ -92,10 +88,8 @@ public class FriendsFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                     Friendship friend = dataSnapshot.getValue(Friendship.class);
-                    //TODO this list should probably be saved to disk once populated
-                    //in order to cut down on reads
+                    /*TODO save things like this to disk to minimize reads*/
                     list.add(friend);
-                    Log.i(TAG, "Loading friend");
                 }
                 //this is okay because the friends list once loaded will not change and can be bound all at once
                 friendAdapter.notifyDataSetChanged();
@@ -105,42 +99,76 @@ public class FriendsFragment extends Fragment {
             }
         });
     }
-
+    //TODO: replace username lookup with SharedPreferences Query (which will need populating)
+    //TODO: order the conditions to query last, to minimize the chance of a database read
     void tryAddFriend(String username){
-        /*prevent adding people you're already friends with
-          this may technically not work if a user manages to input a friend they already have added
-          in the time it takes to load a friend, but this is rare and also shouldn't really cause
-          any unrecoverable errors besides an odd friend request */
-        Log.i(TAG, "Current contents of list: \n" + list.toString());
+
+
+        //check if username exists by leveraging taken usernames list
         mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(doesExistTask -> {
             if(doesExistTask.isSuccessful()){
                 if (doesExistTask.getResult().getValue() != null) {
                     //user exists, check to see if friend is already in friends list
-                    String UID = doesExistTask.getResult().getValue().toString();
-                    Log.i(TAG, "User located, " + UID);
-                    mDatabase.child(Objects.requireNonNull(mAuth.getUid())).child("Friends").child(UID).get().addOnCompleteListener(noDupTask -> {
-                        if(noDupTask.isSuccessful()){
-                            if(noDupTask.getResult().getValue() == null){
-                                Log.i(TAG,"User not already added");
-                                //check if a friend request is already pending
-                                //query for Friend Request where UID matches given
-                            } else {
-                                Log.i(TAG, "FriendsFragment: User already friends");
-                                Toast.makeText(getContext(), "You are already friends with " + username, Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Log.i(TAG, "FriendsFragment: Username check failed");
-                            Toast.makeText(getContext(), "FriendsFragment: Username check failed", Toast.LENGTH_SHORT).show();
+                    String friendUID = doesExistTask.getResult().getValue().toString();
+                    //extra condition deny request if the username's associated UID matches our own
+                    boolean validRequest = !friendUID.equals(mAuth.getUid());
+                    //between this line and the next validRequest represents solely an own-request
+                    if(!validRequest){
+                        Log.i(TAG, "Self-add detected");
+                        Toast.makeText(getContext(), "You can't add yourself", Toast.LENGTH_SHORT).show();
+                    }
+                    for(Friendship friendship : list){
+                        if(friendship.getUser2().equals(friendUID)){
+                            //deny re-adding someone who is already a friend
+                            validRequest = false;
+                            Log.i(TAG, "FriendsFragment: Already friends with user " + friendship.getUser2());
+                            Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    }
+                    //next condition to check is whether a friend request is already pending
+                    if(validRequest){
+                        Log.i(TAG, "Valid Request, checking for existing requests");
+                        mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(friendUID).get().addOnSuccessListener(matchingRequests -> {
+                            if(matchingRequests.exists()){
+                                Log.i(TAG, "Requests to " + username + " found");
+                                boolean isDuplicate = false;
+                                for(DataSnapshot fr : matchingRequests.getChildren()){
+                                    FriendRequest mfr = fr.getValue(FriendRequest.class);
+                                    //if among the friend requests ours is there its a dupe, no-go
+                                    if(Objects.requireNonNull(mfr).getSender().equals(mAuth.getUid())){
+                                        Log.i(TAG,"Duplicate Request");
+                                        isDuplicate = true;
+                                    }
+                                }
+                                if(isDuplicate){
+                                    Toast.makeText(getContext(), "Already sent Request", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    createRecord(friendUID);
+                                }
+                            } else {
+                                Log.i(TAG, "No Requests to " + username + " found");
+                                createRecord(friendUID);
+                            }
+                        });
+                    }
                 } else {
+                    //case for user DNE
                     Log.i(TAG, "FriendsFragment: No such user");
                     Toast.makeText(getContext(), "This user does not exist", Toast.LENGTH_SHORT).show();
                 }
             } else {
+                //case for general database failure
                 Log.i(TAG, "FriendsFragment: Username check failed");
                 Toast.makeText(getContext(), "FriendsFragment: Username check failed", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    //simple helper function to clean things up
+    private void createRecord(String friendUID){
+        mDatabase.child("FriendRequests").push().setValue(new FriendRequest(mAuth.getUid(), friendUID));
+        Log.i(TAG, "Request sent");
+        Toast.makeText(getContext(), "Request Sent", Toast.LENGTH_SHORT).show();
+    }
+
 }
