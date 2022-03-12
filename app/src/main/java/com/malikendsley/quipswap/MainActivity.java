@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_friends:
                 Log.i(TAG, "Friends Selected");
-                if (user!= null){
+                if (user != null) {
                     Log.d(TAG, "User Logged In");
                     selectedFragment = new FriendsFragment();
                 } else {
@@ -83,14 +83,14 @@ public class MainActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         bottomNav.getMenu().findItem(R.id.nav_friends).setVisible(user != null);
         //save tab on screen rotation
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
         }
 
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mainoverflowmenu, menu);
         return true;
     }
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case R.id.aboutUsOption:
                 //unlikely but if this presents a perf issue can pre-build
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);

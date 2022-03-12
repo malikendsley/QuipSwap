@@ -49,7 +49,7 @@ public class MakeQuipActivity extends AppCompatActivity {
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.normal:
                 paintView.normal();
                 return true;

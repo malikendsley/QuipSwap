@@ -34,8 +34,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/signUpUsername"
-        android:layout_marginTop="15dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/email"
@@ -68,8 +68,6 @@
         android:text="@string/register"
         android:textAlignment="center"
         android:textSize="16sp" />
-
-
 
 
 </RelativeLayout>

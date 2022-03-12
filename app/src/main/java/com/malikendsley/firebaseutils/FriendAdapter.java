@@ -15,7 +15,7 @@ import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
 
-public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder>{
+public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder> {
     private static final String TAG = "Own";
 
     ArrayList<Friendship> list;
@@ -39,11 +39,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         Friendship friendship = list.get(position);
         //search the users table for this person
         mDatabase.child("Users").child(friendship.getUser2()).get().addOnSuccessListener(userSnapshot -> {
-                //fill their details into the textview
-                //Log.i(TAG, "Data Retrieved: " + Objects.requireNonNull(task.getResult().getValue()));
-                user = userSnapshot.getValue(User.class);
-                holder.FID.setText(friendship.getUser2());
-                holder.username.setText(user.getUsername());
+            //fill their details into the textview
+            //Log.i(TAG, "Data Retrieved: " + Objects.requireNonNull(task.getResult().getValue()));
+            user = userSnapshot.getValue(User.class);
+            holder.FID.setText(friendship.getUser2());
+            holder.username.setText(user.getUsername());
         });
     }
 
@@ -52,11 +52,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         return list.size();
     }
 
-    public static class FriendViewHolder extends RecyclerView.ViewHolder{
+    public static class FriendViewHolder extends RecyclerView.ViewHolder {
 
         TextView FID, username;
 
-        public FriendViewHolder(@NonNull View itemView){
+        public FriendViewHolder(@NonNull View itemView) {
             super(itemView);
 
             FID = itemView.findViewById(R.id.friendID);

@@ -10,32 +10,31 @@
         android:id="@+id/loggedInText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
         android:text="@string/profile"
         android:textSize="28sp" />
 
     <LinearLayout
-        android:minWidth="200dp"
         android:id="@+id/usernameGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:minWidth="200dp">
 
         <TextView
-            android:minWidth="85dp"
             android:id="@+id/usernameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/username"
-            android:padding="10dp"/>
+            android:minWidth="85dp"
+            android:padding="10dp"
+            android:text="@string/username" />
 
         <TextView
-            android:padding="10dp"
             android:id="@+id/usernameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:padding="10dp" />
 
     </LinearLayout>
 
@@ -49,10 +48,10 @@
         android:minWidth="200dp">
 
         <TextView
-            android:minWidth="85dp"
             android:id="@+id/emailLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="85dp"
             android:padding="10dp"
             android:text="@string/email"
             android:textAllCaps="false" />
@@ -61,10 +60,10 @@
             android:id="@+id/emailText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            />
+            android:padding="10dp" />
 
     </LinearLayout>
+
     <Button
         android:id="@+id/logOutButton"
         android:layout_width="wrap_content"

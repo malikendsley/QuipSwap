@@ -56,7 +56,9 @@
                 android:hint="loading..."
                 android:textSize="12sp" />
         </LinearLayout>
-        <View style="@style/horizontal_divider"/>
+
+        <View style="@style/horizontal_divider" />
+
         <LinearLayout
             android:id="@+id/expandingRequestMenu"
             style="?android:attr/buttonBarButtonStyle"
@@ -65,19 +67,20 @@
             android:layout_margin="18dp">
 
             <Button
-                style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/denyFriendButton"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"
                 android:layout_weight="1"
                 android:text="Deny"
-                android:textSize="18sp"/>
+                android:textSize="18sp" />
 
-            <View style="@style/vertical_divider"/>
+            <View style="@style/vertical_divider" />
+
             <Button
-                style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/acceptFriendButton"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"

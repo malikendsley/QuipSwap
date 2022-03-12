@@ -11,9 +11,8 @@ public class Friendship {
     private String key = null;
 
 
-
     @SuppressWarnings("unused")
-    public Friendship(){
+    public Friendship() {
         //necessary for firebase
     }
 
@@ -29,15 +28,15 @@ public class Friendship {
         return key;
     }
 
-    public String getTimestamp(){
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setKey(String key){
+    public void setKey(String key) {
         this.key = key;
     }
 
-    public String toString(){
-        return("Friendship w/ key " + key + "\nUser 1: " + User1 + " friends with " + User2);
+    public String toString() {
+        return ("Friendship w/ key " + key + "\nUser 1: " + User1 + " friends with " + User2);
     }
 }

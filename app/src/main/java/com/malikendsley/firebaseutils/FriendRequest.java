@@ -10,9 +10,8 @@ public class FriendRequest {
     private boolean expandable = false;
 
 
-
     //necessary for firebase
-    public FriendRequest(){
+    public FriendRequest() {
 
     }
 
@@ -33,6 +32,7 @@ public class FriendRequest {
     public String getSender() {
         return Sender;
     }
+
     @PropertyName("Recipient")
     public String getRecipient() {
         return Recipient;
