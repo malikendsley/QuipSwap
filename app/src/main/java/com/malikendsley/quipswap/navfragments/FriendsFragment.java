@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.malikendsley.firebaseutils.FriendAdapter;
 import com.malikendsley.firebaseutils.FriendRequest;
 import com.malikendsley.firebaseutils.Friendship;
+import com.malikendsley.firebaseutils.RequestAdapter;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
@@ -33,11 +35,16 @@ import java.util.Objects;
 
 public class FriendsFragment extends Fragment {
     private static final String TAG = "Own";
-    RecyclerView recyclerView;
-    DatabaseReference mDatabase;
+    RecyclerView friendRecycler;
     FriendAdapter friendAdapter;
-    ArrayList<Friendship> list;
+
+    RecyclerView requestRecycler;
+    RequestAdapter requestAdapter;
+
     FirebaseAuth mAuth;
+    DatabaseReference mDatabase;
+    ArrayList<Friendship> friendList = new ArrayList<>();
+    ArrayList<FriendRequest> requestList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -45,6 +52,7 @@ public class FriendsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_friends, container, false);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -53,57 +61,52 @@ public class FriendsFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
-        //recycler setup
-        recyclerView = requireActivity().findViewById(R.id.friendList);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        list = new ArrayList<>();
-        friendAdapter = new FriendAdapter(getContext(), list);
-        recyclerView.setAdapter(friendAdapter);
+        //friend recycler setup
+        friendRecycler = requireActivity().findViewById(R.id.friendList);
+        friendRecycler.setHasFixedSize(true);
+        friendRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        friendAdapter = new FriendAdapter(getContext(), friendList);
+        friendRecycler.setAdapter(friendAdapter);
+
+        //friend request recycler setup
+        requestRecycler = requireActivity().findViewById(R.id.requestList);
+        requestRecycler.setHasFixedSize(true);
+        requestRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        requestAdapter = new RequestAdapter(getContext(), requestList);
+        requestRecycler.setAdapter(requestAdapter);
 
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
         EditText friendSearch = requireActivity().findViewById(R.id.friendSearchUsername);
 
         addFriendButton.setOnClickListener(view1 -> {
             Log.i(TAG, "Add friend clicked");
-            //TODO Implement add friends
             String username = friendSearch.getText().toString();
-            tryAddFriend(username);
             //create new friend request
+            tryAddFriend(username);
         });
 
-        //TODO find a way to display friend requests
-        //likely either in line with friends (expand friendship class to include status?
-        //or on separate menu (more de-normalization ugh)
-        //load friendships into the list from database
-
-        //TODO An option:
-        //retrofit FriendAdapter to fill the recycler with "cards" which can contain either a friend
-        //or a friend request, then fill them in order with friends at the top instead of
-        //coercing a friend request into the existing friend adapter
-
-        mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    Friendship friend = dataSnapshot.getValue(Friendship.class);
+        //retrieve friends and populate
+        mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(friendSnapshot ->  {
+            for(DataSnapshot child : friendSnapshot.getChildren()){
                     /*TODO save things like this to disk to minimize reads*/
-                    list.add(friend);
+                    friendList.add(child.getValue(Friendship.class));
                 }
                 //this is okay because the friends list once loaded will not change and can be bound all at once
                 friendAdapter.notifyDataSetChanged();
+            });
+
+        //retrieve friend requests and populate
+        mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnSuccessListener(requestSnapshot -> {
+            for(DataSnapshot child : requestSnapshot.getChildren()){
+                requestList.add(child.getValue(FriendRequest.class));
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
+            friendAdapter.notifyDataSetChanged();
         });
     }
+
     //TODO: replace username lookup with SharedPreferences Query (which will need populating)
     //TODO: order the conditions to query last, to minimize the chance of a database read
     void tryAddFriend(String username){
-
-
         //check if username exists by leveraging taken usernames list
         mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(doesExistTask -> {
             if(doesExistTask.isSuccessful()){
@@ -117,7 +120,7 @@ public class FriendsFragment extends Fragment {
                         Log.i(TAG, "Self-add detected");
                         Toast.makeText(getContext(), "You can't add yourself", Toast.LENGTH_SHORT).show();
                     }
-                    for(Friendship friendship : list){
+                    for(Friendship friendship : friendList){
                         if(friendship.getUser2().equals(friendUID)){
                             //deny re-adding someone who is already a friend
                             validRequest = false;
@@ -163,12 +166,18 @@ public class FriendsFragment extends Fragment {
             }
         });
     }
-
     //simple helper function to clean things up
-    private void createRecord(String friendUID){
+    void createRecord(String friendUID){
         mDatabase.child("FriendRequests").push().setValue(new FriendRequest(mAuth.getUid(), friendUID));
         Log.i(TAG, "Request sent");
         Toast.makeText(getContext(), "Request Sent", Toast.LENGTH_SHORT).show();
     }
 
+    void acceptRequest(String RequestID){
+        //delete the request
+        //add a new friendship
+    }
+    void rejectRequest(String RequestID){
+        //delete the request
+    }
 }

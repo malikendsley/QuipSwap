@@ -12,12 +12,14 @@
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/activity_main.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/activity_make_quip.xml" value="0.22" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/activity_sign_up.xml" value="0.25" />
-        <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/fragment_friends.xml" value="0.21" />
+        <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/fragment_friends.xml" value="0.1" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/fragment_logged_in_profile.xml" value="0.28229166666666666" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/fragment_profile.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/fragment_received.xml" value="0.24414414414414415" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/fragment_sent.xml" value="0.24414414414414415" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/friend.xml" value="0.24414414414414415" />
+        <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/list_item_friend.xml" value="0.1" />
+        <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/list_item_friendrequest.xml" value="0.25" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/layout/make_quip_bottom_sheet.xml" value="0.24414414414414415" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/menu/bottom_navigation.xml" value="0.16261261261261262" />
         <entry key="..\:/Users/ifigh/StudioProjects/app/src/main/res/menu/paint_menu.xml" value="0.28229166666666666" />
