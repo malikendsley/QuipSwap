@@ -7,6 +7,9 @@ public class FriendRequest {
 
     private String Sender = "";
     private String Recipient = "";
+    private boolean expandable = false;
+
+
 
     //necessary for firebase
     public FriendRequest(){
@@ -17,6 +20,15 @@ public class FriendRequest {
         this.Sender = Sender;
         this.Recipient = Recipient;
     }
+
+    public boolean isExpandable() {
+        return expandable;
+    }
+
+    public void setExpandable(boolean expandable) {
+        this.expandable = expandable;
+    }
+
     @PropertyName("Sender")
     public String getSender() {
         return Sender;

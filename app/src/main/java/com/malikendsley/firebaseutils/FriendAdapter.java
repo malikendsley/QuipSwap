@@ -18,20 +18,18 @@ import java.util.ArrayList;
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder>{
     private static final String TAG = "Own";
 
-    Context context;
     ArrayList<Friendship> list;
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     User user = new User();
 
-    public FriendAdapter(Context context, ArrayList<Friendship> list) {
-        this.context = context;
+    public FriendAdapter(ArrayList<Friendship> list) {
         this.list = list;
     }
 
     @NonNull
     @Override
     public FriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.list_item_friend, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_friend, parent, false);
         return new FriendViewHolder(v);
     }
 

@@ -65,14 +65,14 @@ public class FriendsFragment extends Fragment {
         friendRecycler = requireActivity().findViewById(R.id.friendList);
         friendRecycler.setHasFixedSize(true);
         friendRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        friendAdapter = new FriendAdapter(getContext(), friendList);
+        friendAdapter = new FriendAdapter(friendList);
         friendRecycler.setAdapter(friendAdapter);
 
         //friend request recycler setup
         requestRecycler = requireActivity().findViewById(R.id.requestList);
         requestRecycler.setHasFixedSize(true);
         requestRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        requestAdapter = new RequestAdapter(getContext(), requestList);
+        requestAdapter = new RequestAdapter(requestList);
         requestRecycler.setAdapter(requestAdapter);
 
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
