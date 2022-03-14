@@ -99,22 +99,10 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                     Log.i(TAG, "Request Deleted");
                     Toast.makeText(itemView.getContext(), "Request Deleted", Toast.LENGTH_SHORT).show();
                     //has the desirable side effect of removing the request from the list
+                    list.remove(getBindingAdapterPosition());
                     notifyItemChanged(getBindingAdapterPosition());
-                    //TODO refresh the recycler right away, right now i have to navigate away and back
                 });
             });
         }
     }
-
-    void acceptRequest(){
-    }
-
-    void denyRequest(String key){
-
-    }
-
-    void deleteRequest(String key){
-
-    }
-
 }
