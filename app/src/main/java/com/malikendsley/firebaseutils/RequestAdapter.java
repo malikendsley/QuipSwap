@@ -4,9 +4,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestViewHolder> {
@@ -43,9 +44,14 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         //search the database for this user
         mDatabase.child("Users").child(request.getSender()).get().addOnSuccessListener(requestSnapshot -> {
             //populate the card with this user's data
-            user = requestSnapshot.getValue(User.class);
-            holder.RID.setText(request.getSender());
-            holder.username.setText(user.getUsername());
+            if(requestSnapshot.exists()) {
+                user = requestSnapshot.getValue(User.class);
+                Objects.requireNonNull(user).setUID(request.getRecipient());
+                holder.RID.setText(request.getSender());
+                holder.username.setText(user.getUsername());
+            } else {
+                Log.i(TAG, "DB Read failed");
+            }
         });
 
         boolean isExpandable = list.get(position).isExpandable();
@@ -61,7 +67,6 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     public class RequestViewHolder extends RecyclerView.ViewHolder {
 
         TextView RID, username;
-        Button DenyButton, AcceptButton;
         LinearLayout expandingSection;
         LinearLayout rowLayout;
 
@@ -70,18 +75,46 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
 
             RID = itemView.findViewById(R.id.requestID);
             username = itemView.findViewById(R.id.requestUsername);
-            AcceptButton = itemView.findViewById(R.id.acceptFriendButton);
-            DenyButton = itemView.findViewById(R.id.denyFriendButton);
 
             expandingSection = itemView.findViewById(R.id.expandingRequestMenu);
             rowLayout = itemView.findViewById(R.id.rowLayout);
 
+            //TODO if scroll suddenly breaks this is why, go back to the deprecated function
             rowLayout.setOnClickListener(view -> {
-                FriendRequest request = list.get(getAdapterPosition());
+                FriendRequest request = list.get(getBindingAdapterPosition());
                 request.setExpandable(!request.isExpandable());
-                notifyItemChanged(getAdapterPosition());
+                notifyItemChanged(getBindingAdapterPosition());
             });
 
+            itemView.findViewById(R.id.acceptFriendButton).setOnClickListener(view -> {
+                Log.i(TAG, "Accept request from " + user.getUsername());
+
+            });
+
+            itemView.findViewById(R.id.denyFriendButton).setOnClickListener(view -> {
+                String key = list.get(getBindingAdapterPosition()).getKey();
+                Log.i(TAG, "Deny request from " + key);
+                mDatabase.child("FriendRequests").child(key).removeValue().addOnSuccessListener(deleteRequest -> {
+                    //notify user of deletion
+                    Log.i(TAG, "Request Deleted");
+                    Toast.makeText(itemView.getContext(), "Request Deleted", Toast.LENGTH_SHORT).show();
+                    //has the desirable side effect of removing the request from the list
+                    notifyItemChanged(getBindingAdapterPosition());
+                    //TODO refresh the recycler right away, right now i have to navigate away and back
+                });
+            });
         }
     }
+
+    void acceptRequest(){
+    }
+
+    void denyRequest(String key){
+
+    }
+
+    void deleteRequest(String key){
+
+    }
+
 }

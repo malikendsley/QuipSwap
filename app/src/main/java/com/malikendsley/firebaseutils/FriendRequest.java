@@ -5,8 +5,9 @@ import com.google.firebase.database.PropertyName;
 @SuppressWarnings("unused")
 public class FriendRequest {
 
-    private String Sender = "";
-    private String Recipient = "";
+    private String Sender = "unset";
+    private String Recipient = "unset";
+    private String key = "unset";
     private boolean expandable = false;
 
 
@@ -26,6 +27,14 @@ public class FriendRequest {
 
     public void setExpandable(boolean expandable) {
         this.expandable = expandable;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     @PropertyName("Sender")

@@ -95,7 +95,9 @@ public class FriendsFragment extends Fragment {
         //retrieve friend requests and populate
         mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnSuccessListener(requestSnapshot -> {
             for (DataSnapshot child : requestSnapshot.getChildren()) {
-                requestList.add(child.getValue(FriendRequest.class));
+                FriendRequest fr = child.getValue(FriendRequest.class);
+                fr.setKey(child.getKey());
+                requestList.add(fr);
             }
             friendAdapter.notifyDataSetChanged();
         });
@@ -169,15 +171,5 @@ public class FriendsFragment extends Fragment {
         mDatabase.child("FriendRequests").push().setValue(new FriendRequest(mAuth.getUid(), friendUID));
         Log.i(TAG, "Request sent");
         Toast.makeText(getContext(), "Request Sent", Toast.LENGTH_SHORT).show();
-    }
-
-    //TODO remove if ultimately unused (might implement functionality in the adapter instead)
-    void acceptRequest(String RequestID) {
-        //delete the request
-        //add a new friendship
-    }
-
-    void rejectRequest(String RequestID) {
-        //delete the request
     }
 }

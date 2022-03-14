@@ -26,14 +26,16 @@ public class User {
         return UID;
     }
 
+    public void setUID(String UID) {
+        this.UID = UID;
+    }
+
+    //for the case where the UID isn't known at the time of creation
     public User(String username, String email) {
         this.username = username;
         this.email = email;
     }
 
-    //it appears the id of an element of the database may not be
-    //immediately known upon its creation so an alternate
-    //constructor is provided or convenience
     public User(String UID, String username, String email) {
         this.UID = UID;
         this.username = username;
