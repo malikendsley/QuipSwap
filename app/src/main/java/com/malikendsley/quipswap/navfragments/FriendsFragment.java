@@ -38,7 +38,7 @@ public class FriendsFragment extends Fragment {
     RecyclerView requestRecycler;
     RequestAdapter requestAdapter;
 
-    FirebaseAuth mAuth;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase;
     ArrayList<Friendship> friendList = new ArrayList<>();
     ArrayList<FriendRequest> requestList = new ArrayList<>();
@@ -56,7 +56,6 @@ public class FriendsFragment extends Fragment {
 
         //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
 
         //friend recycler setup
         friendRecycler = requireActivity().findViewById(R.id.friendList);
@@ -79,24 +78,38 @@ public class FriendsFragment extends Fragment {
             Log.i(TAG, "Add friend clicked");
             String username = friendSearch.getText().toString();
             //create new friend request
-            tryAddFriend(username);
+            if(username.equals("")){
+                Log.i(TAG, "Empty Add Friend");
+                Toast.makeText(getContext(), "Please specify a user", Toast.LENGTH_SHORT).show();
+            } else {
+                tryAddFriend(username);
+            }
         });
 
+        Log.i(TAG, "Requesting friends");
         //retrieve friends and populate
-        mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(friendSnapshot -> {
-            for (DataSnapshot child : friendSnapshot.getChildren()) {
+        mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(user1snapshot -> {
+            for (DataSnapshot child : user1snapshot.getChildren()) {
                 /*TODO save things like this to disk to minimize reads*/
                 friendList.add(child.getValue(Friendship.class));
             }
             //this is okay because the friends list once loaded will not change and can be bound all at once
             friendAdapter.notifyDataSetChanged();
         });
+        mDatabase.child("Friendships").orderByChild("User2").equalTo(mAuth.getUid()).get().addOnSuccessListener(user2snapshot -> {
+            for (DataSnapshot child : user2snapshot.getChildren()) {
+                friendList.add(child.getValue(Friendship.class));
+            }
+            //this is okay because the friends list once loaded will not change and can be bound all at once
+            friendAdapter.notifyDataSetChanged();
+        });
+        friendAdapter.notifyDataSetChanged();
 
         //retrieve friend requests and populate
         mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnSuccessListener(requestSnapshot -> {
             for (DataSnapshot child : requestSnapshot.getChildren()) {
                 FriendRequest fr = child.getValue(FriendRequest.class);
-                fr.setKey(child.getKey());
+                Objects.requireNonNull(fr).setKey(child.getKey());
                 requestList.add(fr);
             }
             friendAdapter.notifyDataSetChanged();
@@ -104,66 +117,62 @@ public class FriendsFragment extends Fragment {
     }
 
     //TODO: replace username lookup with SharedPreferences Query (which will need populating)
-    //TODO: order the conditions to query last, to minimize the chance of a database read
+
     void tryAddFriend(String username) {
-        //check if username exists by leveraging taken usernames list
-        mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(doesExistTask -> {
-            if (doesExistTask.isSuccessful()) {
-                if (doesExistTask.getResult().getValue() != null) {
-                    //user exists, check to see if friend is already in friends list
-                    String friendUID = doesExistTask.getResult().getValue().toString();
-                    //extra condition deny request if the username's associated UID matches our own
-                    boolean validRequest = !friendUID.equals(mAuth.getUid());
-                    //between this line and the next validRequest represents solely an own-request
-                    if (!validRequest) {
-                        Log.i(TAG, "Self-add detected");
-                        Toast.makeText(getContext(), "You can't add yourself", Toast.LENGTH_SHORT).show();
-                    }
-                    for (Friendship friendship : friendList) {
-                        if (friendship.getUser2().equals(friendUID)) {
-                            //deny re-adding someone who is already a friend
-                            validRequest = false;
-                            Log.i(TAG, "FriendsFragment: Already friends with user " + friendship.getUser2());
-                            Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
+        //user must exist
+        //you cannot send 2 requests to the same person
+        //you cannot request a person who has requested you already
+        //you can't send a request to your friend or yourself
+
+        //first retrieve UID of username
+        mDatabase.child("TakenUsernames").child(username).get().addOnSuccessListener(dataSnapshot -> {
+            //user must exist
+            if (dataSnapshot.getValue() == null) {
+                Log.i(TAG, "FriendsFragment: No such user");
+                Toast.makeText(getContext(), "This user does not exist", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String addUID = dataSnapshot.getValue().toString();
+            Log.i(TAG, "addUID = " + addUID);
+            //prevent self add
+            if (addUID.equals(mAuth.getUid())) {
+                Log.i(TAG, "Self-add detected");
+                Toast.makeText(getContext(), "You can't add yourself", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            //prevent adding if already friends
+            for (Friendship friend : friendList) {
+                if (friend.getUser2().equals(addUID) || friend.getUser1().equals(addUID)) {
+                    Log.i(TAG, "Already friends");
+                    Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+            //prevent adding if incoming request exists
+            for (FriendRequest request : requestList) {
+                if (request.getSender().equals(addUID)) {
+                    Log.i(TAG, "Cross-send attempt");
+                    Toast.makeText(getContext(), "Accept the pending request instead", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+            //prevent adding if outgoing request exists
+            mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(addUID).get().addOnSuccessListener(matchingIncoming -> {
+                if (matchingIncoming.exists()) {
+                    for (DataSnapshot fr : matchingIncoming.getChildren()) {
+                        FriendRequest mfr = fr.getValue(FriendRequest.class);
+                        if (Objects.requireNonNull(mfr).getSender().equals(mAuth.getUid())) {
+                            Log.i(TAG, "Already outgoing");
+                            Toast.makeText(getContext(), "Already sent Request", Toast.LENGTH_SHORT).show();
+                            return;
                         }
                     }
-                    //next condition to check is whether a friend request is already pending
-                    if (validRequest) {
-                        Log.i(TAG, "Valid Request, checking for existing requests");
-                        mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(friendUID).get().addOnSuccessListener(matchingRequests -> {
-                            if (matchingRequests.exists()) {
-                                Log.i(TAG, "Requests to " + username + " found");
-                                boolean isDuplicate = false;
-                                for (DataSnapshot fr : matchingRequests.getChildren()) {
-                                    FriendRequest mfr = fr.getValue(FriendRequest.class);
-                                    //if among the friend requests ours is there its a dupe, no-go
-                                    if (Objects.requireNonNull(mfr).getSender().equals(mAuth.getUid())) {
-                                        Log.i(TAG, "Duplicate Request");
-                                        isDuplicate = true;
-                                    }
-                                }
-                                if (isDuplicate) {
-                                    Toast.makeText(getContext(), "Already sent Request", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    createRecord(friendUID);
-                                }
-                            } else {
-                                Log.i(TAG, "No Requests to " + username + " found");
-                                createRecord(friendUID);
-                            }
-                        });
-                    }
-                } else {
-                    //case for user DNE
-                    Log.i(TAG, "FriendsFragment: No such user");
-                    Toast.makeText(getContext(), "This user does not exist", Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                //case for general database failure
-                Log.i(TAG, "FriendsFragment: Username check failed");
-                Toast.makeText(getContext(), "FriendsFragment: Username check failed", Toast.LENGTH_SHORT).show();
-            }
+                //all clear
+                createRecord(addUID);
+            });
         });
+
     }
 
     //simple helper function to clean things up
@@ -173,3 +182,4 @@ public class FriendsFragment extends Fragment {
         Toast.makeText(getContext(), "Request Sent", Toast.LENGTH_SHORT).show();
     }
 }
+

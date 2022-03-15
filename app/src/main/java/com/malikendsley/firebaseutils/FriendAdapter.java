@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.quipswap.R;
@@ -21,6 +22,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     ArrayList<Friendship> list;
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     User user = new User();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 
     public FriendAdapter(ArrayList<Friendship> list) {
         this.list = list;
@@ -37,11 +40,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
         //list is populated externally
         Friendship friendship = list.get(position);
-        //search the users table for this person
-        mDatabase.child("Users").child(friendship.getUser2()).get().addOnSuccessListener(userSnapshot -> {
+        //figure out which user is not us
+        String correctID = friendship.getUser1().equals(mAuth.getUid()) ? friendship.getUser2() : friendship.getUser1();
+        mDatabase.child("Users").child(correctID).get().addOnSuccessListener(userSnapshot -> {
             //fill their details into the textview
             //Log.i(TAG, "Data Retrieved: " + Objects.requireNonNull(task.getResult().getValue()));
             user = userSnapshot.getValue(User.class);
+            //get whichever user is not you
             holder.FID.setText(friendship.getUser2());
             holder.username.setText(user.getUsername());
         });

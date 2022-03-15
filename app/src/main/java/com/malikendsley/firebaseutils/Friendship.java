@@ -5,9 +5,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class Friendship {
 
-    private String User1 = null;
-    private String User2 = null;
-    private String timestamp = null;
+    private final String User1 = null;
+    private final String User2 = null;
+    private final String timestamp = null;
     private String key = null;
 
 

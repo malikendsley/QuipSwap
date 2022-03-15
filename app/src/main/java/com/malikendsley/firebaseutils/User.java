@@ -2,8 +2,8 @@ package com.malikendsley.firebaseutils;
 
 public class User {
 
-    private String username;
-    private String email;
+    private final String username;
+    private final String email;
     private String UID;
 
     @SuppressWarnings("unused")
