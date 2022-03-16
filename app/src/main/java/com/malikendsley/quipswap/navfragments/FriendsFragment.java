@@ -85,8 +85,8 @@ public class FriendsFragment extends Fragment {
                 denyFriend(position);
             }
         });
-        requestRecycler.setAdapter(requestAdapter);
 
+        requestRecycler.setAdapter(requestAdapter);
 
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
         EditText friendSearch = requireActivity().findViewById(R.id.friendSearchUsername);

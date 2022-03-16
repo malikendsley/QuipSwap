@@ -27,6 +27,7 @@
         android:hint="@string/username"
         android:inputType="text"
         android:minHeight="48dp"
+        android:imeOptions="actionNext"
         android:textColorHint="#757575" />
 
     <EditText
@@ -38,6 +39,7 @@
         android:layout_marginTop="15dp"
         android:autofillHints=""
         android:ems="10"
+        android:imeOptions="actionNext"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:minHeight="48dp" />
@@ -54,6 +56,7 @@
         android:hint="@string/password"
         android:inputType="textPassword"
         android:minHeight="48dp"
+        android:imeOptions="actionDone"
         android:textColorHint="#757575" />
 
     <Button

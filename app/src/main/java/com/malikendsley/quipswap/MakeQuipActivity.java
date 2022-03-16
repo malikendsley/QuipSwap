@@ -25,7 +25,7 @@ public class MakeQuipActivity extends AppCompatActivity {
         Button shareButton = findViewById(R.id.shareButton);
         Button clearButton = findViewById(R.id.clearButton);
 
-        paintView = (PaintView) findViewById(R.id.paintView);
+        paintView = findViewById(R.id.paintView);
         //TODO Find out what this does exactly
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -43,21 +44,39 @@ public class SignupActivity extends AppCompatActivity {
         password = findViewById(R.id.signUpPassword);
         Button registerButton = findViewById(R.id.registerButton);
 
+        password.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if(i == EditorInfo.IME_ACTION_DONE){
+                trySubmit();
 
-        registerButton.setOnClickListener(v -> {
-            String txt_username = username.getText().toString();
-            String txt_email = email.getText().toString();
-            String txt_password = password.getText().toString();
-            //rudimentary validation, can use onTextChanged() later
-            if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password) || TextUtils.isEmpty(txt_username)) {
-                Toast.makeText(this, "Missing Information", Toast.LENGTH_SHORT).show();
-            } else if (!Patterns.EMAIL_ADDRESS.matcher(txt_email).matches()) {
-                Toast.makeText(this, "Invalid Email", Toast.LENGTH_SHORT).show();
+                return true;
             } else {
-                //register user
-                registerUser(txt_username, txt_email, txt_password);
+                return false;
             }
         });
+
+        registerButton.setOnClickListener(v -> trySubmit());
+    }
+
+    private void trySubmit() {
+        String txt_username = username.getText().toString();
+        String txt_email = email.getText().toString();
+        String txt_password = password.getText().toString();
+
+        if (validateUser(txt_username, txt_email, txt_password)) {
+            registerUser(txt_username, txt_email, txt_password);
+        }
+    }
+
+    private boolean validateUser(String username, String email, String password) {
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password) || TextUtils.isEmpty(email)) {
+            Toast.makeText(this, "Missing Information", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Invalid Email", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private void registerUser(String username, String email, String password) {
