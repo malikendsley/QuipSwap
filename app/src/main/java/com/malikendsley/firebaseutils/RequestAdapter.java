@@ -112,33 +112,5 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                 Log.i(TAG, "Request Adapter Problem");
             }
         }
-
-
-/*
-            rowLayout.setOnClickListener(view -> {
-                FriendRequest request = list.get(getBindingAdapterPosition());
-                request.setExpandable(!request.isExpandable());
-                notifyItemChanged(getBindingAdapterPosition());
-            });
-
-            itemView.findViewById(R.id.acceptFriendButton).setOnClickListener(view -> {
-                Log.i(TAG, "Accept request from " + user.getUsername());
-
-            });
-
-            itemView.findViewById(R.id.denyFriendButton).setOnClickListener(view -> {
-                String key = list.get(getBindingAdapterPosition()).getKey();
-                Log.i(TAG, "Deny request from " + key);
-                mDatabase.child("FriendRequests").child(key).removeValue().addOnSuccessListener(deleteRequest -> {
-                    //notify user of deletion
-                    Log.i(TAG, "Request Deleted");
-                    Toast.makeText(itemView.getContext(), "Request Deleted", Toast.LENGTH_SHORT).show();
-                    //has the desirable side effect of removing the request from the list
-                    list.remove(getBindingAdapterPosition());
-                    notifyItemChanged(getBindingAdapterPosition());
-                });
-            });
-*/
-
     }
 }

@@ -1,11 +1,13 @@
 package com.malikendsley.firebaseutils;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,6 +15,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.quipswap.R;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder> {
@@ -22,17 +25,18 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     User user = new User();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private final FriendClickListener listener;
 
-
-    public FriendAdapter(ArrayList<Friendship> list) {
+    public FriendAdapter(ArrayList<Friendship> list, FriendClickListener listener) {
         this.list = list;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public FriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_friend, parent, false);
-        return new FriendViewHolder(v);
+        return new FriendViewHolder(v, listener);
     }
 
     @Override
@@ -56,15 +60,33 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         return list.size();
     }
 
-    public static class FriendViewHolder extends RecyclerView.ViewHolder {
+    public static class FriendViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView FID, username;
+        CardView row;
 
-        public FriendViewHolder(@NonNull View itemView) {
+        private final WeakReference<FriendClickListener> listenerRef;
+
+        public FriendViewHolder(@NonNull View itemView, FriendClickListener listener) {
             super(itemView);
+
+            listenerRef = new WeakReference<>(listener);
 
             FID = itemView.findViewById(R.id.friendID);
             username = itemView.findViewById(R.id.friendUsername);
+            row = itemView.findViewById(R.id.friendRow);
+
+            row.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v){
+            if (v.getId() == row.getId()){
+                Log.i(TAG, "Row Clicked in Adapter");
+                listenerRef.get().onFriendClicked(getBindingAdapterPosition());
+            } else {
+                Log.i(TAG, "Friend Adapter Problem");
+            }
         }
     }
 }

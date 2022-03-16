@@ -30,7 +30,6 @@ import com.malikendsley.quipswap.R;
 import java.util.ArrayList;
 import java.util.Objects;
 
-
 public class FriendsFragment extends Fragment {
     private static final String TAG = "Own";
     RecyclerView friendRecycler;
@@ -65,7 +64,9 @@ public class FriendsFragment extends Fragment {
         friendRecycler = requireActivity().findViewById(R.id.friendList);
         friendRecycler.setHasFixedSize(true);
         friendRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        friendAdapter = new FriendAdapter(friendList);
+        friendAdapter = new FriendAdapter(friendList, position -> {
+
+        });
         friendRecycler.setAdapter(friendAdapter);
 
         //friend request recycler setup
