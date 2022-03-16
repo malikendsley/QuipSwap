@@ -24,6 +24,7 @@ import com.malikendsley.firebaseutils.FriendAdapter;
 import com.malikendsley.firebaseutils.FriendRequest;
 import com.malikendsley.firebaseutils.Friendship;
 import com.malikendsley.firebaseutils.RequestAdapter;
+import com.malikendsley.firebaseutils.RequestClickListener;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
@@ -42,6 +43,9 @@ public class FriendsFragment extends Fragment {
     DatabaseReference mDatabase;
     ArrayList<Friendship> friendList = new ArrayList<>();
     ArrayList<FriendRequest> requestList = new ArrayList<>();
+
+    boolean dataFetched1 = false;
+    boolean dataFetched2 = false;
 
     @Nullable
     @Override
@@ -68,8 +72,20 @@ public class FriendsFragment extends Fragment {
         requestRecycler = requireActivity().findViewById(R.id.requestList);
         requestRecycler.setHasFixedSize(true);
         requestRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        requestAdapter = new RequestAdapter(requestList);
+        //safe to use requestList, loading it is a prerequisite to accessing these buttons
+        requestAdapter = new RequestAdapter(requestList, new RequestClickListener() {
+            @Override
+            public void onAcceptClicked(int position) {
+                acceptFriend(position);
+            }
+
+            @Override
+            public void onDenyClicked(int position) {
+                denyFriend(position);
+            }
+        });
         requestRecycler.setAdapter(requestAdapter);
+
 
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
         EditText friendSearch = requireActivity().findViewById(R.id.friendSearchUsername);
@@ -78,7 +94,7 @@ public class FriendsFragment extends Fragment {
             Log.i(TAG, "Add friend clicked");
             String username = friendSearch.getText().toString();
             //create new friend request
-            if(username.equals("")){
+            if (username.equals("")) {
                 Log.i(TAG, "Empty Add Friend");
                 Toast.makeText(getContext(), "Please specify a user", Toast.LENGTH_SHORT).show();
             } else {
@@ -95,6 +111,8 @@ public class FriendsFragment extends Fragment {
             }
             //this is okay because the friends list once loaded will not change and can be bound all at once
             friendAdapter.notifyDataSetChanged();
+            Log.i(TAG, "User1 loaded");
+            dataFetched1 = true;
         });
         mDatabase.child("Friendships").orderByChild("User2").equalTo(mAuth.getUid()).get().addOnSuccessListener(user2snapshot -> {
             for (DataSnapshot child : user2snapshot.getChildren()) {
@@ -102,8 +120,10 @@ public class FriendsFragment extends Fragment {
             }
             //this is okay because the friends list once loaded will not change and can be bound all at once
             friendAdapter.notifyDataSetChanged();
+            Log.i(TAG, "User2 loaded");
+            dataFetched2 = true;
         });
-        friendAdapter.notifyDataSetChanged();
+
 
         //retrieve friend requests and populate
         mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnSuccessListener(requestSnapshot -> {
@@ -124,6 +144,15 @@ public class FriendsFragment extends Fragment {
         //you cannot request a person who has requested you already
         //you can't send a request to your friend or yourself
 
+        //it is very unlikely that a user manages to add a friend before their friends list loads
+        //but this code handles that
+        Log.i(TAG,"Check load friends");
+        if (!dataFetched1 || !dataFetched2) {
+            Log.i(TAG, "Friends not loaded");
+            Toast.makeText(getContext(), "Please wait a moment then try again", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         //first retrieve UID of username
         mDatabase.child("TakenUsernames").child(username).get().addOnSuccessListener(dataSnapshot -> {
             //user must exist
@@ -140,14 +169,7 @@ public class FriendsFragment extends Fragment {
                 Toast.makeText(getContext(), "You can't add yourself", Toast.LENGTH_SHORT).show();
                 return;
             }
-            //prevent adding if already friends
-            for (Friendship friend : friendList) {
-                if (friend.getUser2().equals(addUID) || friend.getUser1().equals(addUID)) {
-                    Log.i(TAG, "Already friends");
-                    Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
+
             //prevent adding if incoming request exists
             for (FriendRequest request : requestList) {
                 if (request.getSender().equals(addUID)) {
@@ -168,11 +190,38 @@ public class FriendsFragment extends Fragment {
                         }
                     }
                 }
-                //all clear
-                createRecord(addUID);
+                Log.i(TAG,"Loading friends by User 1");
+                mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(user1Snapshot -> {
+                    if(user1Snapshot.exists()){
+                        for(DataSnapshot friend : user1Snapshot.getChildren()){
+                            if(Objects.requireNonNull(friend.getValue(Friendship.class)).getUser2().equals(addUID)){
+                                Log.i(TAG, "Already friends");
+                                Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                    }
+                    Log.i(TAG,"Loading friends by User 2");
+                    mDatabase.child("Friendships").orderByChild("User2").equalTo(mAuth.getUid()).get().addOnSuccessListener(user2Snapshot -> {
+                        if(user2Snapshot.exists()){
+                            for(DataSnapshot friend : user2Snapshot.getChildren()){
+                                if(Objects.requireNonNull(friend.getValue(Friendship.class)).getUser1().equals(addUID)){
+                                    Log.i(TAG, "Already friends");
+                                    Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            }
+                        }
+
+                        //check friend requests
+                        //all clear
+                        Log.i(TAG, "Request created");
+                        createRecord(addUID);
+                    });
+                });
+
             });
         });
-
     }
 
     //simple helper function to clean things up
@@ -180,6 +229,34 @@ public class FriendsFragment extends Fragment {
         mDatabase.child("FriendRequests").push().setValue(new FriendRequest(mAuth.getUid(), friendUID));
         Log.i(TAG, "Request sent");
         Toast.makeText(getContext(), "Request Sent", Toast.LENGTH_SHORT).show();
+    }
+
+    void acceptFriend(int position){
+        //delete friend request
+        deleteFriend(position);
+        //add the friend
+        Friendship f = new Friendship(mAuth.getUid(), requestList.get(position).getSender(), (new java.sql.Timestamp(System.currentTimeMillis()).toString()));
+        mDatabase.child("Friendships").push().setValue(f).addOnSuccessListener(unused -> {
+            Log.i(TAG, "Friend added");
+            Toast.makeText(getContext(), "Friend Added", Toast.LENGTH_SHORT).show();
+            friendList.add(f);
+            friendAdapter.notifyItemInserted(friendList.size());
+        });
+    }
+
+    void denyFriend(int position){
+        deleteFriend(position);
+        Log.i(TAG, "Request Denied");
+        Toast.makeText(getContext(), "Request Denied", Toast.LENGTH_SHORT).show();
+    }
+
+    void deleteFriend(int position){
+        String key = requestList.get(position).getKey();
+        Log.i(TAG, "Delete request from " + key);
+        mDatabase.child("FriendRequests").child(key).removeValue().addOnSuccessListener(deleteRequest -> {
+            requestList.remove(position);
+            requestAdapter.notifyItemRemoved(position);
+        });
     }
 }
 

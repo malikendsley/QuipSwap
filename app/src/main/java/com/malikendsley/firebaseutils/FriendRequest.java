@@ -1,5 +1,6 @@
 package com.malikendsley.firebaseutils;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
 @SuppressWarnings("unused")
@@ -8,7 +9,7 @@ public class FriendRequest {
     private String Sender = "unset";
     private String Recipient = "unset";
     private String key = "unset";
-    private boolean expandable = false;
+    @Exclude private boolean expandable = false;
 
 
     //necessary for firebase
