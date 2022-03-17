@@ -118,33 +118,11 @@ public class FriendsFragment extends Fragment {
 
         mdb.retrieveFriends(friendsList -> {
             Log.i(TAG, "Adapter: Friends Retrieved");
+            friendList = new ArrayList<>();
             friendList.addAll(friendsList);
             dataFetched = true;
             friendAdapter.notifyDataSetChanged();
         });
-
-//        Log.i(TAG, "Requesting friends");
-//        //retrieve friends and populate
-//        mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(user1snapshot -> {
-//            for (DataSnapshot child : user1snapshot.getChildren()) {
-//                /*TODO save things like this to disk to minimize reads*/
-//                friendList.add(child.getValue(Friendship.class));
-//            }
-//            //this is okay because the friends list once loaded will not change and can be bound all at once
-//            friendAdapter.notifyDataSetChanged();
-//            Log.i(TAG, "User1 loaded");
-//            dataFetched1 = true;
-//        });
-//        mDatabase.child("Friendships").orderByChild("User2").equalTo(mAuth.getUid()).get().addOnSuccessListener(user2snapshot -> {
-//            for (DataSnapshot child : user2snapshot.getChildren()) {
-//                friendList.add(child.getValue(Friendship.class));
-//            }
-//            //this is okay because the friends list once loaded will not change and can be bound all at once
-//            friendAdapter.notifyDataSetChanged();
-//            Log.i(TAG, "User2 loaded");
-//            dataFetched2 = true;
-//        });
-
 
         //retrieve friend requests and populate
         mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnSuccessListener(requestSnapshot -> {

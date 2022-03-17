@@ -26,6 +26,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Own";
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+    SentFragment sentFragment;
+    ReceivedFragment recFragment;
+    ProfileLoggedInFragment loggedInFragment;
+    ProfileFragment profileFragment;
+    FriendsFragment friendsFragment;
     @SuppressLint("NonConstantResourceId")
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
         Fragment selectedFragment = new ReceivedFragment();
@@ -34,33 +40,57 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.nav_received_swaps:
                 Log.i(TAG, "Received selected");
-                selectedFragment = new ReceivedFragment();
+                if (recFragment == null) {
+                    Log.i(TAG, "Generating");
+                    recFragment = new ReceivedFragment();
+                }
+                selectedFragment = recFragment;
                 break;
             case R.id.nav_sent_swaps:
                 Log.i(TAG, "Sent selected");
-                selectedFragment = new SentFragment();
+                if (sentFragment == null) {
+                    Log.i(TAG, "Generating");
+                    sentFragment = new SentFragment();
+                }
+                selectedFragment = sentFragment;
                 break;
             case R.id.nav_friends:
                 Log.i(TAG, "Friends Selected");
                 if (user != null) {
                     Log.d(TAG, "User Logged In");
-                    selectedFragment = new FriendsFragment();
+                    if (friendsFragment == null) {
+                        Log.i(TAG, "Generating");
+                        friendsFragment = new FriendsFragment();
+                    }
+                    selectedFragment = friendsFragment;
                 } else {
                     Log.d(TAG, "This shouldn't be possible");
-                    selectedFragment = new ProfileFragment();
+                    if (profileFragment == null) {
+                        Log.i(TAG, "Generating");
+                        profileFragment = new ProfileFragment();
+                    }
+                    selectedFragment = profileFragment;
                 }
                 break;
             case R.id.nav_profile:
                 Log.i(TAG, "Profile Selected");
                 //send the right fragment based on whether user is logged in
                 if (user != null) {
+                    if (loggedInFragment == null) {
+                        Log.i(TAG, "Generating");
+                        loggedInFragment = new ProfileLoggedInFragment();
+                    }
                     //User is Logged in
                     Log.d(TAG, "onNavigationItemSelected User logged in");
-                    selectedFragment = new ProfileLoggedInFragment();
+                    selectedFragment = loggedInFragment;
                 } else {
+                    if (profileFragment == null) {
+                        Log.i(TAG, "Generating");
+                        profileFragment = new ProfileFragment();
+                    }
                     Log.d(TAG, "onNavigationItemSelected No user logged in");
                     //No User is Logged in
-                    selectedFragment = new ProfileFragment();
+                    selectedFragment = profileFragment;
                 }
                 break;
         }
@@ -69,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
         return true;
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
