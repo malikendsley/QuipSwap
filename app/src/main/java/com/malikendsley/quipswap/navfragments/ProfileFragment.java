@@ -1,4 +1,4 @@
-package com.malikendsley.quipswap;
+package com.malikendsley.quipswap.navfragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,6 +17,9 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.malikendsley.quipswap.MainActivity;
+import com.malikendsley.quipswap.R;
+import com.malikendsley.quipswap.SignupActivity;
 
 import java.util.Objects;
 
@@ -43,28 +47,39 @@ public class ProfileFragment extends Fragment {
 
         auth = FirebaseAuth.getInstance();
 
+        passwordField.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_DONE) {
+                validateUser(emailField.getText().toString(), passwordField.getText().toString());
+                return true;
+            } else {
+                return false;
+            }
+        });
+
         signUpButton.setOnClickListener(signUpView -> {
             Intent intent = new Intent(getContext(), SignupActivity.class);
             startActivity(intent);
         });
 
         signInButton.setOnClickListener(view1 -> {
-            String email = emailField.getText().toString();
-            String password = passwordField.getText().toString();
-            //prevent empty string
-            if(email.matches("") || password.matches("")){
-                Log.i(TAG, "Empty Field Submitted");
-                Toast.makeText(getContext(), "You must provide both an email and a password", Toast.LENGTH_SHORT).show();
-            } else {
-                loginUser(email, password);
-            }
+            //validate then try to log in
+            validateUser(emailField.getText().toString(), passwordField.getText().toString());
         });
     }
 
-    private void loginUser(String email, String password){
+    private void validateUser(String email, String password) {
+        if (email.matches("") || password.matches("")) {
+            Log.i(TAG, "Empty Field Submitted");
+            Toast.makeText(getContext(), "You must provide both an email and a password", Toast.LENGTH_SHORT).show();
+        } else {
+            loginUser(email, password);
+        }
+    }
+
+    private void loginUser(String email, String password) {
         Log.i(TAG, "Attempting to log in");
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
+            if (task.isSuccessful()) {
                 Toast.makeText(getActivity(), "Login Successful", Toast.LENGTH_SHORT).show();
                 //wasteful, find a way to stay in the current activity
                 startActivity(new Intent(getActivity(), MainActivity.class));

@@ -8,7 +8,7 @@ public class Quip {
     String quipID;
 
     @SuppressWarnings("unused")
-    public Quip(){
+    public Quip() {
 
     }
 
@@ -28,7 +28,7 @@ public class Quip {
         this.quipID = quipID;
     }
 
-    public String toString(){
-        return("Quip owned by UID " + ownerUID + " created at " + timestamp);
+    public String toString() {
+        return ("Quip owned by UID " + ownerUID + " created at " + timestamp);
     }
 }

@@ -1,4 +1,4 @@
-package com.malikendsley.quipswap;
+package com.malikendsley.quipswap.navfragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.malikendsley.firebaseutils.User;
+import com.malikendsley.quipswap.MainActivity;
+import com.malikendsley.quipswap.R;
 
 import java.util.Objects;
 
@@ -53,9 +55,10 @@ public class ProfileLoggedInFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 Log.i(TAG, "Data retrieved: " + user);
-                username.setText(user.username);
-                email.setText(user.email);
+                username.setText(user.getUsername());
+                email.setText(user.getEmail());
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.w(TAG, "loadPost:onCancelled", error.toException());
