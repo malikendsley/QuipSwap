@@ -24,9 +24,8 @@ import com.malikendsley.quipswap.navfragments.SentFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private static final String TAG = "Own";
-
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     @SuppressLint("NonConstantResourceId")
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
         Fragment selectedFragment = new ReceivedFragment();

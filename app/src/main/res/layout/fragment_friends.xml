@@ -61,6 +61,7 @@
             android:layout_weight="1"
             android:autofillHints="username"
             android:hint="enter username"
+            android:imeOptions="actionDone"
             android:inputType="text" />
 
         <Button

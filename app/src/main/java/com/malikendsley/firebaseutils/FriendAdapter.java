@@ -20,12 +20,11 @@ import java.util.ArrayList;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder> {
     private static final String TAG = "Own";
-
-    ArrayList<Friendship> list;
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    private final FriendClickListener listener;
+    ArrayList<Friendship> list;
     User user = new User();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private final FriendClickListener listener;
 
     public FriendAdapter(ArrayList<Friendship> list, FriendClickListener listener) {
         this.list = list;
@@ -60,12 +59,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         return list.size();
     }
 
-    public static class FriendViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-        TextView FID, username;
-        CardView row;
+    public static class FriendViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final WeakReference<FriendClickListener> listenerRef;
+        TextView FID, username;
+        CardView row;
 
         public FriendViewHolder(@NonNull View itemView, FriendClickListener listener) {
             super(itemView);
@@ -80,8 +78,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         }
 
         @Override
-        public void onClick(View v){
-            if (v.getId() == row.getId()){
+        public void onClick(View v) {
+            if (v.getId() == row.getId()) {
                 Log.i(TAG, "Row Clicked in Adapter");
                 listenerRef.get().onFriendClicked(getBindingAdapterPosition());
             } else {

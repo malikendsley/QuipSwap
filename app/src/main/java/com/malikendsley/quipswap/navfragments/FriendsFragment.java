@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -91,16 +92,20 @@ public class FriendsFragment extends Fragment {
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
         EditText friendSearch = requireActivity().findViewById(R.id.friendSearchUsername);
 
+        friendSearch.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_DONE) {
+                Log.i(TAG, "Add friend clicked via soft keyboard");
+                tryAddFriend(friendSearch.getText().toString());
+                return true;
+            } else {
+                return false;
+            }
+        });
+
         addFriendButton.setOnClickListener(view1 -> {
             Log.i(TAG, "Add friend clicked");
-            String username = friendSearch.getText().toString();
             //create new friend request
-            if (username.equals("")) {
-                Log.i(TAG, "Empty Add Friend");
-                Toast.makeText(getContext(), "Please specify a user", Toast.LENGTH_SHORT).show();
-            } else {
-                tryAddFriend(username);
-            }
+            validateFriendUsername(friendSearch.getText().toString());
         });
 
         Log.i(TAG, "Requesting friends");
@@ -137,6 +142,15 @@ public class FriendsFragment extends Fragment {
         });
     }
 
+    private void validateFriendUsername(String username) {
+        if (username == null || username.equals("")) {
+            Log.i(TAG, "Empty Add Friend");
+            Toast.makeText(getContext(), "Please specify a user", Toast.LENGTH_SHORT).show();
+        } else {
+            tryAddFriend(username);
+        }
+    }
+
     //TODO: replace username lookup with SharedPreferences Query (which will need populating)
 
     void tryAddFriend(String username) {
@@ -147,7 +161,7 @@ public class FriendsFragment extends Fragment {
 
         //it is very unlikely that a user manages to add a friend before their friends list loads
         //but this code handles that
-        Log.i(TAG,"Check load friends");
+        Log.i(TAG, "Check load friends");
         if (!dataFetched1 || !dataFetched2) {
             Log.i(TAG, "Friends not loaded");
             Toast.makeText(getContext(), "Please wait a moment then try again", Toast.LENGTH_SHORT).show();
@@ -191,22 +205,22 @@ public class FriendsFragment extends Fragment {
                         }
                     }
                 }
-                Log.i(TAG,"Loading friends by User 1");
+                Log.i(TAG, "Loading friends by User 1");
                 mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(user1Snapshot -> {
-                    if(user1Snapshot.exists()){
-                        for(DataSnapshot friend : user1Snapshot.getChildren()){
-                            if(Objects.requireNonNull(friend.getValue(Friendship.class)).getUser2().equals(addUID)){
+                    if (user1Snapshot.exists()) {
+                        for (DataSnapshot friend : user1Snapshot.getChildren()) {
+                            if (Objects.requireNonNull(friend.getValue(Friendship.class)).getUser2().equals(addUID)) {
                                 Log.i(TAG, "Already friends");
                                 Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                         }
                     }
-                    Log.i(TAG,"Loading friends by User 2");
+                    Log.i(TAG, "Loading friends by User 2");
                     mDatabase.child("Friendships").orderByChild("User2").equalTo(mAuth.getUid()).get().addOnSuccessListener(user2Snapshot -> {
-                        if(user2Snapshot.exists()){
-                            for(DataSnapshot friend : user2Snapshot.getChildren()){
-                                if(Objects.requireNonNull(friend.getValue(Friendship.class)).getUser1().equals(addUID)){
+                        if (user2Snapshot.exists()) {
+                            for (DataSnapshot friend : user2Snapshot.getChildren()) {
+                                if (Objects.requireNonNull(friend.getValue(Friendship.class)).getUser1().equals(addUID)) {
                                     Log.i(TAG, "Already friends");
                                     Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
                                     return;
@@ -232,7 +246,7 @@ public class FriendsFragment extends Fragment {
         Toast.makeText(getContext(), "Request Sent", Toast.LENGTH_SHORT).show();
     }
 
-    void acceptFriend(int position){
+    void acceptFriend(int position) {
         //delete friend request
         deleteFriend(position);
         //add the friend
@@ -245,13 +259,13 @@ public class FriendsFragment extends Fragment {
         });
     }
 
-    void denyFriend(int position){
+    void denyFriend(int position) {
         deleteFriend(position);
         Log.i(TAG, "Request Denied");
         Toast.makeText(getContext(), "Request Denied", Toast.LENGTH_SHORT).show();
     }
 
-    void deleteFriend(int position){
+    void deleteFriend(int position) {
         String key = requestList.get(position).getKey();
         Log.i(TAG, "Delete request from " + key);
         mDatabase.child("FriendRequests").child(key).removeValue().addOnSuccessListener(deleteRequest -> {

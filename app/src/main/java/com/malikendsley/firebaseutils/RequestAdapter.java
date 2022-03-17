@@ -23,10 +23,10 @@ import java.util.Objects;
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestViewHolder> {
 
     private static final String TAG = "Own";
-    ArrayList<FriendRequest> list;
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    User user = new User();
     private final RequestClickListener listener;
+    ArrayList<FriendRequest> list;
+    User user = new User();
 
     public RequestAdapter(ArrayList<FriendRequest> list, RequestClickListener listener) {
         this.list = list;
@@ -69,13 +69,12 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
 
     public class RequestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        private final WeakReference<RequestClickListener> listenerRef;
         TextView RID, username;
         LinearLayout expandingSection;
         LinearLayout rowLayout;
         Button acceptButton;
         Button denyButton;
-
-        private final WeakReference<RequestClickListener> listenerRef;
 
         public RequestViewHolder(@NonNull View itemView, RequestClickListener listener) {
             super(itemView);

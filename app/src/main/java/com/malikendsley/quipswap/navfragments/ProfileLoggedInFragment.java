@@ -58,6 +58,7 @@ public class ProfileLoggedInFragment extends Fragment {
                 username.setText(user.getUsername());
                 email.setText(user.getEmail());
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.w(TAG, "loadPost:onCancelled", error.toException());
