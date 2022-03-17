@@ -21,8 +21,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.malikendsley.firebaseutils.FirebaseDatabaseHandler;
 import com.malikendsley.firebaseutils.FriendAdapter;
 import com.malikendsley.firebaseutils.FriendRequest;
+import com.malikendsley.firebaseutils.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.Friendship;
 import com.malikendsley.firebaseutils.RequestAdapter;
 import com.malikendsley.firebaseutils.RequestClickListener;
@@ -33,6 +35,9 @@ import java.util.Objects;
 
 public class FriendsFragment extends Fragment {
     private static final String TAG = "Own";
+
+    FirebaseDatabaseHandler mdb;
+
     RecyclerView friendRecycler;
     FriendAdapter friendAdapter;
 
@@ -44,8 +49,7 @@ public class FriendsFragment extends Fragment {
     ArrayList<Friendship> friendList = new ArrayList<>();
     ArrayList<FriendRequest> requestList = new ArrayList<>();
 
-    boolean dataFetched1 = false;
-    boolean dataFetched2 = false;
+    boolean dataFetched = false;
 
     @Nullable
     @Override
@@ -57,6 +61,9 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //utility functions
+        mdb = new FirebaseDatabaseHandler();
 
         //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -108,27 +115,35 @@ public class FriendsFragment extends Fragment {
             validateFriendUsername(friendSearch.getText().toString());
         });
 
-        Log.i(TAG, "Requesting friends");
-        //retrieve friends and populate
-        mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(user1snapshot -> {
-            for (DataSnapshot child : user1snapshot.getChildren()) {
-                /*TODO save things like this to disk to minimize reads*/
-                friendList.add(child.getValue(Friendship.class));
-            }
-            //this is okay because the friends list once loaded will not change and can be bound all at once
+
+        mdb.retrieveFriends(friendsList -> {
+            Log.i(TAG, "Adapter: Friends Retrieved");
+            friendList.addAll(friendsList);
+            dataFetched = true;
             friendAdapter.notifyDataSetChanged();
-            Log.i(TAG, "User1 loaded");
-            dataFetched1 = true;
         });
-        mDatabase.child("Friendships").orderByChild("User2").equalTo(mAuth.getUid()).get().addOnSuccessListener(user2snapshot -> {
-            for (DataSnapshot child : user2snapshot.getChildren()) {
-                friendList.add(child.getValue(Friendship.class));
-            }
-            //this is okay because the friends list once loaded will not change and can be bound all at once
-            friendAdapter.notifyDataSetChanged();
-            Log.i(TAG, "User2 loaded");
-            dataFetched2 = true;
-        });
+
+//        Log.i(TAG, "Requesting friends");
+//        //retrieve friends and populate
+//        mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(user1snapshot -> {
+//            for (DataSnapshot child : user1snapshot.getChildren()) {
+//                /*TODO save things like this to disk to minimize reads*/
+//                friendList.add(child.getValue(Friendship.class));
+//            }
+//            //this is okay because the friends list once loaded will not change and can be bound all at once
+//            friendAdapter.notifyDataSetChanged();
+//            Log.i(TAG, "User1 loaded");
+//            dataFetched1 = true;
+//        });
+//        mDatabase.child("Friendships").orderByChild("User2").equalTo(mAuth.getUid()).get().addOnSuccessListener(user2snapshot -> {
+//            for (DataSnapshot child : user2snapshot.getChildren()) {
+//                friendList.add(child.getValue(Friendship.class));
+//            }
+//            //this is okay because the friends list once loaded will not change and can be bound all at once
+//            friendAdapter.notifyDataSetChanged();
+//            Log.i(TAG, "User2 loaded");
+//            dataFetched2 = true;
+//        });
 
 
         //retrieve friend requests and populate
@@ -162,7 +177,7 @@ public class FriendsFragment extends Fragment {
         //it is very unlikely that a user manages to add a friend before their friends list loads
         //but this code handles that
         Log.i(TAG, "Check load friends");
-        if (!dataFetched1 || !dataFetched2) {
+        if (!dataFetched) {
             Log.i(TAG, "Friends not loaded");
             Toast.makeText(getContext(), "Please wait a moment then try again", Toast.LENGTH_SHORT).show();
             return;
