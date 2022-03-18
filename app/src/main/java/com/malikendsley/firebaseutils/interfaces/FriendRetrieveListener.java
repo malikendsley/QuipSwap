@@ -1,4 +1,6 @@
-package com.malikendsley.firebaseutils;
+package com.malikendsley.firebaseutils.interfaces;
+
+import com.malikendsley.firebaseutils.Friendship;
 
 import java.util.ArrayList;
 

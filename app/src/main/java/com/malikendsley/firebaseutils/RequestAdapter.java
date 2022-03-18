@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
 import com.malikendsley.quipswap.R;
 
 import java.lang.ref.WeakReference;

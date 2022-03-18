@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils;
+package com.malikendsley.firebaseutils.interfaces;
 
 public interface FriendClickListener {
 

@@ -26,7 +26,7 @@ import com.malikendsley.firebaseutils.FriendAdapter;
 import com.malikendsley.firebaseutils.FriendRequest;
 import com.malikendsley.firebaseutils.Friendship;
 import com.malikendsley.firebaseutils.RequestAdapter;
-import com.malikendsley.firebaseutils.RequestClickListener;
+import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
