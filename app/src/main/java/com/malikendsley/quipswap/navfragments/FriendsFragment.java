@@ -24,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseDatabaseHandler;
 import com.malikendsley.firebaseutils.FriendAdapter;
 import com.malikendsley.firebaseutils.FriendRequest;
-import com.malikendsley.firebaseutils.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.Friendship;
 import com.malikendsley.firebaseutils.RequestAdapter;
 import com.malikendsley.firebaseutils.RequestClickListener;
@@ -49,12 +48,14 @@ public class FriendsFragment extends Fragment {
     ArrayList<Friendship> friendList = new ArrayList<>();
     ArrayList<FriendRequest> requestList = new ArrayList<>();
 
+
     boolean dataFetched = false;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_friends, container, false);
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -62,8 +63,6 @@ public class FriendsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //utility functions
-        mdb = new FirebaseDatabaseHandler();
 
         //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -115,12 +114,17 @@ public class FriendsFragment extends Fragment {
             validateFriendUsername(friendSearch.getText().toString());
         });
 
-
+        mdb = new FirebaseDatabaseHandler(mDatabase);
         mdb.retrieveFriends(friendsList -> {
             Log.i(TAG, "Adapter: Friends Retrieved");
-            friendList = new ArrayList<>();
-            friendList.addAll(friendsList);
-            dataFetched = true;
+            if (friendsList != null) {
+                friendList.clear();
+                friendList.addAll(friendsList);
+                dataFetched = true;
+                Log.i(TAG, friendList.toString());
+            } else {
+                Log.i(TAG, "Retrieved Null");
+            }
             friendAdapter.notifyDataSetChanged();
         });
 
@@ -131,7 +135,7 @@ public class FriendsFragment extends Fragment {
                 Objects.requireNonNull(fr).setKey(child.getKey());
                 requestList.add(fr);
             }
-            friendAdapter.notifyDataSetChanged();
+            requestAdapter.notifyDataSetChanged();
         });
     }
 

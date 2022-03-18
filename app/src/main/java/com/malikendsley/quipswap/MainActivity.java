@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     ReceivedFragment recFragment;
     ProfileLoggedInFragment loggedInFragment;
     ProfileFragment profileFragment;
-    FriendsFragment friendsFragment;
+    FriendsFragment friendsFragment = new FriendsFragment();
     @SuppressLint("NonConstantResourceId")
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
         Fragment selectedFragment = new ReceivedFragment();
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_received_swaps:
                 Log.i(TAG, "Received selected");
                 if (recFragment == null) {
-                    Log.i(TAG, "Generating");
+//                    Log.i(TAG, "Generating");
                     recFragment = new ReceivedFragment();
                 }
                 selectedFragment = recFragment;
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_sent_swaps:
                 Log.i(TAG, "Sent selected");
                 if (sentFragment == null) {
-                    Log.i(TAG, "Generating");
+//                    Log.i(TAG, "Generating");
                     sentFragment = new SentFragment();
                 }
                 selectedFragment = sentFragment;
@@ -57,16 +57,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_friends:
                 Log.i(TAG, "Friends Selected");
                 if (user != null) {
-                    Log.d(TAG, "User Logged In");
-                    if (friendsFragment == null) {
-                        Log.i(TAG, "Generating");
-                        friendsFragment = new FriendsFragment();
-                    }
                     selectedFragment = friendsFragment;
                 } else {
                     Log.d(TAG, "This shouldn't be possible");
                     if (profileFragment == null) {
-                        Log.i(TAG, "Generating");
+//                        Log.i(TAG, "Generating");
                         profileFragment = new ProfileFragment();
                     }
                     selectedFragment = profileFragment;
@@ -77,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 //send the right fragment based on whether user is logged in
                 if (user != null) {
                     if (loggedInFragment == null) {
-                        Log.i(TAG, "Generating");
+//                        Log.i(TAG, "Generating");
                         loggedInFragment = new ProfileLoggedInFragment();
                     }
                     //User is Logged in
@@ -85,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = loggedInFragment;
                 } else {
                     if (profileFragment == null) {
-                        Log.i(TAG, "Generating");
+//                        Log.i(TAG, "Generating");
                         profileFragment = new ProfileFragment();
                     }
                     Log.d(TAG, "onNavigationItemSelected No user logged in");
