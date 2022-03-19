@@ -10,7 +10,8 @@ public class Friendship {
     private String User1 = null;
     private String User2 = null;
     private String timestamp = null;
-    @Exclude private String key = null;
+    @Exclude
+    private String key = null;
 
 
     @SuppressWarnings("unused")

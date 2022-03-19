@@ -22,8 +22,6 @@ public class FirebaseDatabaseHandler {
     }
 
     public void retrieveFriends(FriendRetrieveListener listener) {
-        listenerRef = new WeakReference<>(listener);
-
         ArrayList<Friendship> friendList = new ArrayList<>();
 
         Log.i(TAG, "Requesting friends");
@@ -42,7 +40,7 @@ public class FirebaseDatabaseHandler {
                 }
                 Log.i(TAG, "User2 loaded");
 
-                listenerRef.get().onFriendsRetrieved(friendList);
+                listener.onFriendsRetrieved(friendList);
             });
         });
     }

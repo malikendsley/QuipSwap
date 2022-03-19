@@ -163,4 +163,8 @@ public class PaintView extends View {
 
         return true;
     }
+
+    public Bitmap getmBitmap() {
+        return mBitmap;
+    }
 }

@@ -9,7 +9,8 @@ public class FriendRequest {
     private String Sender = "unset";
     private String Recipient = "unset";
     private String key = "unset";
-    @Exclude private boolean expandable = false;
+    @Exclude
+    private boolean expandable = false;
 
 
     //necessary for firebase
