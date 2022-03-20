@@ -4,6 +4,7 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -73,32 +74,10 @@ public class MakeQuipActivity extends AppCompatActivity {
 
 
         shareButton.setOnClickListener(view -> {
-            paintView.setDrawingCacheEnabled(true);
-            Bitmap bm = Bitmap.createBitmap(paintView.getDrawingCache());
-            paintView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-            paintView.buildDrawingCache(true);
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, 1);
-                }
-                OutputStream fOut;
-                File folder = commonDocumentDirPath("MyQuips");
-                if (folder == null) {
-                    Log.i(TAG, "Image Write Failed Folder Null");
-                } else {
-                    Log.i(TAG, "Folder path: " + folder);
-                    File file = new File(folder, "img_" + dateFormatter.format(new Date()) + ".jpg");
-                    fOut = new FileOutputStream(file);
-                    //This line writes the Bitmap, do your compression prior to here
-                    bm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
-                    fOut.flush();
-                    fOut.close();
-                    //This line also writes a bitmap but to the wrong location
-                }
-            } catch (Exception e) {
-                Log.i(TAG, "Image Write Failed Stack Trace");
-                e.printStackTrace();
-            }
+            String imagePath = saveImageToMyQuips();
+            Intent intent = new Intent(this, ShareQuipActivity.class);
+            intent.putExtra("Path", imagePath);
+            startActivity(intent);
         });
         clearButton.setOnClickListener(view -> paintView.clear());
     }
@@ -125,6 +104,37 @@ public class MakeQuipActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    String saveImageToMyQuips(){
+        paintView.setDrawingCacheEnabled(true);
+        Bitmap bm = Bitmap.createBitmap(paintView.getDrawingCache());
+        paintView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        paintView.buildDrawingCache(true);
+        OutputStream fOut;
+        File folder = commonDocumentDirPath("MyQuips");
+        File file = new File(folder, "img_" + dateFormatter.format(new Date()) + ".jpg");
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, 1);
+            }
+            if (folder == null) {
+                Log.i(TAG, "Image Write Failed Folder Null");
+            } else {
+                fOut = new FileOutputStream(file);
+                //This line writes the Bitmap, do your compression prior to here
+                bm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                fOut.flush();
+                fOut.close();
+                Log.e(TAG, "Image written to " + file.getAbsolutePath());
+                return file.getAbsolutePath();
+            }
+        } catch (Exception e) {
+            Log.i(TAG, "Image Write Failed Stack Trace");
+            e.printStackTrace();
+            return null;
+        }
+        return file.getAbsolutePath();
     }
 
 }
