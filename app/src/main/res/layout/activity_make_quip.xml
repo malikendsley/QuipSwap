@@ -24,6 +24,7 @@
                 android:layout_weight="1" />
 
             <com.malikendsley.fingerpainting.PaintView
+                
                 android:id="@+id/paintView"
                 android:layout_width="300dp"
                 android:layout_height="300dp"

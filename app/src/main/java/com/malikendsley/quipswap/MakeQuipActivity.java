@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -25,25 +24,31 @@ import com.malikendsley.fingerpainting.PaintView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MakeQuipActivity extends AppCompatActivity {
 
+    public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
     private static final String TAG = "Own";
     PaintView paintView;
+    private SimpleDateFormat dateFormatter;
 
     public static File commonDocumentDirPath(String FolderName) {
         File dir;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + FolderName);
+            Log.i(TAG, "SDK > R");
+            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + FolderName);
         } else {
+            Log.i(TAG, "SDK < R");
             dir = new File(Environment.getExternalStorageDirectory() + "/" + FolderName);
         }
 
-        // Make sure the path directory exists.
         if (!dir.exists()) {
-            // Make it, if it doesn't exit
             boolean success = dir.mkdirs();
             if (!success) {
+                Log.i(TAG, "mkdirs() Failed");
                 dir = null;
             }
         }
@@ -63,41 +68,38 @@ public class MakeQuipActivity extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
+        dateFormatter = new SimpleDateFormat(
+                DATE_FORMAT, Locale.US);
+
 
         shareButton.setOnClickListener(view -> {
-            Log.i(TAG, "Attaching Listener");
-            //TODO save the image as a bitmap and pass it to the share screen
             paintView.setDrawingCacheEnabled(true);
             Bitmap bm = Bitmap.createBitmap(paintView.getDrawingCache());
             paintView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-            // keeping this here for posterity but it randomly shifts my layout when used and doesn't break things when removed
-            //paintView.layout(0, 0, paintView.getWidth(), paintView.getHeight());
             paintView.buildDrawingCache(true);
-            if (bm != null) {
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, 1);
-                    }
-
-                    OutputStream fOut;
-                    File folder = commonDocumentDirPath("My Quips");
-                    if (folder == null) {
-                        Log.i(TAG, "Image Write Failed Folder Null");
-                    } else {
-                        File file = new File(folder, "screenTest.jpg");
-                        fOut = new FileOutputStream(file);
-                        bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-                        fOut.flush();
-                        fOut.close();
-                        Log.e(TAG, "Image Path : " + MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName()));
-                    }
-                } catch (Exception e) {
-                    Log.i(TAG, "Image Write Failed Stack Trace");
-                    e.printStackTrace();
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, 1);
                 }
+                OutputStream fOut;
+                File folder = commonDocumentDirPath("MyQuips");
+                if (folder == null) {
+                    Log.i(TAG, "Image Write Failed Folder Null");
+                } else {
+                    Log.i(TAG, "Folder path: " + folder);
+                    File file = new File(folder, "img_" + dateFormatter.format(new Date()) + ".jpg");
+                    fOut = new FileOutputStream(file);
+                    //This line writes the Bitmap, do your compression prior to here
+                    bm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                    fOut.flush();
+                    fOut.close();
+                    //This line also writes a bitmap but to the wrong location
+                }
+            } catch (Exception e) {
+                Log.i(TAG, "Image Write Failed Stack Trace");
+                e.printStackTrace();
             }
         });
-
         clearButton.setOnClickListener(view -> paintView.clear());
     }
 
