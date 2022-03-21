@@ -66,6 +66,7 @@ public class FriendsFragment extends Fragment {
 
         //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mdb = new FirebaseDatabaseHandler(mDatabase);
 
         //friend recycler setup
         friendRecycler = requireActivity().findViewById(R.id.friendList);
@@ -114,7 +115,6 @@ public class FriendsFragment extends Fragment {
             validateFriendUsername(friendSearch.getText().toString());
         });
 
-        mdb = new FirebaseDatabaseHandler(mDatabase);
         mdb.retrieveFriends(friendsList -> {
             Log.i(TAG, "Adapter: Friends Retrieved");
             if (friendsList != null) {
@@ -148,7 +148,7 @@ public class FriendsFragment extends Fragment {
         }
     }
 
-    //TODO: replace username lookup with SharedPreferences Query (which will need populating)
+    //TODO: replace username lookup with disk query (which will need populating)
 
     void tryAddFriend(String username) {
         //user must exist

@@ -20,6 +20,8 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.malikendsley.fingerpainting.PaintView;
 
 import java.io.File;
@@ -64,6 +66,7 @@ public class MakeQuipActivity extends AppCompatActivity {
         Button shareButton = findViewById(R.id.shareButton);
         Button clearButton = findViewById(R.id.clearButton);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         paintView = findViewById(R.id.paintView);
         //TODO Find out what this does exactly
         DisplayMetrics metrics = new DisplayMetrics();
@@ -74,6 +77,12 @@ public class MakeQuipActivity extends AppCompatActivity {
 
 
         shareButton.setOnClickListener(view -> {
+            if(user == null){
+                Log.i(TAG, "Null user, sign up instead");
+                startActivity(new Intent(this, SignupActivity.class));
+                finish();
+                return;
+            }
             String imagePath = saveImageToMyQuips();
             Intent intent = new Intent(this, ShareQuipActivity.class);
             intent.putExtra("Path", imagePath);
@@ -113,7 +122,7 @@ public class MakeQuipActivity extends AppCompatActivity {
         paintView.buildDrawingCache(true);
         OutputStream fOut;
         File folder = commonDocumentDirPath("MyQuips");
-        File file = new File(folder, "img_" + dateFormatter.format(new Date()) + ".jpg");
+        File file = new File(folder, "sent_" + dateFormatter.format(new Date()) + ".jpg");
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, 1);

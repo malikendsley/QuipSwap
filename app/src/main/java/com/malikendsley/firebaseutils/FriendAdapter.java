@@ -81,7 +81,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         @Override
         public void onClick(View v) {
             if (v.getId() == row.getId()) {
-                Log.i(TAG, "Row Clicked in Adapter");
                 listenerRef.get().onFriendClicked(getBindingAdapterPosition());
             } else {
                 Log.i(TAG, "Friend Adapter Problem");
