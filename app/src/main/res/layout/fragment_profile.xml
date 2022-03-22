@@ -1,90 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".navfragments.ProfileFragment">
 
     <TextView
-        android:id="@+id/profileText"
+        android:id="@+id/loggedInText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="37dp"
+        android:layout_marginTop="40dp"
         android:text="@string/profile"
-        android:textSize="48sp" />
+        android:textSize="28sp" />
 
-    <TextView
-        android:id="@+id/isSignedInText"
+    <LinearLayout
+        android:id="@+id/usernameGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/you_are_not_signed_in" />
+        android:layout_centerInParent="true"
+        android:minWidth="200dp">
 
-    <EditText
-        android:id="@+id/signupEmail"
+        <TextView
+            android:id="@+id/usernameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="85dp"
+            android:padding="10dp"
+            android:text="@string/username" />
+
+        <TextView
+            android:id="@+id/usernameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/emailGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="@string/email"
-        android:imeOptions="actionNext"
-        android:inputType="textEmailAddress"
-        android:minHeight="48dp"
-        android:textColorHint="#757575" />
+        android:layout_below="@id/usernameGroup"
+        android:layout_alignStart="@id/usernameGroup"
+        android:layout_centerInParent="true"
+        android:minWidth="200dp">
+
+        <TextView
+            android:id="@+id/emailLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="85dp"
+            android:padding="10dp"
+            android:text="@string/email"
+            android:textAllCaps="false" />
+
+        <TextView
+            android:id="@+id/emailText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
+
+    </LinearLayout>
 
     <Button
-        android:id="@+id/signInButton"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/signUpPassword"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:elegantTextHeight="true"
-        android:maxLines="1"
-        android:text="@string/sign_in"
-        android:textAlignment="center"
-        android:textSize="16sp" />
-
-    <Button
-        android:id="@+id/signUpButton"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/notAUserFlavor"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:elegantTextHeight="true"
-        android:maxLines="1"
-        android:text="@string/sign_up"
-        android:textAlignment="center"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/signUpPassword"
+        android:id="@+id/logOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/signupEmail"
+        android:layout_below="@+id/emailGroup"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="@string/password"
-        android:imeOptions="actionDone"
-        android:inputType="textPassword"
-        android:minHeight="48dp"
-        android:textColorHint="#757575" />
-
-    <TextView
-        android:id="@+id/notAUserFlavor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/signInButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="@string/not_a_user" />
-
+        android:layout_centerVertical="false"
+        android:layout_marginTop="30dp"
+        android:text="@string/log_out" />
 </RelativeLayout>

@@ -17,8 +17,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.malikendsley.quipswap.navfragments.FriendsFragment;
+import com.malikendsley.quipswap.navfragments.SignInFragment;
 import com.malikendsley.quipswap.navfragments.ProfileFragment;
-import com.malikendsley.quipswap.navfragments.ProfileLoggedInFragment;
 import com.malikendsley.quipswap.navfragments.ReceivedFragment;
 import com.malikendsley.quipswap.navfragments.SentFragment;
 
@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     SentFragment sentFragment;
     ReceivedFragment recFragment;
-    ProfileLoggedInFragment loggedInFragment;
-    ProfileFragment profileFragment;
+    ProfileFragment loggedInFragment;
+    SignInFragment signInFragment;
     FriendsFragment friendsFragment = new FriendsFragment();
     @SuppressLint("NonConstantResourceId")
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
@@ -60,11 +60,11 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = friendsFragment;
                 } else {
                     Log.d(TAG, "This shouldn't be possible");
-                    if (profileFragment == null) {
+                    if (signInFragment == null) {
 //                        Log.i(TAG, "Generating");
-                        profileFragment = new ProfileFragment();
+                        signInFragment = new SignInFragment();
                     }
-                    selectedFragment = profileFragment;
+                    selectedFragment = signInFragment;
                 }
                 break;
             case R.id.nav_profile:
@@ -73,19 +73,19 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     if (loggedInFragment == null) {
 //                        Log.i(TAG, "Generating");
-                        loggedInFragment = new ProfileLoggedInFragment();
+                        loggedInFragment = new ProfileFragment();
                     }
                     //User is Logged in
                     Log.d(TAG, "onNavigationItemSelected User logged in");
                     selectedFragment = loggedInFragment;
                 } else {
-                    if (profileFragment == null) {
+                    if (signInFragment == null) {
 //                        Log.i(TAG, "Generating");
-                        profileFragment = new ProfileFragment();
+                        signInFragment = new SignInFragment();
                     }
                     Log.d(TAG, "onNavigationItemSelected No user logged in");
                     //No User is Logged in
-                    selectedFragment = profileFragment;
+                    selectedFragment = signInFragment;
                 }
                 break;
         }

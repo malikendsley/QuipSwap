@@ -6,8 +6,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
+import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class FirebaseDatabaseHandler {
@@ -15,7 +15,6 @@ public class FirebaseDatabaseHandler {
     private static final String TAG = "Own";
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase;
-    WeakReference<FriendRetrieveListener> listenerRef;
 
     public FirebaseDatabaseHandler(DatabaseReference ref) {
         mDatabase = ref;
@@ -43,5 +42,9 @@ public class FirebaseDatabaseHandler {
                 listener.onFriendsRetrieved(friendList);
             });
         });
+    }
+
+    public void resolveUsername(UsernameResolveListener listener){
+        mDatabase.child("TakenUsernames")
     }
 }
