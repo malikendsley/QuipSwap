@@ -90,6 +90,6 @@ public class ShareQuipActivity extends AppCompatActivity {
     }
 
     void shareQuip(Friendship recipient) {
-        Log.i(TAG, "Share quip to " + ((recipient.getUser1().equals(mAuth.getUid())) ? recipient.getUser2() : recipient.getUser1()));
+        Log.i(TAG, "Share quip to " + ((recipient.getUser1().equals(mAuth.getUid())) ? recipient.getUser1() : recipient.getUser2()));
     }
 }
