@@ -1,10 +1,16 @@
 package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,9 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseDatabaseHandler;
 import com.malikendsley.firebaseutils.FriendAdapter;
 import com.malikendsley.firebaseutils.Friendship;
-import com.malikendsley.firebaseutils.interfaces.FriendClickListener;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class ShareQuipActivity extends AppCompatActivity {
@@ -34,6 +38,7 @@ public class ShareQuipActivity extends AppCompatActivity {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     ArrayList<Friendship> friendList = new ArrayList<>();
+    Bitmap bitmap;
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -43,8 +48,11 @@ public class ShareQuipActivity extends AppCompatActivity {
 
         Button cancelButton = findViewById(R.id.shareQuipCancel);
 
-        quipPath = getIntent().getStringExtra("Path");
-        Log.i(TAG, "Image path retrieved: " + quipPath);
+        Log.i(TAG, "Retrieving bitmap");
+        //intent work
+        Intent intent = getIntent();
+        bitmap = intent.getParcelableExtra("BitmapImage");
+        Log.i(TAG, "Bitmap retrieved");
 
         //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -54,11 +62,11 @@ public class ShareQuipActivity extends AppCompatActivity {
         friendRecycler = findViewById(R.id.selectFriendsRecyclerView);
         friendRecycler.setHasFixedSize(true);
         friendRecycler.setLayoutManager(new LinearLayoutManager(this));
-        friendAdapter = new FriendAdapter(friendList, position -> shareQuip(friendList.get(position)));
+        friendAdapter = new FriendAdapter(friendList, position -> debugQuip(friendList.get(position)));
         friendRecycler.setAdapter(friendAdapter);
 
         mdb.retrieveFriends(friendsList -> {
-            Log.i(TAG, "Adapter: Friends Retrieved");
+            Log.i(TAG, "FriendAdapter: Friends Retrieved");
             if (friendsList != null) {
                 friendList.clear();
                 friendList.addAll(friendsList);
@@ -69,22 +77,31 @@ public class ShareQuipActivity extends AppCompatActivity {
             friendAdapter.notifyDataSetChanged();
         });
 
-        cancelButton.setOnClickListener(view -> {
-            File fDelete = new File(quipPath);
-            if (fDelete.exists()) {
-                if (fDelete.delete()) {
-                    Log.i(TAG, "Deleted: " + quipPath);
-                    finish();
-                } else {
-                    Log.i(TAG, "File DNE: " + quipPath);
-                }
-            } else {
-                Log.e(TAG, "Error with file");
-            }
-        });
+
+        cancelButton.setOnClickListener(view -> finish());
+    }
+
+    void debugQuip(Friendship recipient) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setIcon(new BitmapDrawable(this.getResources(), bitmap));
+        builder.setTitle("Preview Quip");
+        builder.setPositiveButton("Accept", (dialog, i) -> dialog.dismiss());
+        builder.setNegativeButton("Deny", (dialog, i) -> dialog.dismiss());
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     void shareQuip(Friendship recipient) {
+
+        //set up data
+
+        //create quip
+
+        //share quip
+
+        //go back
+
         Log.i(TAG, "Share quip to " + ((recipient.getUser1().equals(mAuth.getUid())) ? recipient.getUser1() : recipient.getUser2()));
     }
 }

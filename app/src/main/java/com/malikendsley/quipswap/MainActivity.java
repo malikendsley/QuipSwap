@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
-//        try to run this as late as possible to check whether to display friends tab
+        //try to run this as late as possible to check whether to display friends tab
         user = FirebaseAuth.getInstance().getCurrentUser();
         bottomNav.getMenu().findItem(R.id.nav_friends).setVisible(user != null);
         //save tab on screen rotation

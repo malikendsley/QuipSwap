@@ -93,9 +93,9 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             denyButton.setOnClickListener(this);
 
             rowLayout.setOnClickListener(view -> {
-                FriendRequest request = list.get(getBindingAdapterPosition());
+                FriendRequest request = list.get(getAdapterPosition());
                 request.setExpandable(!request.isExpandable());
-                notifyItemChanged(getBindingAdapterPosition());
+                notifyItemChanged(getAdapterPosition());
             });
 
         }
@@ -104,10 +104,10 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         public void onClick(View v) {
             if (v.getId() == acceptButton.getId()) {
                 Log.i(TAG, "Accept Request in Adapter");
-                listenerRef.get().onAcceptClicked(getBindingAdapterPosition());
+                listenerRef.get().onAcceptClicked(getAdapterPosition());
             } else if (v.getId() == denyButton.getId()) {
                 Log.i(TAG, "Deny Request in Adapter");
-                listenerRef.get().onDenyClicked(getBindingAdapterPosition());
+                listenerRef.get().onDenyClicked(getAdapterPosition());
             } else {
                 Log.i(TAG, "Request Adapter Problem");
             }

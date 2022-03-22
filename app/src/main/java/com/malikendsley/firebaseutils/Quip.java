@@ -3,6 +3,7 @@ package com.malikendsley.firebaseutils;
 public class Quip {
 
     String quipURI;
+    String localURI;
     String ownerUID;
     String timestamp;
     String quipID;
@@ -18,9 +19,6 @@ public class Quip {
         this.timestamp = timestamp;
     }
 
-    //it appears the id of an element of the database may not be
-    //immediately known upon its creation so an alternate
-    //constructor is provided or convenience
     public Quip(String quipID, String quipURI, String ownerUID, String timestamp) {
         this.quipURI = quipURI;
         this.ownerUID = ownerUID;
@@ -29,6 +27,6 @@ public class Quip {
     }
 
     public String toString() {
-        return ("Quip owned by UID " + ownerUID + " created at " + timestamp);
+        return ("Quip owned by " + ownerUID + " created on " + timestamp);
     }
 }

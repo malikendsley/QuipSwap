@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,7 +65,7 @@ public class MakeQuipActivity extends AppCompatActivity {
         setContentView(R.layout.activity_make_quip);
 
         Button shareButton = findViewById(R.id.shareButton);
-        Button clearButton = findViewById(R.id.clearButton);
+        Button saveButton = findViewById(R.id.clearButton);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         paintView = findViewById(R.id.paintView);
@@ -77,18 +78,21 @@ public class MakeQuipActivity extends AppCompatActivity {
 
 
         shareButton.setOnClickListener(view -> {
-            if(user == null){
+            if (user == null) {
                 Log.i(TAG, "Null user, sign up instead");
                 startActivity(new Intent(this, SignupActivity.class));
                 finish();
                 return;
             }
-            String imagePath = saveImageToMyQuips();
             Intent intent = new Intent(this, ShareQuipActivity.class);
-            intent.putExtra("Path", imagePath);
+            intent.putExtra("BitmapImage", getBitmap());
+            Log.i(TAG, "Starting new activity");
             startActivity(intent);
         });
-        clearButton.setOnClickListener(view -> paintView.clear());
+        saveButton.setOnClickListener(view -> {
+            String URI = saveImageToMyQuips(100);
+            Toast.makeText(MakeQuipActivity.this, "Image Saved to " + URI, Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
@@ -115,9 +119,8 @@ public class MakeQuipActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    String saveImageToMyQuips(){
-        paintView.setDrawingCacheEnabled(true);
-        Bitmap bm = Bitmap.createBitmap(paintView.getDrawingCache());
+    String saveImageToMyQuips(int quality) {
+        Bitmap bm = getBitmap();
         paintView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         paintView.buildDrawingCache(true);
         OutputStream fOut;
@@ -132,7 +135,7 @@ public class MakeQuipActivity extends AppCompatActivity {
             } else {
                 fOut = new FileOutputStream(file);
                 //This line writes the Bitmap, do your compression prior to here
-                bm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                bm.compress(Bitmap.CompressFormat.JPEG, quality, fOut);
                 fOut.flush();
                 fOut.close();
                 Log.e(TAG, "Image written to " + file.getAbsolutePath());
@@ -144,6 +147,11 @@ public class MakeQuipActivity extends AppCompatActivity {
             return null;
         }
         return file.getAbsolutePath();
+    }
+
+    private Bitmap getBitmap() {
+        paintView.setDrawingCacheEnabled(true);
+        return Bitmap.createBitmap(paintView.getDrawingCache());
     }
 
 }

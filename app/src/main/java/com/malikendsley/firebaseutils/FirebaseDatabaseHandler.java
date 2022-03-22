@@ -21,24 +21,24 @@ public class FirebaseDatabaseHandler {
         mDatabase = ref;
     }
 
+    //retrieve a list of a User's friends
     public void retrieveFriends(FriendRetrieveListener listener) {
         ArrayList<Friendship> friendList = new ArrayList<>();
 
-        Log.i(TAG, "Requesting friends");
+        Log.i(TAG, "Retrieving friends");
         //retrieve friends and populate
         mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(user1snapshot -> {
             for (DataSnapshot child : user1snapshot.getChildren()) {
-                /*TODO save things like this to disk to minimize reads*/
                 friendList.add(child.getValue(Friendship.class));
-                Log.i(TAG, "Friend Loaded");
+                //Log.i(TAG, "Friend Loaded");
             }
-            Log.i(TAG, "User1 loaded");
+            //Log.i(TAG, "User1 loaded");
             mDatabase.child("Friendships").orderByChild("User2").equalTo(mAuth.getUid()).get().addOnSuccessListener(user2snapshot -> {
                 for (DataSnapshot child : user2snapshot.getChildren()) {
                     friendList.add(child.getValue(Friendship.class));
-                    Log.i(TAG, "Friend Loaded");
+                    //Log.i(TAG, "Friend Loaded");
                 }
-                Log.i(TAG, "User2 loaded");
+                //Log.i(TAG, "User2 loaded");
 
                 listener.onFriendsRetrieved(friendList);
             });
@@ -58,4 +58,11 @@ public class FirebaseDatabaseHandler {
             }
         });
     }
+
+    //Create a Quip in the database
+//    public void createQuip(String )
+    //Share a Quip to one user
+
+    //Share a Quip to the following users
+
 }
