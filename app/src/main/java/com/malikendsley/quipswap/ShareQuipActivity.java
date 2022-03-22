@@ -54,12 +54,7 @@ public class ShareQuipActivity extends AppCompatActivity {
         friendRecycler = findViewById(R.id.selectFriendsRecyclerView);
         friendRecycler.setHasFixedSize(true);
         friendRecycler.setLayoutManager(new LinearLayoutManager(this));
-        friendAdapter = new FriendAdapter(friendList, new FriendClickListener() {
-            @Override
-            public void onFriendClicked(int position) {
-                shareQuip(friendList.get(position));
-            }
-        });
+        friendAdapter = new FriendAdapter(friendList, position -> shareQuip(friendList.get(position)));
         friendRecycler.setAdapter(friendAdapter);
 
         mdb.retrieveFriends(friendsList -> {

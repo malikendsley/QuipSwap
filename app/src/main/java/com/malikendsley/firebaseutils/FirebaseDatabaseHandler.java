@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class FirebaseDatabaseHandler {
 
+    //TODO: augment db interface with caching logic (or leverage firebase's)
     private static final String TAG = "Own";
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase;
@@ -44,7 +45,17 @@ public class FirebaseDatabaseHandler {
         });
     }
 
-    public void resolveUsername(UsernameResolveListener listener){
-        mDatabase.child("TakenUsernames")
+    //Resolve a username to a UID
+    public void resolveUsername(String username, UsernameResolveListener listener) {
+        mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(task -> {
+            String UID = (String) task.getResult().getValue();
+            Log.i(TAG, "UID: " + UID);
+            if (UID != null) {
+                listener.onUsernameResolved(UID);
+            } else {
+                listener.onUsernameResolved(null);
+                Log.e(TAG, "UID Null");
+            }
+        });
     }
 }
