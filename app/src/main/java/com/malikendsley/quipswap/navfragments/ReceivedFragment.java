@@ -2,6 +2,7 @@ package com.malikendsley.quipswap.navfragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.malikendsley.quipswap.MakeQuipActivity;
 import com.malikendsley.quipswap.R;
 
-
 public class ReceivedFragment extends Fragment {
+
+    private static final String TAG = "Own";
 
     @Nullable
     @Override
@@ -27,6 +29,9 @@ public class ReceivedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         FloatingActionButton fab = requireView().findViewById(R.id.fab);
-        fab.setOnClickListener(view1 -> startActivity(new Intent(getContext(), MakeQuipActivity.class)));
+        fab.setOnClickListener(view1 -> {
+            Log.i(TAG, "Fab clicked");
+            ReceivedFragment.this.startActivity(new Intent(ReceivedFragment.this.getContext(), MakeQuipActivity.class));
+        });
     }
 }

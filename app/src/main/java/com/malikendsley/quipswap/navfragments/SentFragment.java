@@ -2,6 +2,7 @@ package com.malikendsley.quipswap.navfragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import com.malikendsley.quipswap.R;
 
 public class SentFragment extends Fragment {
 
+    private static final String TAG = "Own";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -26,6 +29,9 @@ public class SentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         FloatingActionButton fab = requireView().findViewById(R.id.fab);
-        fab.setOnClickListener(view1 -> startActivity(new Intent(getContext(), MakeQuipActivity.class)));
+        fab.setOnClickListener(view1 -> {
+            Log.i(TAG, "Fab clicked");
+            SentFragment.this.startActivity(new Intent(SentFragment.this.getContext(), MakeQuipActivity.class));
+        });
     }
 }

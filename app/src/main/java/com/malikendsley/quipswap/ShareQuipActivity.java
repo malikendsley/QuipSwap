@@ -1,13 +1,12 @@
 package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AlertDialog;
@@ -51,7 +50,8 @@ public class ShareQuipActivity extends AppCompatActivity {
         Log.i(TAG, "Retrieving bitmap");
         //intent work
         Intent intent = getIntent();
-        bitmap = intent.getParcelableExtra("BitmapImage");
+        byte[] byteArray = intent.getByteArrayExtra("BitmapImage");
+        bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         Log.i(TAG, "Bitmap retrieved");
 
         //firebase setup
@@ -81,11 +81,13 @@ public class ShareQuipActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(view -> finish());
     }
 
-    void debugQuip(Friendship recipient) {
+    void debugQuip(Friendship friendship) {
+        Log.i(TAG, "Displaying Dialog");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
         builder.setIcon(new BitmapDrawable(this.getResources(), bitmap));
         builder.setTitle("Preview Quip");
+        builder.setMessage(((friendship.getUser1().equals(mAuth.getUid())) ? friendship.getUser2() : friendship.getUser1()));
         builder.setPositiveButton("Accept", (dialog, i) -> dialog.dismiss());
         builder.setNegativeButton("Deny", (dialog, i) -> dialog.dismiss());
         AlertDialog alert = builder.create();

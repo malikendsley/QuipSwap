@@ -6,6 +6,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.malikendsley.fingerpainting.PaintView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -41,13 +43,8 @@ public class MakeQuipActivity extends AppCompatActivity {
 
     public static File commonDocumentDirPath(String FolderName) {
         File dir;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Log.i(TAG, "SDK > R");
-            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + FolderName);
-        } else {
-            Log.i(TAG, "SDK < R");
-            dir = new File(Environment.getExternalStorageDirectory() + "/" + FolderName);
-        }
+        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + FolderName);
+        Log.i(TAG, "Full path: " + dir);
 
         if (!dir.exists()) {
             boolean success = dir.mkdirs();
@@ -85,7 +82,7 @@ public class MakeQuipActivity extends AppCompatActivity {
                 return;
             }
             Intent intent = new Intent(this, ShareQuipActivity.class);
-            intent.putExtra("BitmapImage", getBitmap());
+            intent.putExtra("BitmapImage", getBitmap(100));
             Log.i(TAG, "Starting new activity");
             startActivity(intent);
         });
@@ -120,7 +117,8 @@ public class MakeQuipActivity extends AppCompatActivity {
     }
 
     String saveImageToMyQuips(int quality) {
-        Bitmap bm = getBitmap();
+        paintView.setDrawingCacheEnabled(true);
+        Bitmap bm = Bitmap.createBitmap(paintView.getDrawingCache());
         paintView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         paintView.buildDrawingCache(true);
         OutputStream fOut;
@@ -149,9 +147,14 @@ public class MakeQuipActivity extends AppCompatActivity {
         return file.getAbsolutePath();
     }
 
-    private Bitmap getBitmap() {
+    private byte[] getBitmap(int quality) {
         paintView.setDrawingCacheEnabled(true);
-        return Bitmap.createBitmap(paintView.getDrawingCache());
+        Bitmap capture = Bitmap.createBitmap(paintView.getWidth(), paintView.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas captureCanvas = new Canvas(capture);
+        paintView.draw(captureCanvas);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        capture.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+        return outputStream.toByteArray();
     }
 
 }

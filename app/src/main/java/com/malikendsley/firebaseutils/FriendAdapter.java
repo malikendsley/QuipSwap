@@ -50,7 +50,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
             //Log.i(TAG, "Data Retrieved: " + Objects.requireNonNull(task.getResult().getValue()));
             user = userSnapshot.getValue(User.class);
             //get whichever user is not you
-            holder.FID.setText(friendship.getUser2());
+            holder.FID.setText(correctID);
             holder.username.setText(user.getUsername());
         });
     }
