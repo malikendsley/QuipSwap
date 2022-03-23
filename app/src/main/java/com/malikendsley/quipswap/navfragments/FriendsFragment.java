@@ -21,7 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseDatabaseHandler;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.FriendAdapter;
 import com.malikendsley.firebaseutils.FriendRequest;
 import com.malikendsley.firebaseutils.Friendship;
@@ -35,7 +35,7 @@ import java.util.Objects;
 public class FriendsFragment extends Fragment {
     private static final String TAG = "Own";
 
-    FirebaseDatabaseHandler mdb;
+    FirebaseHandler mdb;
 
     RecyclerView friendRecycler;
     FriendAdapter friendAdapter;
@@ -66,7 +66,7 @@ public class FriendsFragment extends Fragment {
 
         //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mdb = new FirebaseDatabaseHandler(mDatabase);
+        mdb = new FirebaseHandler(mDatabase);
 
         //friend recycler setup
         friendRecycler = requireActivity().findViewById(R.id.friendList);

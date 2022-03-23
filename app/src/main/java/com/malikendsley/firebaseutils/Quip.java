@@ -1,9 +1,11 @@
 package com.malikendsley.firebaseutils;
 
+import com.google.firebase.database.Exclude;
+
 public class Quip {
 
     String quipURI;
-    String localURI;
+    @Exclude String localURI;
     String ownerUID;
     String timestamp;
     String quipID;
@@ -24,6 +26,10 @@ public class Quip {
         this.ownerUID = ownerUID;
         this.timestamp = timestamp;
         this.quipID = quipID;
+    }
+
+    public void setLocalURI(String localURI){
+        this.localURI = localURI;
     }
 
     public String toString() {

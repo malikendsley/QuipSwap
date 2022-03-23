@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseDatabaseHandler;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.User;
 
 import java.util.Objects;
@@ -27,7 +27,7 @@ public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "Own";
 
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    FirebaseDatabaseHandler mdb = new FirebaseDatabaseHandler(mDatabase);
+    FirebaseHandler mdb = new FirebaseHandler(mDatabase);
     private FirebaseAuth mAuth;
     private EditText username;
     private EditText email;
