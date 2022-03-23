@@ -72,7 +72,7 @@ public class ShareQuipActivity extends AppCompatActivity {
             if (friendsList != null) {
                 friendList.clear();
                 friendList.addAll(friendsList);
-                Log.i(TAG, friendList.toString());
+                //Log.i(TAG, friendList.toString());
             } else {
                 Log.i(TAG, "Retrieved Null");
             }
@@ -98,7 +98,9 @@ public class ShareQuipActivity extends AppCompatActivity {
     }
 
     void shareQuip(Friendship recipient) {
-        mdb.shareQuip((recipient.getUser1().equals(mAuth.getUid())) ? recipient.getUser2() : recipient.getUser1(), byteArray, new QuipUploadListener() {
+        String UID = (recipient.getUser1().equals(mAuth.getUid())) ? recipient.getUser2() : recipient.getUser1();
+        Log.e(TAG, "ShareQuip: " + UID);
+        mdb.shareQuip(UID, byteArray, new QuipUploadListener() {
             @Override
             public void onUploadComplete(String URI) {
                 Toast.makeText(ShareQuipActivity.this, "Quip Shared!", Toast.LENGTH_SHORT).show();

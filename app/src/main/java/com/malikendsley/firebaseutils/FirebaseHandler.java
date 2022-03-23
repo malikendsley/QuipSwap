@@ -68,7 +68,7 @@ public class FirebaseHandler {
     //Create a quip in the storage database and if successful, share it
     public void shareQuip(String recipientUID, byte[] byteArray, QuipUploadListener listener) {
         //upload the image to the database
-        String path = "users/" + mAuth.getUid() + "quips/" + UUID.randomUUID() + ".jpeg";
+        String path = "users/" + mAuth.getUid() + "/quips/" + UUID.randomUUID() + ".jpeg";
         Log.i(TAG, "Submitting image to " + path);
         StorageReference imageRef = storageRef.child(path);
         UploadTask uploadTask = imageRef.putBytes(byteArray);
@@ -81,11 +81,13 @@ public class FirebaseHandler {
                 Quip q = new Quip(uri.toString(), mAuth.getUid(), (new java.sql.Timestamp(System.currentTimeMillis()).toString()));
                 mDatabase.child("Quips").push().setValue(q).addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
+                        Log.i(TAG, "Quip Fail");
                         listener.onUploadFail(task.getException());
                     } else {
-                        SharedQuip q1 = new SharedQuip(mAuth.getUid(), recipientUID, uri.toString());
+                        SharedQuip q1 = new SharedQuip(uri.toString(),  mAuth.getUid(),recipientUID);
                         mDatabase.child("SharedQuips").push().setValue(q1).addOnCompleteListener(task1 -> {
                             if (!task1.isSuccessful()) {
+                                Log.i(TAG, "SharedQuip Fail");
                                 listener.onUploadFail(task1.getException());
                             } else {
                                 Log.i(TAG, "Quip Shared to: " + recipientUID);
