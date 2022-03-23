@@ -2,6 +2,10 @@ package com.malikendsley.firebaseutils;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -9,6 +13,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
+import com.malikendsley.firebaseutils.interfaces.QuipRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
 import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
 
@@ -79,13 +84,16 @@ public class FirebaseHandler {
                 //asynchronously retrieve the URL of the image
                 Log.i(TAG, "URI: " + uri);
                 Quip q = new Quip(uri.toString(), mAuth.getUid(), (new java.sql.Timestamp(System.currentTimeMillis()).toString()));
-                mDatabase.child("Quips").push().setValue(q).addOnCompleteListener(task -> {
+                DatabaseReference dbr = mDatabase.child("Quips").push();
+                String key = dbr.getKey();
+                dbr.setValue(q).addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
                         Log.i(TAG, "Quip Fail");
                         listener.onUploadFail(task.getException());
                     } else {
-                        SharedQuip q1 = new SharedQuip(uri.toString(),  mAuth.getUid(),recipientUID);
-                        mDatabase.child("SharedQuips").push().setValue(q1).addOnCompleteListener(task1 -> {
+                        SharedQuip sq = new SharedQuip(uri.toString(), mAuth.getUid(), recipientUID);
+                        sq.setQID(key);
+                        mDatabase.child("SharedQuips").push().setValue(sq).addOnCompleteListener(task1 -> {
                             if (!task1.isSuccessful()) {
                                 Log.i(TAG, "SharedQuip Fail");
                                 listener.onUploadFail(task1.getException());
@@ -97,6 +105,26 @@ public class FirebaseHandler {
                     }
                 });
             });
+        });
+    }
+
+    public void retrieveMyQuips(QuipRetrieveListener listener) {
+        ArrayList<SharedQuip> list = new ArrayList<>();
+
+        mDatabase.child("SharedQuips").orderByChild("recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    listener.onRetrieveFail(task.getException());
+                } else {
+                    for (DataSnapshot sharedQuip : task.getResult().getChildren()) {
+                        //retrieve all sharedQuips
+                        SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
+                        list.add(sq);
+                    }
+                    listener.onRetrieveComplete(list);
+                }
+            }
         });
     }
 }

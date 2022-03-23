@@ -4,11 +4,19 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/receivedSwapsHeaderText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
         android:text="Received Swaps"
+        android:layout_margin="8dp"
         android:textSize="30sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/receivedSwapsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/receivedSwapsHeaderText" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

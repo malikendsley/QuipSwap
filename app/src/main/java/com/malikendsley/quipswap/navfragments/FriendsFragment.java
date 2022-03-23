@@ -63,7 +63,6 @@ public class FriendsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mdb = new FirebaseHandler(mDatabase);
@@ -202,13 +201,13 @@ public class FriendsFragment extends Fragment {
                     for (Friendship friend : friendsList) {
                         if (friend.getUser1().equals(resolvedUID) || friend.getUser2().equals(resolvedUID)) {
                             Log.i(TAG, "Already friends");
-                            Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(FriendsFragment.this.getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
                     //all clear
                     Log.i(TAG, "Request created");
-                    createRecord(resolvedUID);
+                    FriendsFragment.this.createRecord(resolvedUID);
                 });
             });
         });
