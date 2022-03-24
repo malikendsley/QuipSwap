@@ -1,13 +1,19 @@
 package com.malikendsley.firebaseutils;
 
+import com.google.firebase.database.PropertyName;
+
 @SuppressWarnings("unused")
 
 public class SharedQuip {
 
-    String Sender;
-    String Recipient;
-    String URI;
-    String QID;
+    @PropertyName("Sender")
+    public String Sender;
+    @PropertyName("Recipient")
+    public String Recipient;
+    @PropertyName("URI")
+    public String URI;
+    @PropertyName("QID")
+    public String QID;
 
     public SharedQuip() {
         //necessary for firebase
@@ -27,35 +33,7 @@ public class SharedQuip {
         this.URI = URI;
     }
 
-    public String getQID() {
-        return QID;
-    }
-
-    public void setQID(String QID) {
-        this.QID = QID;
-    }
-
-    public String getSender() {
-        return Sender;
-    }
-
-    public void setSender(String sender) {
-        Sender = sender;
-    }
-
-    public String getRecipient() {
-        return Recipient;
-    }
-
-    public void setRecipient(String recipient) {
-        Recipient = recipient;
-    }
-
-    public String getURI() {
-        return URI;
-    }
-
-    public void setSharedQuipID(String URI) {
-        this.URI = URI;
+    public String toString(){
+        return Sender + " " + Recipient + " " + URI;
     }
 }

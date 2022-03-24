@@ -67,7 +67,7 @@ public class ReceivedFragment extends Fragment {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRetrieveComplete(ArrayList<SharedQuip> quips) {
-                Log.i(TAG, quips.toString());
+                Log.i(TAG, "OnRetrieve: " + quips.toString());
                 //populate quip adapter
                 sharedQuipList.clear();
                 sharedQuipList.addAll(quips);

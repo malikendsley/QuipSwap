@@ -2,10 +2,6 @@ package com.malikendsley.firebaseutils;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -92,7 +88,7 @@ public class FirebaseHandler {
                         listener.onUploadFail(task.getException());
                     } else {
                         SharedQuip sq = new SharedQuip(uri.toString(), mAuth.getUid(), recipientUID);
-                        sq.setQID(key);
+                        sq.QID = key;
                         mDatabase.child("SharedQuips").push().setValue(sq).addOnCompleteListener(task1 -> {
                             if (!task1.isSuccessful()) {
                                 Log.i(TAG, "SharedQuip Fail");
@@ -111,19 +107,16 @@ public class FirebaseHandler {
     public void retrieveMyQuips(QuipRetrieveListener listener) {
         ArrayList<SharedQuip> list = new ArrayList<>();
 
-        mDatabase.child("SharedQuips").orderByChild("recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    listener.onRetrieveFail(task.getException());
-                } else {
-                    for (DataSnapshot sharedQuip : task.getResult().getChildren()) {
-                        //retrieve all sharedQuips
-                        SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
-                        list.add(sq);
-                    }
-                    listener.onRetrieveComplete(list);
+        mDatabase.child("SharedQuips").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                listener.onRetrieveFail(task.getException());
+            } else {
+                for (DataSnapshot sharedQuip : task.getResult().getChildren()) {
+                    //retrieve all sharedQuips
+                    SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
+                    list.add(sq);
                 }
+                listener.onRetrieveComplete(list);
             }
         });
     }

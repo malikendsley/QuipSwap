@@ -42,7 +42,7 @@
             android:layout_weight="8"
             android:gravity="center_vertical"
             android:text="unset"
-            android:textSize="32sp" />
+            android:textSize="16sp" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

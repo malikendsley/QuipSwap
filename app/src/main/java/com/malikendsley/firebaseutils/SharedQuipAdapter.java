@@ -1,9 +1,7 @@
 package com.malikendsley.firebaseutils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +12,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.malikendsley.quipswap.R;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.SharedQuipViewHolder> {
 
+    static final String TAG = "Own";
     ArrayList<SharedQuip> list;
     Context context;
+
 
     public SharedQuipAdapter(Context context, ArrayList<SharedQuip> list) {
         this.list = list;
@@ -40,17 +41,18 @@ public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.Sh
     public void onBindViewHolder(@NonNull SharedQuipViewHolder holder, int position) {
         //list is populated externally
         SharedQuip sq = list.get(position);
-        Log.i("Own", sq.getURI());
-        holder.Sender.setText(sq.getSender());
-        Uri uri = Uri.parse(sq.getURI());
+        Log.i("Own", "onBind: " + sq.toString());
+        holder.Sender.setText(sq.Sender);
 
-        Bitmap bitmap = null;
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-        } catch (IOException e) {
+        StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl(sq.URI);
+        final long FIVE_MEGABYTES = 1024 * 1024 * 5;
+
+        httpsReference.getBytes(FIVE_MEGABYTES).addOnSuccessListener(bytes -> holder.Thumbnail.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length))).addOnFailureListener(e -> {
+            Log.i(TAG, "URL Download Failed");
             e.printStackTrace();
-        }
-        holder.Thumbnail.setImageBitmap(bitmap);
+        });
+
+
     }
 
     @Override
