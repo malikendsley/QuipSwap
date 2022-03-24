@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils;
+package com.malikendsley.firebaseutils.adapters;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.malikendsley.firebaseutils.schema.FriendRequest;
+import com.malikendsley.firebaseutils.schema.User;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
 import com.malikendsley.quipswap.R;
 

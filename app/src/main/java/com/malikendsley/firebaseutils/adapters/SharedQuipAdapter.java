@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils;
+package com.malikendsley.firebaseutils.adapters;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.malikendsley.firebaseutils.schema.SharedQuip;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
@@ -22,10 +23,12 @@ public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.Sh
 
     static final String TAG = "Own";
     ArrayList<SharedQuip> list;
+    boolean isSent;
     Context context;
 
-
-    public SharedQuipAdapter(Context context, ArrayList<SharedQuip> list) {
+    //if isSending = 1, populate with outgoing data, else incoming data
+    public SharedQuipAdapter(boolean isSent, Context context, ArrayList<SharedQuip> list) {
+        this.isSent = isSent;
         this.list = list;
         this.context = context;
     }
@@ -42,7 +45,8 @@ public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.Sh
         //list is populated externally
         SharedQuip sq = list.get(position);
         Log.i("Own", "onBind: " + sq.toString());
-        holder.Sender.setText(sq.Sender);
+
+        holder.UID.setText(isSent ? sq.Recipient : sq.Sender);
 
         StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl(sq.URI);
         final long FIVE_MEGABYTES = 1024 * 1024 * 5;
@@ -51,7 +55,6 @@ public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.Sh
             Log.i(TAG, "URL Download Failed");
             e.printStackTrace();
         });
-
 
     }
 
@@ -62,13 +65,13 @@ public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.Sh
 
     public static class SharedQuipViewHolder extends RecyclerView.ViewHolder {
 
-        TextView Sender;
+        TextView UID;
         ImageView Thumbnail;
 
         public SharedQuipViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            Sender = itemView.findViewById(R.id.receivedText);
+            UID = itemView.findViewById(R.id.UIDText);
             Thumbnail = itemView.findViewById(R.id.receivedThumbnail);
 
         }

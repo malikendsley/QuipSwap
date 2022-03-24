@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils;
+package com.malikendsley.firebaseutils.schema;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;

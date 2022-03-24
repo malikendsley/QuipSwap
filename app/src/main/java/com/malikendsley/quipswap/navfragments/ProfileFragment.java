@@ -20,7 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.malikendsley.firebaseutils.User;
+import com.malikendsley.firebaseutils.schema.User;
 import com.malikendsley.quipswap.MainActivity;
 import com.malikendsley.quipswap.R;
 

@@ -14,13 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.SharedQuip;
-import com.malikendsley.firebaseutils.SharedQuipAdapter;
+import com.malikendsley.firebaseutils.adapters.SharedQuipAdapter;
 import com.malikendsley.firebaseutils.interfaces.QuipRetrieveListener;
+import com.malikendsley.firebaseutils.schema.SharedQuip;
 import com.malikendsley.quipswap.MakeQuipActivity;
 import com.malikendsley.quipswap.R;
 
@@ -45,6 +44,7 @@ public class ReceivedFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mdb = new FirebaseHandler(mDatabase);
@@ -53,12 +53,11 @@ public class ReceivedFragment extends Fragment {
         receivedRecycler = requireActivity().findViewById(R.id.receivedSwapsRecycler);
         receivedRecycler.setHasFixedSize(true);
         receivedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        sharedQuipAdapter = new SharedQuipAdapter(getContext(), sharedQuipList);
+        sharedQuipAdapter = new SharedQuipAdapter(false, getContext(), sharedQuipList);
         receivedRecycler.setAdapter(sharedQuipAdapter);
 
-        super.onViewCreated(view, savedInstanceState);
-        FloatingActionButton fab = requireView().findViewById(R.id.fab);
-        fab.setOnClickListener(view1 -> {
+        //fab
+        requireView().findViewById(R.id.fab).setOnClickListener(view1 -> {
             Log.i(TAG, "Fab clicked");
             ReceivedFragment.this.startActivity(new Intent(ReceivedFragment.this.getContext(), MakeQuipActivity.class));
         });
@@ -67,7 +66,7 @@ public class ReceivedFragment extends Fragment {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRetrieveComplete(ArrayList<SharedQuip> quips) {
-                Log.i(TAG, "OnRetrieve: " + quips.toString());
+                Log.i(TAG, "Retrieve Complete");
                 //populate quip adapter
                 sharedQuipList.clear();
                 sharedQuipList.addAll(quips);
@@ -82,6 +81,5 @@ public class ReceivedFragment extends Fragment {
                 Log.i(TAG, "Retrieve failed");
             }
         });
-
     }
 }

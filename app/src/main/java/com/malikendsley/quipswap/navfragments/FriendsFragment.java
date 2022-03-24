@@ -22,10 +22,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.FriendAdapter;
-import com.malikendsley.firebaseutils.FriendRequest;
-import com.malikendsley.firebaseutils.Friendship;
-import com.malikendsley.firebaseutils.RequestAdapter;
+import com.malikendsley.firebaseutils.adapters.FriendAdapter;
+import com.malikendsley.firebaseutils.schema.FriendRequest;
+import com.malikendsley.firebaseutils.schema.Friendship;
+import com.malikendsley.firebaseutils.adapters.RequestAdapter;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
 import com.malikendsley.quipswap.R;
 

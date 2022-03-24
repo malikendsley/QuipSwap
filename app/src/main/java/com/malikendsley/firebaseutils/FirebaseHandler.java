@@ -12,6 +12,9 @@ import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
 import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
+import com.malikendsley.firebaseutils.schema.Friendship;
+import com.malikendsley.firebaseutils.schema.Quip;
+import com.malikendsley.firebaseutils.schema.SharedQuip;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -113,6 +116,23 @@ public class FirebaseHandler {
             } else {
                 for (DataSnapshot sharedQuip : task.getResult().getChildren()) {
                     //retrieve all sharedQuips
+                    SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
+                    list.add(sq);
+                }
+                listener.onRetrieveComplete(list);
+            }
+        });
+    }
+
+    public void retrieveSentQuips(QuipRetrieveListener listener) {
+        ArrayList<SharedQuip> list = new ArrayList<>();
+
+        mDatabase.child("SharedQuips").orderByChild("Sender").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                listener.onRetrieveFail(task.getException());
+            } else {
+                for (DataSnapshot sharedQuip : task.getResult().getChildren()) {
+
                     SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
                     list.add(sq);
                 }

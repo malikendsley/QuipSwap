@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils;
+package com.malikendsley.firebaseutils.schema;
 
 import androidx.annotation.NonNull;
 

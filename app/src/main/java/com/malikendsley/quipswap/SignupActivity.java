@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.User;
+import com.malikendsley.firebaseutils.schema.User;
 
 import java.util.Objects;
 

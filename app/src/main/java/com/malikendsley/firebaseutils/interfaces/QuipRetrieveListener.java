@@ -1,6 +1,6 @@
 package com.malikendsley.firebaseutils.interfaces;
 
-import com.malikendsley.firebaseutils.SharedQuip;
+import com.malikendsley.firebaseutils.schema.SharedQuip;
 
 import java.util.ArrayList;
 
