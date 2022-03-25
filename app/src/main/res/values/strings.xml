@@ -15,4 +15,8 @@
     <string name="settings">Settings</string>
     <string name="about_us_text">Us? There is no us, it\'s just me.</string>
     <string name="friends_since">Friends Since: </string>
+    <string name="requests">Requests</string>
+    <string name="back">Back</string>
+    <string name="friend_requests">Friend Requests</string>
+    <string name="you_have_no_pending_friend_requests">You have no pending friend requests.</string>
 </resources>

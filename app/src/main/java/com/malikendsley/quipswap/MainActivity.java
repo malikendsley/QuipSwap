@@ -1,6 +1,7 @@
 package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_received_swaps:
                 Log.i(TAG, "Received selected");
                 if (recFragment == null) {
-//                    Log.i(TAG, "Generating");
+                    //Log.i(TAG, "Generating");
                     recFragment = new ReceivedFragment();
                 }
                 selectedFragment = recFragment;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_sent_swaps:
                 Log.i(TAG, "Sent selected");
                 if (sentFragment == null) {
-//                    Log.i(TAG, "Generating");
+                    //Log.i(TAG, "Generating");
                     sentFragment = new SentFragment();
                 }
                 selectedFragment = sentFragment;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "This shouldn't be possible");
                     if (signInFragment == null) {
-//                        Log.i(TAG, "Generating");
+                        //Log.i(TAG, "Generating");
                         signInFragment = new SignInFragment();
                     }
                     selectedFragment = signInFragment;
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 //send the right fragment based on whether user is logged in
                 if (user != null) {
                     if (loggedInFragment == null) {
-//                        Log.i(TAG, "Generating");
+                        //Log.i(TAG, "Generating");
                         loggedInFragment = new ProfileFragment();
                     }
                     //User is Logged in
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = loggedInFragment;
                 } else {
                     if (signInFragment == null) {
-//                        Log.i(TAG, "Generating");
+                        //Log.i(TAG, "Generating");
                         signInFragment = new SignInFragment();
                     }
                     Log.d(TAG, "onNavigationItemSelected No user logged in");
@@ -123,6 +124,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            case R.id.friendRequestsAppBar:
+                startActivity(new Intent(this, FriendRequestsActivity.class));
+                break;
             case R.id.aboutUsOption:
                 //unlikely but if this presents a perf issue can pre-build
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);

@@ -23,10 +23,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.adapters.FriendAdapter;
-import com.malikendsley.firebaseutils.schema.FriendRequest;
-import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.firebaseutils.adapters.RequestAdapter;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
+import com.malikendsley.firebaseutils.schema.FriendRequest;
+import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
@@ -45,9 +45,9 @@ public class FriendsFragment extends Fragment {
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase;
+
     ArrayList<Friendship> friendList = new ArrayList<>();
     ArrayList<FriendRequest> requestList = new ArrayList<>();
-
 
     boolean dataFetched = false;
 
@@ -154,8 +154,7 @@ public class FriendsFragment extends Fragment {
         //you cannot request a person who has requested you already
         //you can't send a request to your friend or yourself
 
-        //it is very unlikely that a user manages to add a friend before their friends list loads
-        //but this code handles that
+        //unlikely edge case handling
         Log.i(TAG, "Check load friends");
         if (!dataFetched) {
             Log.i(TAG, "Friends not loaded");

@@ -2,6 +2,9 @@ package com.malikendsley.firebaseutils;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -11,12 +14,15 @@ import com.google.firebase.storage.UploadTask;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
+import com.malikendsley.firebaseutils.interfaces.RequestRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
+import com.malikendsley.firebaseutils.schema.FriendRequest;
 import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.firebaseutils.schema.Quip;
 import com.malikendsley.firebaseutils.schema.SharedQuip;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.UUID;
 
 public class FirebaseHandler {
@@ -139,5 +145,20 @@ public class FirebaseHandler {
                 listener.onRetrieveComplete(list);
             }
         });
+    }
+
+    public void retrieveFriendRequests(RequestRetrieveListener listener){
+        ArrayList<FriendRequest> list = new ArrayList<>();
+
+        //retrieve friend requests and populate
+        mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnSuccessListener(requestSnapshot -> {
+            for (DataSnapshot child : requestSnapshot.getChildren()) {
+                FriendRequest fr = child.getValue(FriendRequest.class);
+                Objects.requireNonNull(fr).setKey(child.getKey());
+                list.add(fr);
+            }
+            listener.onRequestsRetrieved(list);
+        }).addOnFailureListener(listener::onRequestsFailed);
+
     }
 }
