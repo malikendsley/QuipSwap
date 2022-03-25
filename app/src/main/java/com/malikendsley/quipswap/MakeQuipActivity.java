@@ -95,7 +95,7 @@ public class MakeQuipActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.paint_menu, menu);
+        menuInflater.inflate(R.menu.menu_paint, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

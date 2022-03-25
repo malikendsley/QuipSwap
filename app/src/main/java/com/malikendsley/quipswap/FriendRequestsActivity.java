@@ -44,7 +44,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friendrequests);
+        setContentView(R.layout.activity_friend_requests);
 
         //retrieve friend requests and populate
         mdb.retrieveFriendRequests(new RequestRetrieveListener() {
@@ -108,7 +108,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.mainoverflowmenu, menu);
+        inflater.inflate(R.menu.menu_main, menu);
 
         return true;
     }

@@ -2,9 +2,6 @@ package com.malikendsley.firebaseutils;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -15,11 +12,13 @@ import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
 import com.malikendsley.firebaseutils.interfaces.RequestRetrieveListener;
+import com.malikendsley.firebaseutils.interfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
 import com.malikendsley.firebaseutils.schema.FriendRequest;
 import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.firebaseutils.schema.Quip;
 import com.malikendsley.firebaseutils.schema.SharedQuip;
+import com.malikendsley.firebaseutils.schema.User;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -147,7 +146,7 @@ public class FirebaseHandler {
         });
     }
 
-    public void retrieveFriendRequests(RequestRetrieveListener listener){
+    public void retrieveFriendRequests(RequestRetrieveListener listener) {
         ArrayList<FriendRequest> list = new ArrayList<>();
 
         //retrieve friend requests and populate
@@ -160,5 +159,16 @@ public class FirebaseHandler {
             listener.onRequestsRetrieved(list);
         }).addOnFailureListener(listener::onRequestsFailed);
 
+    }
+
+    public void retrieveUser(String UID, UserRetrievedListener listener) {
+        mDatabase.child("Users").child(UID).get().addOnSuccessListener(dataSnapshot -> {
+            User user = (dataSnapshot.getValue(User.class));
+            if (user != null) {
+                Log.i(TAG, user.toString());
+            } else {
+                Log.i(TAG, "retrieveUser problem");
+            }
+        }).addOnFailureListener(listener::onRetrieveFailed);
     }
 }

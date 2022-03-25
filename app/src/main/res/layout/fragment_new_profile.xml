@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/loggedInText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="@string/profile"
+        android:textSize="30sp" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/profileDivider1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loggedInText"
+        android:layout_margin="8dp" />
+
+    <TextView
+        android:id="@id/usernameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profileDivider1"
+        android:layout_alignParentStart="true"
+        android:layout_margin="20dp"
+        android:gravity="center_vertical"
+        android:text="@string/username"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/usernameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/usernameLabel"
+        android:layout_margin="10dp"
+        android:layout_toEndOf="@id/usernameLabel"
+        android:text=""
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/passwordLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/usernameLabel"
+        android:layout_alignParentStart="true"
+        android:layout_margin="20dp"
+        android:gravity="center_vertical"
+        android:text="@string/password"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/passwordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/passwordLabel"
+        android:layout_margin="10dp"
+        android:layout_toEndOf="@id/passwordLabel"
+        android:text=""
+        android:textSize="18sp" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/profileDivider2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/passwordLabel"
+        android:layout_margin="8dp" />
+
+    <TextView
+        android:id="@+id/friendsTitleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profileDivider2"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:text="@string/friends"
+        android:textSize="30sp" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/profileDivider3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/friendsTitleText"
+        android:layout_margin="8dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/friendList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profileDivider3"
+        android:layout_above="@id/addFriendSection"/>
+
+    <LinearLayout
+        android:id="@+id/addFriendSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/friendSearchUsername"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:autofillHints="username"
+            android:hint="@string/enter_username"
+            android:imeOptions="actionDone"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/addFriendButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="3"
+            android:singleLine="true"
+            android:text="@string/add" />
+
+    </LinearLayout>
+
+</RelativeLayout>
