@@ -1,5 +1,7 @@
 package com.malikendsley.firebaseutils.schema;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.Exclude;
 @SuppressWarnings("unused")
 
@@ -69,6 +71,7 @@ public class Quip {
         this.localURI = localURI;
     }
 
+    @NonNull
     public String toString() {
         return ("Quip owned by " + ownerUID + " created on " + timestamp);
     }

@@ -51,9 +51,17 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                Log.i(TAG, "Data retrieved: " + user);
-                username.setText(user.getUsername());
-                email.setText(user.getEmail());
+                //Log.i(TAG, "Data retrieved: " + user);
+                if (user != null) {
+                    username.setText(user.Username);
+                } else {
+                    Log.i(TAG, "Profile: Null User");
+                }
+                if (user != null) {
+                    email.setText(user.Email);
+                } else {
+                    Log.i(TAG, "Profile: Null Email");
+                }
             }
 
             @Override

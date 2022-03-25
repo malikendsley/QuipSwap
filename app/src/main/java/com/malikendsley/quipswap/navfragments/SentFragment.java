@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +32,7 @@ public class SentFragment extends Fragment {
     FirebaseHandler mdb;
     DatabaseReference mDatabase;
 
+    TextView noSentText;
     RecyclerView sentRecycler;
     SharedQuipAdapter sharedQuipAdapter;
 
@@ -48,6 +50,9 @@ public class SentFragment extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mdb = new FirebaseHandler(mDatabase);
+
+        //flavor
+        noSentText = requireActivity().findViewById(R.id.noSentSwapsText);
 
         //sent recycler setup
         sentRecycler = requireActivity().findViewById(R.id.sentSwapsRecycler);
@@ -71,7 +76,12 @@ public class SentFragment extends Fragment {
                 sharedQuipList.clear();
                 sharedQuipList.addAll(quips);
                 //notify
-                sharedQuipAdapter.notifyDataSetChanged();
+                if(!sharedQuipList.isEmpty()){
+                    sharedQuipAdapter.notifyDataSetChanged();
+                    noSentText.setVisibility(View.GONE);
+                } else {
+                    noSentText.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

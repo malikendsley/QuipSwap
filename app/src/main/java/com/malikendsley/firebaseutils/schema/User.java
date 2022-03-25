@@ -1,29 +1,27 @@
 package com.malikendsley.firebaseutils.schema;
 
+import com.google.firebase.database.PropertyName;
+
 public class User {
 
-    private final String username;
-    private final String email;
+    public final String Username;
+    public final String Email;
     private String UID;
 
     @SuppressWarnings("unused")
     public User() {
-        username = "unset";
-        email = "unset";
+        Username = "unset";
+        Email = "unset";
         UID = "unset";
         //necessary for firebase
     }
-
+    @PropertyName("Username")
     public String getUsername() {
-        return username;
+        return Username;
     }
-
+    @PropertyName("Email")
     public String getEmail() {
-        return email;
-    }
-
-    public String getUID() {
-        return UID;
+        return Email;
     }
 
     public void setUID(String UID) {
@@ -32,13 +30,8 @@ public class User {
 
     //for the case where the UID isn't known at the time of creation
     public User(String username, String email) {
-        this.username = username;
-        this.email = email;
+        this.Username = username;
+        this.Email = email;
     }
 
-    public User(String UID, String username, String email) {
-        this.UID = UID;
-        this.username = username;
-        this.email = email;
-    }
 }

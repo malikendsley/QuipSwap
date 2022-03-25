@@ -19,25 +19,24 @@ import java.util.ArrayList;
 //don't use emboss, it causes lag
 public class PaintView extends View {
 
-    private static final String TAG = "Own";
-    public static int BRUSH_SIZE = 20;
     public static final int DEFAULT_COLOR = Color.RED;
     public static final int DEFAULT_BG_COLOR = Color.WHITE;
     private static final float TOUCH_TOLERANCE = 4;
-    private float mX, mY;
-    private Path mPath;
+    public static int BRUSH_SIZE = 20;
     private final Paint mPaint;
     private final ArrayList<FingerPath> paths = new ArrayList<>();
+    private final MaskFilter mEmboss;
+    private final MaskFilter mBlur;
+    private final Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+    private float mX, mY;
+    private Path mPath;
     private int currentColor;
     private int backgroundColor = DEFAULT_BG_COLOR;
     private int strokeWidth;
     private boolean emboss;
     private boolean blur;
-    private final MaskFilter mEmboss;
-    private final MaskFilter mBlur;
     private Bitmap mBitmap;
     private Canvas mCanvas;
-    private final Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
 
     public PaintView(Context context) {
         this(context, null);
@@ -72,11 +71,6 @@ public class PaintView extends View {
 
     public void normal() {
         emboss = false;
-        blur = false;
-    }
-
-    public void emboss() {
-        emboss = true;
         blur = false;
     }
 
@@ -142,7 +136,15 @@ public class PaintView extends View {
     }
 
     @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //Lint silencer
+        this.performClick();
         float x = event.getX();
         float y = event.getY();
 
@@ -164,7 +166,4 @@ public class PaintView extends View {
         return true;
     }
 
-    public Bitmap getmBitmap() {
-        return mBitmap;
-    }
 }

@@ -1,5 +1,7 @@
 package com.malikendsley.firebaseutils.schema;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.PropertyName;
 
 @SuppressWarnings("unused")
@@ -33,7 +35,8 @@ public class SharedQuip {
         this.URI = URI;
     }
 
-    public String toString(){
+    @NonNull
+    public String toString() {
         return Sender + " " + Recipient + " " + URI;
     }
 }

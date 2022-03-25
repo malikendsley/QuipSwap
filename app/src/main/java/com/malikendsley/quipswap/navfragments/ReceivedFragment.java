@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +32,7 @@ public class ReceivedFragment extends Fragment {
     FirebaseHandler mdb;
     DatabaseReference mDatabase;
 
+    TextView noReceivedText;
     RecyclerView receivedRecycler;
     SharedQuipAdapter sharedQuipAdapter;
 
@@ -48,6 +50,9 @@ public class ReceivedFragment extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mdb = new FirebaseHandler(mDatabase);
+
+        //flavor
+        noReceivedText = requireActivity().findViewById(R.id.noReceivedSwapsText);
 
         //received recycler setup
         receivedRecycler = requireActivity().findViewById(R.id.receivedSwapsRecycler);
@@ -71,7 +76,12 @@ public class ReceivedFragment extends Fragment {
                 sharedQuipList.clear();
                 sharedQuipList.addAll(quips);
                 //notify
-                sharedQuipAdapter.notifyDataSetChanged();
+                if(!sharedQuipList.isEmpty()){
+                    sharedQuipAdapter.notifyDataSetChanged();
+                    noReceivedText.setVisibility(View.GONE);
+                } else {
+                    noReceivedText.setVisibility(View.VISIBLE);
+                }
                 //TODO: speed this up, discovering how to "realtime" this would improve every adapter in the app
             }
 

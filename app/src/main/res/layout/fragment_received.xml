@@ -8,9 +8,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Received Swaps"
         android:layout_margin="8dp"
+        android:text="Received Swaps"
         android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/noReceivedSwapsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:text="You haven't received any swaps. Ask your friends to send you some!"
+        android:textSize="16sp"
+        android:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/receivedSwapsRecycler"
