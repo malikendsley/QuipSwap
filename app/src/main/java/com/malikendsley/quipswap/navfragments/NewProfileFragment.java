@@ -2,7 +2,6 @@ package com.malikendsley.quipswap.navfragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.adapters.FriendAdapter;
+import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
 import com.malikendsley.firebaseutils.interfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.schema.FriendRequest;
 import com.malikendsley.firebaseutils.schema.Friendship;
@@ -71,8 +71,19 @@ public class NewProfileFragment extends Fragment {
         //adding friends functionality
         addFriendButton.setOnClickListener(view1 -> {
             //Log.i(TAG, "Add friend clicked");
-            //create new friend request
-            //validateFriendUsername(friendSearch.getText().toString());
+            mdb.tryAddFriend(friendSearch.getText().toString(), new FriendAddListener() {
+                @Override
+                public void onResult(String result) {
+                    Toast.makeText(getContext(), (result == null) ? "Request Sent" : result, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onDatabaseException(Exception e) {
+                    //Log.i(TAG, "Database Error");
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
         friendSearch.setOnEditorActionListener((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_DONE) {

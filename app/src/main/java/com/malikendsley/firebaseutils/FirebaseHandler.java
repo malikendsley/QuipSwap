@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
@@ -166,9 +167,20 @@ public class FirebaseHandler {
             User user = (dataSnapshot.getValue(User.class));
             if (user != null) {
                 Log.i(TAG, user.toString());
+                listener.onUserRetrieved(user);
             } else {
                 Log.i(TAG, "retrieveUser problem");
             }
         }).addOnFailureListener(listener::onRetrieveFailed);
+    }
+
+    public void tryAddFriend(String friendUID, FriendAddListener listener) {
+        //validate, try to add friend according to rules
+
+        //if successful, call notify
+
+        //if unsuccessful, fail with string
+
+        //if error, fail with caught exception
     }
 }
