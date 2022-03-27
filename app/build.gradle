@@ -1,17 +1,19 @@
 plugins {
     id 'com.android.application'
+    id 'kotlin-android'
+
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.malikendsley.quipswap"
         minSdk 21
-        targetSdk 32
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
