@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -18,8 +19,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.malikendsley.quipswap.navfragments.FriendsFragment;
+import com.malikendsley.quipswap.navfragments.OldProfileFragment;
 import com.malikendsley.quipswap.navfragments.SignInFragment;
-import com.malikendsley.quipswap.navfragments.ProfileFragment;
 import com.malikendsley.quipswap.navfragments.ReceivedFragment;
 import com.malikendsley.quipswap.navfragments.SentFragment;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     SentFragment sentFragment;
     ReceivedFragment recFragment;
-    ProfileFragment loggedInFragment;
+    OldProfileFragment loggedInFragment;
     SignInFragment signInFragment;
     FriendsFragment friendsFragment = new FriendsFragment();
     @SuppressLint("NonConstantResourceId")
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     if (loggedInFragment == null) {
                         //Log.i(TAG, "Generating");
-                        loggedInFragment = new ProfileFragment();
+                        loggedInFragment = new OldProfileFragment();
                     }
                     //User is Logged in
                     Log.d(TAG, "onNavigationItemSelected User logged in");
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         setContentView(R.layout.activity_main);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
@@ -110,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
         }
-
     }
 
     @Override
