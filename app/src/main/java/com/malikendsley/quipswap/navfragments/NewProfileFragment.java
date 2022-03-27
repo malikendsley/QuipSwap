@@ -49,7 +49,7 @@ public class NewProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return inflater.inflate(R.layout.fragment_new_profile, container, false);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -59,7 +59,7 @@ public class NewProfileFragment extends Fragment {
 
         //profile data setup
         username = requireActivity().findViewById(R.id.usernameText);
-        email = requireActivity().findViewById(R.id.passwordText);
+        email = requireActivity().findViewById(R.id.profileEmailText);
 
         //friend request setup
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);

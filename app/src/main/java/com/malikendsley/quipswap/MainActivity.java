@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -19,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.malikendsley.quipswap.navfragments.FriendsFragment;
+import com.malikendsley.quipswap.navfragments.NewProfileFragment;
 import com.malikendsley.quipswap.navfragments.OldProfileFragment;
 import com.malikendsley.quipswap.navfragments.SignInFragment;
 import com.malikendsley.quipswap.navfragments.ReceivedFragment;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     SentFragment sentFragment;
     ReceivedFragment recFragment;
-    OldProfileFragment loggedInFragment;
+    NewProfileFragment loggedInFragment;
     SignInFragment signInFragment;
     FriendsFragment friendsFragment = new FriendsFragment();
     @SuppressLint("NonConstantResourceId")
@@ -56,26 +58,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 selectedFragment = sentFragment;
                 break;
-            case R.id.nav_friends:
-                Log.i(TAG, "Friends Selected");
-                if (user != null) {
-                    selectedFragment = friendsFragment;
-                } else {
-                    Log.d(TAG, "This shouldn't be possible");
-                    if (signInFragment == null) {
-                        //Log.i(TAG, "Generating");
-                        signInFragment = new SignInFragment();
-                    }
-                    selectedFragment = signInFragment;
-                }
-                break;
             case R.id.nav_profile:
                 Log.i(TAG, "Profile Selected");
                 //send the right fragment based on whether user is logged in
                 if (user != null) {
                     if (loggedInFragment == null) {
                         //Log.i(TAG, "Generating");
-                        loggedInFragment = new OldProfileFragment();
+                        loggedInFragment = new NewProfileFragment();
                     }
                     //User is Logged in
                     Log.d(TAG, "onNavigationItemSelected User logged in");
@@ -101,13 +90,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+        user = FirebaseAuth.getInstance().getCurrentUser();
         setContentView(R.layout.activity_main);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
         //try to run this as late as possible to check whether to display friends tab
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        bottomNav.getMenu().findItem(R.id.nav_friends).setVisible(user != null);
         //save tab on screen rotation
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
@@ -136,7 +124,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.settingsOption:
                 Snackbar.make(findViewById(android.R.id.content), "Coming Soon", Snackbar.LENGTH_SHORT).show();
                 break;
-
+            case R.id.logoutOption:
+                FirebaseAuth.getInstance().signOut();
+                Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
         }
         return true;
     }
