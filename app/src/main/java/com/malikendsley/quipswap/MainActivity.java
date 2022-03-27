@@ -19,9 +19,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.malikendsley.quipswap.navfragments.FriendsFragment;
 import com.malikendsley.quipswap.navfragments.NewProfileFragment;
-import com.malikendsley.quipswap.navfragments.OldProfileFragment;
 import com.malikendsley.quipswap.navfragments.SignInFragment;
 import com.malikendsley.quipswap.navfragments.ReceivedFragment;
 import com.malikendsley.quipswap.navfragments.SentFragment;
@@ -35,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     ReceivedFragment recFragment;
     NewProfileFragment loggedInFragment;
     SignInFragment signInFragment;
-    FriendsFragment friendsFragment = new FriendsFragment();
     @SuppressLint("NonConstantResourceId")
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
         Fragment selectedFragment = new ReceivedFragment();
