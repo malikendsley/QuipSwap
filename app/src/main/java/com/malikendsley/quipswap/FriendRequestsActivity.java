@@ -47,7 +47,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_friend_requests);
 
         //retrieve friend requests and populate
-        mdb.retrieveFriendRequests(new RequestRetrieveListener() {
+        mdb.retrieveReceivedRequests(new RequestRetrieveListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRequestsRetrieved(ArrayList<FriendRequest> requests) {

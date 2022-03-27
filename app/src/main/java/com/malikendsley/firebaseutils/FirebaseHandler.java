@@ -1,7 +1,14 @@
 package com.malikendsley.firebaseutils;
 
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -147,7 +154,7 @@ public class FirebaseHandler {
         });
     }
 
-    public void retrieveFriendRequests(RequestRetrieveListener listener) {
+    public void retrieveReceivedRequests(RequestRetrieveListener listener) {
         ArrayList<FriendRequest> list = new ArrayList<>();
 
         //retrieve friend requests and populate
@@ -160,6 +167,20 @@ public class FirebaseHandler {
             listener.onRequestsRetrieved(list);
         }).addOnFailureListener(listener::onRequestsFailed);
 
+    }
+
+    public void retrieveSentRequests(RequestRetrieveListener listener) {
+        ArrayList<FriendRequest> list = new ArrayList<>();
+
+        //retrieve friend requests
+        mDatabase.child("FriendRequests").orderByChild("Sender").equalTo(mAuth.getUid()).get().addOnSuccessListener(dataSnapshot -> {
+            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                FriendRequest fr = child.getValue(FriendRequest.class);
+                Objects.requireNonNull(fr).setKey(child.getKey());
+                list.add(fr);
+            }
+            listener.onRequestsRetrieved(list);
+        }).addOnFailureListener(listener::onRequestsFailed);
     }
 
     public void retrieveUser(String UID, UserRetrievedListener listener) {
@@ -176,11 +197,63 @@ public class FirebaseHandler {
 
     public void tryAddFriend(String friendUID, FriendAddListener listener) {
         //validate, try to add friend according to rules
-
-        //if successful, call notify
-
-        //if unsuccessful, fail with string
-
-        //if error, fail with caught exception
+        resolveUsername(friendUID, resolvedUID -> {
+            //must exist
+            if (resolvedUID == null) {
+                listener.onResult("User does not exist");
+                return;
+            }
+            //prevent self add
+            if (resolvedUID.equals(mAuth.getUid())) {
+                //Log.i(TAG, "Self-add detected");
+                listener.onResult("You cannot add yourself");
+                return;
+            }
+            //prevent add if already outgoing
+            retrieveSentRequests(new RequestRetrieveListener() {
+                @Override
+                public void onRequestsRetrieved(ArrayList<FriendRequest> sentRequests) {
+                    for (FriendRequest request : sentRequests) {
+                        if (request.getRecipient().equals(resolvedUID)) {
+                            listener.onResult("Already sent request");
+                            return;
+                        }
+                    }
+                    //prevent if already incoming
+                    retrieveReceivedRequests(new RequestRetrieveListener() {
+                        @Override
+                        public void onRequestsRetrieved(ArrayList<FriendRequest> retrievedRequests) {
+                            for (FriendRequest request : retrievedRequests) {
+                                if (request.getSender().equals(resolvedUID)) {
+                                    listener.onResult("Accept the pending request instead");
+                                    return;
+                                }
+                            }
+                            retrieveFriends(friendsList -> {
+                                for (Friendship friend : friendsList) {
+                                    if (friend.getUser1().equals(resolvedUID) || friend.getUser2().equals(resolvedUID)) {
+                                        //Log.i(TAG, "Already friends");
+                                        listener.onResult("Already friends with this user");
+                                        return;
+                                    }
+                                }
+                                //all clear
+                                //Log.i(TAG, "Request created");
+                                mDatabase.child("FriendRequests").push().setValue(new FriendRequest(mAuth.getUid(), friendUID));
+                                listener.onResult("");
+                            });
+                        }
+                        @Override
+                        public void onRequestsFailed(Exception e) {
+                            listener.onDatabaseException(e);
+                        }
+                    });
+                }
+                @Override
+                public void onRequestsFailed(Exception e) {
+                    listener.onDatabaseException(e);
+                }
+            });
+        });
     }
 }

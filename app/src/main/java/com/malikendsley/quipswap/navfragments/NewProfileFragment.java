@@ -17,20 +17,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.adapters.FriendAdapter;
 import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
 import com.malikendsley.firebaseutils.interfaces.UserRetrievedListener;
-import com.malikendsley.firebaseutils.schema.FriendRequest;
 import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.firebaseutils.schema.User;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -70,26 +67,13 @@ public class NewProfileFragment extends Fragment {
 
         //adding friends functionality
         addFriendButton.setOnClickListener(view1 -> {
-            //Log.i(TAG, "Add friend clicked");
-            mdb.tryAddFriend(friendSearch.getText().toString(), new FriendAddListener() {
-                @Override
-                public void onResult(String result) {
-                    Toast.makeText(getContext(), (result == null) ? "Request Sent" : result, Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onDatabaseException(Exception e) {
-                    //Log.i(TAG, "Database Error");
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
-                }
-            });
+            String friend = friendSearch.getText().toString();
+            validateFriendUsername(friend);
         });
         friendSearch.setOnEditorActionListener((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_DONE) {
-                //TODO add this
-                //Log.i(TAG, "Add friend clicked via soft keyboard");
-                //tryAddFriend(friendSearch.getText().toString());
+                String friend = friendSearch.getText().toString();
+                validateFriendUsername(friend);
                 return true;
             } else {
                 return false;
@@ -137,86 +121,32 @@ public class NewProfileFragment extends Fragment {
         });
     }
 
+    private void onAddFriend(String friend) {
+        mdb.tryAddFriend(friend, new FriendAddListener() {
+            @Override
+            public void onResult(String result) {
+                Toast.makeText(getContext(), (result.equals("")) ? "Request Sent" : result, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onDatabaseException(Exception e) {
+                //Log.i(TAG, "Database Error");
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void validateFriendUsername(String username) {
+        if (!dataFetched) {
+            Toast.makeText(getContext(), "Please wait a moment before trying again", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (username == null || username.equals("")) {
             //Log.i(TAG, "Empty Add Friend");
             Toast.makeText(getContext(), "Please specify a user", Toast.LENGTH_SHORT).show();
         } else {
-            tryAddFriend(username);
+            onAddFriend(username);
         }
     }
-
-    void tryAddFriend(String username) {
-        //user must exist
-        //you cannot send 2 requests to the same person
-        //you cannot request a person who has requested you already
-        //you can't send a request to your friend or yourself
-
-        //unlikely edge case handling
-        //Log.i(TAG, "Check load friends");
-        if (!dataFetched) {
-            //Log.i(TAG, "Friends not loaded");
-            Toast.makeText(getContext(), "Please wait a moment then try again", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        mdb.resolveUsername(username, resolvedUID -> {
-            if (resolvedUID == null) {
-                //Log.i(TAG, "FriendsFragment: No such user");
-                Toast.makeText(getContext(), "This user does not exist", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            //Log.i(TAG, "addUID = " + resolvedUID);
-            //prevent self add
-            if (resolvedUID.equals(mAuth.getUid())) {
-                //Log.i(TAG, "Self-add detected");
-                Toast.makeText(getContext(), "You can't add yourself", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            //TODO prevent adding if incoming request exists
-//            for (FriendRequest request : requestList) {
-//                if (request.getSender().equals(resolvedUID)) {
-//                    //Log.i(TAG, "Cross-send attempt");
-//                    Toast.makeText(getContext(), "Accept the pending request instead", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//            }
-            //prevent adding if outgoing request exists
-            mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(resolvedUID).get().addOnSuccessListener(matchingIncoming -> {
-                if (matchingIncoming.exists()) {
-                    for (DataSnapshot fr : matchingIncoming.getChildren()) {
-                        FriendRequest mfr = fr.getValue(FriendRequest.class);
-                        if (Objects.requireNonNull(mfr).getSender().equals(mAuth.getUid())) {
-                            //Log.i(TAG, "Already outgoing");
-                            Toast.makeText(getContext(), "Already sent Request", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-                }
-                //don't add people you're already friends with
-                mdb.retrieveFriends(friendsList -> {
-                    for (Friendship friend : friendsList) {
-                        if (friend.getUser1().equals(resolvedUID) || friend.getUser2().equals(resolvedUID)) {
-                            //Log.i(TAG, "Already friends");
-                            Toast.makeText(getContext(), "Already friends with this user", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-                    //all clear
-                    //Log.i(TAG, "Request created");
-                    createRecord(resolvedUID);
-                });
-            });
-        });
-    }
-
-    //simple helper function to clean things up
-    void createRecord(String friendUID) {
-        mDatabase.child("FriendRequests").push().setValue(new FriendRequest(mAuth.getUid(), friendUID));
-        //Log.i(TAG, "Request sent");
-        Toast.makeText(getContext(), "Request Sent", Toast.LENGTH_SHORT).show();
-    }
-
-
-    //add friend setup TODO firebaseHandler
 }

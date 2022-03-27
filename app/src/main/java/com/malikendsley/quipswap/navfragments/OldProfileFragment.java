@@ -26,7 +26,7 @@ import com.malikendsley.quipswap.R;
 
 import java.util.Objects;
 
-public class ProfileFragment extends Fragment {
+public class OldProfileFragment extends Fragment {
 
     private static final String TAG = "Own";
 
@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.w(TAG, "loadPost:onCancelled", error.toException());
-                Toast.makeText(getContext(), "ProfileFragment: Failed to fetch profile data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "OldProfileFragment: Failed to fetch profile data", Toast.LENGTH_SHORT).show();
 
             }
         };
