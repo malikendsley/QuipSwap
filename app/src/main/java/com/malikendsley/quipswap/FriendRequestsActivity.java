@@ -1,6 +1,8 @@
 package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,7 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -99,7 +102,10 @@ public class FriendRequestsActivity extends AppCompatActivity {
 
         MenuItem settingsItem = menu.findItem(R.id.friendRequestsAppBar);
         // set your desired icon here based on a flag if you like
-        settingsItem.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_baseline_notifications_24));
+        Drawable whiteBell = AppCompatResources.getDrawable(this, R.drawable.ic_baseline_notifications_24);
+        Drawable wrappedDrawable = DrawableCompat.wrap(whiteBell);
+        DrawableCompat.setTint(wrappedDrawable, Color.WHITE);
+        settingsItem.setIcon(whiteBell);
 
         return super.onPrepareOptionsMenu(menu);
     }
