@@ -19,7 +19,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.malikendsley.quipswap.navfragments.NewProfileFragment;
+import com.malikendsley.quipswap.navfragments.ProfileFragment;
 import com.malikendsley.quipswap.navfragments.SignInFragment;
 import com.malikendsley.quipswap.navfragments.ReceivedFragment;
 import com.malikendsley.quipswap.navfragments.SentFragment;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     SentFragment sentFragment;
     ReceivedFragment recFragment;
-    NewProfileFragment loggedInFragment;
+    ProfileFragment loggedInFragment;
     SignInFragment signInFragment;
     @SuppressLint("NonConstantResourceId")
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     if (loggedInFragment == null) {
                         //Log.i(TAG, "Generating");
-                        loggedInFragment = new NewProfileFragment();
+                        loggedInFragment = new ProfileFragment();
                     }
                     //User is Logged in
                     Log.d(TAG, "onNavigationItemSelected User logged in");

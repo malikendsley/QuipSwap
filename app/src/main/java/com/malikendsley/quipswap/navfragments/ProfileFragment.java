@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 import javax.annotation.Nullable;
 
-public class NewProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     FirebaseHandler mdb = new FirebaseHandler(mDatabase);
