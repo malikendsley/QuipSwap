@@ -11,8 +11,7 @@ import android.widget.RemoteViews;
  */
 public class QuipWidget extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.quip_widget);
@@ -35,15 +34,5 @@ public class QuipWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             QuipWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
         }
-    }
-
-    @Override
-    public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
     }
 }

@@ -16,6 +16,8 @@ public class SharedQuip {
     public String URI;
     @PropertyName("QID")
     public String QID;
+    @PropertyName("Timestamp")
+    public String Timestamp;
 
     public SharedQuip() {
         //necessary for firebase
@@ -29,10 +31,11 @@ public class SharedQuip {
     //it appears the id of an element of the database may not be
     //immediately known upon its creation so an alternate
     //constructor is provided or convenience
-    public SharedQuip(String URI, String sender, String recipient) {
+    public SharedQuip(String URI, String sender, String recipient, String timestamp) {
         this.Sender = sender;
         this.Recipient = recipient;
         this.URI = URI;
+        this.Timestamp = timestamp;
     }
 
     @NonNull

@@ -67,7 +67,7 @@ public class ReceivedFragment extends Fragment {
             ReceivedFragment.this.startActivity(new Intent(ReceivedFragment.this.getContext(), MakeQuipActivity.class));
         });
 
-        mdb.retrieveMyQuips(new QuipRetrieveListener() {
+        mdb.retrieveReceivedQuips(new QuipRetrieveListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRetrieveComplete(ArrayList<SharedQuip> quips) {

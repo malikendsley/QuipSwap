@@ -1,14 +1,7 @@
 package com.malikendsley.firebaseutils;
 
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +21,7 @@ import com.malikendsley.firebaseutils.schema.Quip;
 import com.malikendsley.firebaseutils.schema.SharedQuip;
 import com.malikendsley.firebaseutils.schema.User;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
@@ -95,7 +89,8 @@ public class FirebaseHandler {
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 //asynchronously retrieve the URL of the image
                 Log.i(TAG, "URI: " + uri);
-                Quip q = new Quip(uri.toString(), mAuth.getUid(), (new java.sql.Timestamp(System.currentTimeMillis()).toString()));
+                Long time = System.currentTimeMillis();
+                Quip q = new Quip(uri.toString(), mAuth.getUid(), time.toString());
                 DatabaseReference dbr = mDatabase.child("Quips").push();
                 String key = dbr.getKey();
                 dbr.setValue(q).addOnCompleteListener(task -> {
@@ -103,7 +98,7 @@ public class FirebaseHandler {
                         Log.i(TAG, "Quip Fail");
                         listener.onUploadFail(task.getException());
                     } else {
-                        SharedQuip sq = new SharedQuip(uri.toString(), mAuth.getUid(), recipientUID);
+                        SharedQuip sq = new SharedQuip(uri.toString(), mAuth.getUid(), recipientUID, time.toString());
                         sq.QID = key;
                         mDatabase.child("SharedQuips").push().setValue(sq).addOnCompleteListener(task1 -> {
                             if (!task1.isSuccessful()) {
@@ -120,7 +115,7 @@ public class FirebaseHandler {
         });
     }
 
-    public void retrieveMyQuips(QuipRetrieveListener listener) {
+    public void retrieveReceivedQuips(QuipRetrieveListener listener) {
         ArrayList<SharedQuip> list = new ArrayList<>();
 
         mDatabase.child("SharedQuips").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
@@ -243,12 +238,14 @@ public class FirebaseHandler {
                                 listener.onResult("");
                             });
                         }
+
                         @Override
                         public void onRequestsFailed(Exception e) {
                             listener.onDatabaseException(e);
                         }
                     });
                 }
+
                 @Override
                 public void onRequestsFailed(Exception e) {
                     listener.onDatabaseException(e);
