@@ -136,6 +136,9 @@ public class FriendRequestsActivity extends AppCompatActivity {
             case R.id.settingsOption:
                 Snackbar.make(findViewById(android.R.id.content), "Coming Soon", Snackbar.LENGTH_SHORT).show();
                 break;
+            case R.id.logoutOption:
+                mAuth.signOut();
+                finish();
 
         }
         return true;
