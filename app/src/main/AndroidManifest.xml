@@ -14,7 +14,7 @@
         android:theme="@style/Theme.QuipSwap">
         <receiver
             android:name=".QuipWidget"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
