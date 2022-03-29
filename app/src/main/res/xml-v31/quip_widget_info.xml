@@ -7,6 +7,9 @@
     android:minWidth="110dp"
     android:minHeight="110dp"
     android:previewImage="@drawable/ic_app_logo"
+    android:previewLayout="@layout/quip_widget"
     android:resizeMode="none"
+    android:targetCellWidth="3"
+    android:targetCellHeight="3"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen" />
