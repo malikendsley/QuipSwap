@@ -28,7 +28,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     FirebaseHandler mdb = new FirebaseHandler(mDatabase);
-    private FirebaseAuth mAuth;
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private EditText username;
     private EditText email;
     private EditText password;
@@ -37,8 +37,6 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-
-        mAuth = FirebaseAuth.getInstance();
         username = findViewById(R.id.signUpUsername);
         email = findViewById(R.id.signupEmail);
         password = findViewById(R.id.signUpPassword);

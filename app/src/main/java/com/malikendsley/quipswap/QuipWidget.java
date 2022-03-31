@@ -5,6 +5,12 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.widget.RemoteViews;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.malikendsley.firebaseutils.FirebaseHandler;
+import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
+
 /**
  * Implementation of App Widget functionality.
  * App Widget Configuration implemented in {@link QuipWidgetConfigureActivity QuipWidgetConfigureActivity}
@@ -13,13 +19,22 @@ public class QuipWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
+        //TODO: allow a user to choose which friend's Quips they want to see and store it as an extra
         CharSequence widgetText = QuipWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.quip_widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
 
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        FirebaseHandler mdb = new FirebaseHandler(mDatabase);
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        //TODO: replace this call (assuming this one works) with a new call to retrieve recent image by UID
+        mdb.resolveUsername(mAuth.getUid(), UID -> {
+            views.setTextViewText(R.id.appwidget_text, UID);
+            // Instruct the widget manager to update the widget
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        });
+
     }
 
     @Override

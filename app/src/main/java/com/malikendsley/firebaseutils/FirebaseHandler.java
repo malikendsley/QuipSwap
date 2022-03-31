@@ -21,7 +21,6 @@ import com.malikendsley.firebaseutils.schema.Quip;
 import com.malikendsley.firebaseutils.schema.SharedQuip;
 import com.malikendsley.firebaseutils.schema.User;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
@@ -89,8 +88,8 @@ public class FirebaseHandler {
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 //asynchronously retrieve the URL of the image
                 Log.i(TAG, "URI: " + uri);
-                Long time = System.currentTimeMillis();
-                Quip q = new Quip(uri.toString(), mAuth.getUid(), time.toString());
+                long time = System.currentTimeMillis();
+                Quip q = new Quip(uri.toString(), mAuth.getUid(), Long.toString(time));
                 DatabaseReference dbr = mDatabase.child("Quips").push();
                 String key = dbr.getKey();
                 dbr.setValue(q).addOnCompleteListener(task -> {
@@ -98,7 +97,7 @@ public class FirebaseHandler {
                         Log.i(TAG, "Quip Fail");
                         listener.onUploadFail(task.getException());
                     } else {
-                        SharedQuip sq = new SharedQuip(uri.toString(), mAuth.getUid(), recipientUID, time.toString());
+                        SharedQuip sq = new SharedQuip(uri.toString(), mAuth.getUid(), recipientUID, Long.toString(time));
                         sq.QID = key;
                         mDatabase.child("SharedQuips").push().setValue(sq).addOnCompleteListener(task1 -> {
                             if (!task1.isSuccessful()) {
