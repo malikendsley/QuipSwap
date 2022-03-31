@@ -15,7 +15,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.firebaseutils.schema.User;
-import com.malikendsley.firebaseutils.interfaces.FriendClickListener;
+import com.malikendsley.firebaseutils.interfaces.RowClickListener;
 import com.malikendsley.quipswap.R;
 
 import java.lang.ref.WeakReference;
@@ -24,12 +24,12 @@ import java.util.ArrayList;
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder> {
     private static final String TAG = "Own";
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    private final FriendClickListener listener;
+    private final RowClickListener listener;
     ArrayList<Friendship> list;
     User user = new User();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    public FriendAdapter(ArrayList<Friendship> list, FriendClickListener listener) {
+    public FriendAdapter(ArrayList<Friendship> list, RowClickListener listener) {
         this.list = list;
         this.listener = listener;
     }
@@ -64,11 +64,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
     public static class FriendViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private final WeakReference<FriendClickListener> listenerRef;
+        private final WeakReference<RowClickListener> listenerRef;
         TextView FID, username;
         CardView row;
 
-        public FriendViewHolder(@NonNull View itemView, FriendClickListener listener) {
+        public FriendViewHolder(@NonNull View itemView, RowClickListener listener) {
             super(itemView);
 
             listenerRef = new WeakReference<>(listener);
@@ -83,7 +83,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         @Override
         public void onClick(View v) {
             if (v.getId() == row.getId()) {
-                listenerRef.get().onFriendClicked(getAdapterPosition());
+                Log.i(TAG, "Row " + getAdapterPosition() + " clicked");
+                listenerRef.get().onRowClicked(getAdapterPosition());
             } else {
                 Log.i(TAG, "Friend Adapter Problem");
             }

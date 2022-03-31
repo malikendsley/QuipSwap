@@ -1,6 +1,7 @@
 package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -74,7 +75,9 @@ public class FriendRequestsActivity extends AppCompatActivity {
         });
 
         //element setup
-        findViewById(R.id.friendRequestsBackButton).setOnClickListener(view -> finish());
+        findViewById(R.id.friendRequestsBackButton).setOnClickListener(view -> {
+            finish();
+        });
         noFriendRequestsFlavor = findViewById(R.id.noPendingRequestsFlavor);
 
         //friend request recycler setup
@@ -103,8 +106,13 @@ public class FriendRequestsActivity extends AppCompatActivity {
         MenuItem settingsItem = menu.findItem(R.id.friendRequestsAppBar);
         // set your desired icon here based on a flag if you like
         Drawable whiteBell = AppCompatResources.getDrawable(this, R.drawable.ic_baseline_notifications_24);
-        Drawable wrappedDrawable = DrawableCompat.wrap(whiteBell);
-        DrawableCompat.setTint(wrappedDrawable, Color.WHITE);
+        Drawable wrappedDrawable = null;
+        if (whiteBell != null) {
+            wrappedDrawable = DrawableCompat.wrap(whiteBell);
+        }
+        if (wrappedDrawable != null) {
+            DrawableCompat.setTint(wrappedDrawable, Color.WHITE);
+        }
         settingsItem.setIcon(whiteBell);
 
         return super.onPrepareOptionsMenu(menu);

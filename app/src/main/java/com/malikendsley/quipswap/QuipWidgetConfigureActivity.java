@@ -6,10 +6,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.malikendsley.firebaseutils.adapters.FriendAdapter;
+import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.quipswap.databinding.QuipWidgetConfigureBinding;
+
+import java.util.ArrayList;
 
 /**
  * The configuration screen for the {@link QuipWidget QuipWidget} AppWidget.
@@ -18,28 +24,12 @@ public class QuipWidgetConfigureActivity extends Activity {
 
     private static final String PREFS_NAME = "com.malikendsley.quipswap.QuipWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
+    RecyclerView friendRecycler;
+    FriendAdapter friendAdapter;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    ArrayList<Friendship> friendList = new ArrayList<>();
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    EditText mAppWidgetText;
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            final Context context = QuipWidgetConfigureActivity.this;
-
-            // When the button is clicked, store the string locally
-            String widgetText = mAppWidgetText.getText().toString();
-            saveTitlePref(context, mAppWidgetId, widgetText);
-
-            // It is the responsibility of the configuration activity to update the app widget
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            QuipWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
-
-            // Make sure we pass back the original appWidgetId
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            setResult(RESULT_OK, resultValue);
-            finish();
-        }
-    };
-    private QuipWidgetConfigureBinding binding;
+    String mFriendUID;
 
     public QuipWidgetConfigureActivity() {
         super();
@@ -54,11 +44,11 @@ public class QuipWidgetConfigureActivity extends Activity {
 
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
-    static String loadTitlePref(Context context, int appWidgetId) {
+    static String loadFriendURI(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-        if (titleValue != null) {
-            return titleValue;
+        String friendUID = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
+        if (friendUID != null) {
+            return friendUID;
         } else {
             return context.getString(R.string.appwidget_text);
         }
@@ -78,11 +68,11 @@ public class QuipWidgetConfigureActivity extends Activity {
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
 
-        binding = QuipWidgetConfigureBinding.inflate(getLayoutInflater());
+        com.malikendsley.quipswap.databinding.QuipWidgetConfigureBinding binding = QuipWidgetConfigureBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        mAppWidgetText = binding.appwidgetText;
-        binding.addButton.setOnClickListener(mOnClickListener);
+        //mAppWidgetText = binding.appwidgetText;
+        binding.addButton.setOnClickListener(view -> finish());
 
         // Find the widget id from the intent.
         Intent intent = getIntent();
@@ -98,6 +88,27 @@ public class QuipWidgetConfigureActivity extends Activity {
             return;
         }
 
-        mAppWidgetText.setText(loadTitlePref(QuipWidgetConfigureActivity.this, mAppWidgetId));
+        friendRecycler = findViewById(R.id.quip_widget_configure_recycler);
+        friendRecycler.setHasFixedSize(true);
+        friendRecycler.setLayoutManager(new LinearLayoutManager(this));
+        //when a friend is selected, store their UID in preferences for the QuipWidget.java class to use
+        friendAdapter = new FriendAdapter(friendList, position -> {
+            mFriendUID = (friendList.get(position).getUser1().equals(mAuth.getUid())) ? friendList.get(position).getUser2() : friendList.get(position).getUser1();
+            final Context context = QuipWidgetConfigureActivity.this;
+            // When the button is clicked, store the string locally
+            saveTitlePref(context, mAppWidgetId, mFriendUID);
+            // It is the responsibility of the configuration activity to update the app widget
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            QuipWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
+            // Make sure we pass back the original appWidgetId
+            Intent resultValue = new Intent();
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+            QuipWidgetConfigureActivity.this.setResult(RESULT_OK, resultValue);
+            QuipWidgetConfigureActivity.this.finish();
+        });
+        friendRecycler.setAdapter(friendAdapter);
+
+
+        //mAppWidgetText.setText(loadTitlePref(QuipWidgetConfigureActivity.this, mAppWidgetId));
     }
 }

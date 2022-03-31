@@ -55,7 +55,6 @@ public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.Sh
             Log.i(TAG, "URL Download Failed");
             e.printStackTrace();
         });
-
     }
 
     @Override

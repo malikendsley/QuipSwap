@@ -23,20 +23,22 @@ public class FriendRequest {
         this.Recipient = Recipient;
     }
 
+    @Exclude
     public boolean isExpandable() {
         return expandable;
     }
 
+    @Exclude
     public void setExpandable(boolean expandable) {
         this.expandable = expandable;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public String getKey() {
         return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     @PropertyName("Sender")

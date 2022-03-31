@@ -189,9 +189,9 @@ public class FirebaseHandler {
         }).addOnFailureListener(listener::onRetrieveFailed);
     }
 
-    public void tryAddFriend(String friendUID, FriendAddListener listener) {
+    public void tryAddFriend(String friendUsername, FriendAddListener listener) {
         //validate, try to add friend according to rules
-        resolveUsername(friendUID, resolvedUID -> {
+        resolveUsername(friendUsername, resolvedUID -> {
             //must exist
             if (resolvedUID == null) {
                 listener.onResult("User does not exist");
@@ -233,7 +233,7 @@ public class FirebaseHandler {
                                 }
                                 //all clear
                                 //Log.i(TAG, "Request created");
-                                mDatabase.child("FriendRequests").push().setValue(new FriendRequest(mAuth.getUid(), friendUID));
+                                mDatabase.child("FriendRequests").push().setValue(new FriendRequest(mAuth.getUid(), resolvedUID));
                                 listener.onResult("");
                             });
                         }

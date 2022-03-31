@@ -20,9 +20,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.malikendsley.quipswap.navfragments.ProfileFragment;
-import com.malikendsley.quipswap.navfragments.SignInFragment;
 import com.malikendsley.quipswap.navfragments.ReceivedFragment;
 import com.malikendsley.quipswap.navfragments.SentFragment;
+import com.malikendsley.quipswap.navfragments.SignInFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+        SplashScreen.installSplashScreen(this);
         user = FirebaseAuth.getInstance().getCurrentUser();
         setContentView(R.layout.activity_main);
 
@@ -111,7 +111,17 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.friendRequestsAppBar:
-                startActivity(new Intent(this, FriendRequestsActivity.class));
+                if (user != null) {
+                    //Log.i(TAG, "");
+                    startActivity(new Intent(this, FriendRequestsActivity.class));
+                } else {
+                    if (signInFragment == null) {
+                        signInFragment = new SignInFragment();
+                    }
+
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, signInFragment).commit();
+                    Toast.makeText(this, "Please log in to continue", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.aboutUsOption:
                 //unlikely but if this presents a perf issue can pre-build

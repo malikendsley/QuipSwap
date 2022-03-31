@@ -3,13 +3,9 @@ package com.malikendsley.quipswap;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.widget.RemoteViews;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
 
 /**
  * Implementation of App Widget functionality.
@@ -17,23 +13,19 @@ import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
  */
 public class QuipWidget extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    final static String TAG = "Own";
 
-        //TODO: allow a user to choose which friend's Quips they want to see and store it as an extra
-        CharSequence widgetText = QuipWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        Log.i(TAG, "updateAppWidget called");
+        //load the UID that this widget should pull from
+        String friendUID = QuipWidgetConfigureActivity.loadFriendURI(context, appWidgetId);
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.quip_widget);
 
-        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        FirebaseHandler mdb = new FirebaseHandler(mDatabase);
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        new GetQuipTask(views, appWidgetId, appWidgetManager).execute(friendUID);
 
-        //TODO: replace this call (assuming this one works) with a new call to retrieve recent image by UID
-        mdb.resolveUsername(mAuth.getUid(), UID -> {
-            views.setTextViewText(R.id.appwidget_text, UID);
-            // Instruct the widget manager to update the widget
-            appWidgetManager.updateAppWidget(appWidgetId, views);
-        });
+        views.setImageViewBitmap(R.id.appwidget_image, BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_app_logo));
+        appWidgetManager.updateAppWidget(appWidgetId, views);
 
     }
 

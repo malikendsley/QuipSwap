@@ -28,4 +28,7 @@
     <string name="app_widget_description">Show the most recent Quip sent to you!</string>
     <string name="quip_swap">Quip Swap</string>
     <string name="refresh">Refresh</string>
+    <string name="select_which_friend">Select which friend whose quips you would like to see in this widget.</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_source">Select Source</string>
 </resources>
