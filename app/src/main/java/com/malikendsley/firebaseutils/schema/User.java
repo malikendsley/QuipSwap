@@ -1,31 +1,20 @@
 package com.malikendsley.firebaseutils.schema;
 
+import androidx.annotation.Nullable;
+
 import com.google.firebase.database.PropertyName;
 
 public class User {
-
+    @PropertyName("Username")
     public final String Username;
+    @PropertyName("Email")
     public final String Email;
-    private String UID;
 
     @SuppressWarnings("unused")
     public User() {
         Username = "unset";
         Email = "unset";
-        UID = "unset";
         //necessary for firebase
-    }
-    @PropertyName("Username")
-    public String getUsername() {
-        return Username;
-    }
-    @PropertyName("Email")
-    public String getEmail() {
-        return Email;
-    }
-
-    public void setUID(String UID) {
-        this.UID = UID;
     }
 
     //for the case where the UID isn't known at the time of creation
@@ -34,4 +23,13 @@ public class User {
         this.Email = email;
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        User other = (User) obj;
+        return Username.equals(other.Username) && Email.equals(other.Email);
+    }
 }
