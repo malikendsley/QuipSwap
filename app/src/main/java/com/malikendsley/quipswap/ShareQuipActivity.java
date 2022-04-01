@@ -104,7 +104,10 @@ public class ShareQuipActivity extends AppCompatActivity {
             @Override
             public void onUploadComplete(String URI) {
                 Toast.makeText(ShareQuipActivity.this, "Quip Shared!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(ShareQuipActivity.this, MainActivity.class));
+                Intent intent = new Intent(ShareQuipActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                ShareQuipActivity.this.finish();
             }
 
             @Override

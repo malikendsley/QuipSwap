@@ -102,7 +102,7 @@ public class ProfileFragment extends Fragment {
             public void onRetrieveFailed(Exception e) {
                 e.printStackTrace();
                 //Log.i(TAG, "Profile: Resolve User failed");
-                Toast.makeText(getContext(), "Having trouble connecting to database", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Profile: Having trouble connecting to database", Toast.LENGTH_SHORT).show();
             }
         });
 
