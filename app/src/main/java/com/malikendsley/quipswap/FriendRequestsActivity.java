@@ -1,9 +1,6 @@
 package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,8 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -75,9 +70,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
         });
 
         //element setup
-        findViewById(R.id.friendRequestsBackButton).setOnClickListener(view -> {
-            finish();
-        });
+        findViewById(R.id.friendRequestsBackButton).setOnClickListener(view -> finish());
         noFriendRequestsFlavor = findViewById(R.id.noPendingRequestsFlavor);
 
         //friend request recycler setup
@@ -100,29 +93,11 @@ public class FriendRequestsActivity extends AppCompatActivity {
         //change menu icon to filled in bell
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-
-        MenuItem settingsItem = menu.findItem(R.id.friendRequestsAppBar);
-        // set your desired icon here based on a flag if you like
-        Drawable whiteBell = AppCompatResources.getDrawable(this, R.drawable.ic_baseline_notifications_24);
-        Drawable wrappedDrawable = null;
-        if (whiteBell != null) {
-            wrappedDrawable = DrawableCompat.wrap(whiteBell);
-        }
-        if (wrappedDrawable != null) {
-            DrawableCompat.setTint(wrappedDrawable, Color.WHITE);
-        }
-        settingsItem.setIcon(whiteBell);
-
-        return super.onPrepareOptionsMenu(menu);
-    }
-
     //add options menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+        inflater.inflate(R.menu.menu_friend_requests, menu);
 
         return true;
     }
@@ -144,10 +119,6 @@ public class FriendRequestsActivity extends AppCompatActivity {
             case R.id.settingsOption:
                 Snackbar.make(findViewById(android.R.id.content), "Coming Soon", Snackbar.LENGTH_SHORT).show();
                 break;
-            case R.id.logoutOption:
-                mAuth.signOut();
-                finish();
-
         }
         return true;
     }
