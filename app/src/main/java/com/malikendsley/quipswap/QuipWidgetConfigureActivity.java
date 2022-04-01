@@ -6,11 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.adapters.FriendAdapter;
 import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.quipswap.databinding.QuipWidgetConfigureBinding;
@@ -22,6 +26,7 @@ import java.util.ArrayList;
  */
 public class QuipWidgetConfigureActivity extends Activity {
 
+    private static final String TAG = "Own";
     private static final String PREFS_NAME = "com.malikendsley.quipswap.QuipWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
     RecyclerView friendRecycler;
@@ -30,6 +35,8 @@ public class QuipWidgetConfigureActivity extends Activity {
     ArrayList<Friendship> friendList = new ArrayList<>();
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     String mFriendUID;
+    private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    FirebaseHandler mdb = new FirebaseHandler(mDatabase);
 
     public QuipWidgetConfigureActivity() {
         super();
@@ -88,14 +95,28 @@ public class QuipWidgetConfigureActivity extends Activity {
             return;
         }
 
-        friendRecycler = findViewById(R.id.quip_widget_configure_recycler);
-        friendRecycler.setHasFixedSize(true);
-        friendRecycler.setLayoutManager(new LinearLayoutManager(this));
+        //populate friends
+        //populate friends
+        mdb.retrieveFriends(friendsList -> {
+            //Log.i(TAG, "Adapter: Friends Retrieved");
+            if (friendsList != null) {
+                friendList.clear();
+                friendList.addAll(friendsList);
+                //Log.i(TAG, friendList.toString());
+            }
+            friendAdapter.notifyDataSetChanged();
+        });
+
+        //set up recycler
+        initFriendRecycler();
+
         //when a friend is selected, store their UID in preferences for the QuipWidget.java class to use
         friendAdapter = new FriendAdapter(friendList, position -> {
+
             mFriendUID = (friendList.get(position).getUser1().equals(mAuth.getUid())) ? friendList.get(position).getUser2() : friendList.get(position).getUser1();
             final Context context = QuipWidgetConfigureActivity.this;
             // When the button is clicked, store the string locally
+            Log.i(TAG, "Row Clicked, storing " + mFriendUID + " in sharedPrefs");
             saveTitlePref(context, mAppWidgetId, mFriendUID);
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -110,5 +131,11 @@ public class QuipWidgetConfigureActivity extends Activity {
 
 
         //mAppWidgetText.setText(loadTitlePref(QuipWidgetConfigureActivity.this, mAppWidgetId));
+    }
+
+    private void initFriendRecycler() {
+        friendRecycler = findViewById(R.id.quip_widget_configure_recycler);
+        friendRecycler.setHasFixedSize(true);
+        friendRecycler.setLayoutManager(new LinearLayoutManager(this));
     }
 }

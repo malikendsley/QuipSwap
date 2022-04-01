@@ -26,7 +26,8 @@
 
         <activity
             android:name=".QuipWidgetConfigureActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.QuipSwap">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

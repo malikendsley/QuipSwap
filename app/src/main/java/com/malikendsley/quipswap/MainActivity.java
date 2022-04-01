@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     ReceivedFragment recFragment;
     ProfileFragment loggedInFragment;
     SignInFragment signInFragment;
-    
+
     @SuppressLint("NonConstantResourceId")
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
         Fragment selectedFragment = new ReceivedFragment();
