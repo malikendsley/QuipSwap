@@ -18,7 +18,8 @@ public class QuipWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         Log.i(TAG, "updateAppWidget called");
         //load the UID that this widget should pull from
-        String friendUID = QuipWidgetConfigureActivity.loadFriendURI(context, appWidgetId);
+        String friendUID = QuipWidgetConfigureActivity.loadFriendUIDPref(context, appWidgetId);
+        Log.i(TAG, "Loaded " + friendUID + " from sharedPrefs");
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.quip_widget);
 

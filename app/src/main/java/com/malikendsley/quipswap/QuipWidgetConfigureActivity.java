@@ -43,7 +43,7 @@ public class QuipWidgetConfigureActivity extends Activity {
     }
 
     // Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, String text) {
+    static void saveFriendUIDPref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
         prefs.apply();
@@ -51,7 +51,7 @@ public class QuipWidgetConfigureActivity extends Activity {
 
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
-    static String loadFriendURI(Context context, int appWidgetId) {
+    static String loadFriendUIDPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String friendUID = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
         if (friendUID != null) {
@@ -117,7 +117,7 @@ public class QuipWidgetConfigureActivity extends Activity {
             final Context context = QuipWidgetConfigureActivity.this;
             // When the button is clicked, store the string locally
             Log.i(TAG, "Row Clicked, storing " + mFriendUID + " in sharedPrefs");
-            saveTitlePref(context, mAppWidgetId, mFriendUID);
+            saveFriendUIDPref(context, mAppWidgetId, mFriendUID);
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             QuipWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
