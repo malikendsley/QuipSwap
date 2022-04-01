@@ -1,6 +1,9 @@
 package com.malikendsley.firebaseutils;
 
+import android.graphics.BitmapFactory;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -12,6 +15,7 @@ import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
+import com.malikendsley.firebaseutils.interfaces.RecentQuipListener;
 import com.malikendsley.firebaseutils.interfaces.RequestRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
@@ -22,6 +26,7 @@ import com.malikendsley.firebaseutils.schema.SharedQuip;
 import com.malikendsley.firebaseutils.schema.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -76,7 +81,7 @@ public class FirebaseHandler {
     }
 
     //Create a quip in the storage database and if successful, share it
-    public void shareQuip(String recipientUID, byte[] byteArray, QuipUploadListener listener) {
+    public void shareQuip(String recipientUID, byte[] byteArray, @NonNull QuipUploadListener listener) {
         //upload the image to the database
         String path = "users/" + mAuth.getUid() + "/quips/" + UUID.randomUUID() + ".jpeg";
         Log.i(TAG, "Submitting image to " + path);
@@ -149,7 +154,7 @@ public class FirebaseHandler {
         });
     }
 
-    public void retrieveReceivedRequests(RequestRetrieveListener listener) {
+    public void retrieveReceivedRequests(@NonNull RequestRetrieveListener listener) {
         ArrayList<FriendRequest> list = new ArrayList<>();
 
         //retrieve friend requests and populate
@@ -164,7 +169,7 @@ public class FirebaseHandler {
 
     }
 
-    public void retrieveSentRequests(RequestRetrieveListener listener) {
+    public void retrieveSentRequests(@NonNull RequestRetrieveListener listener) {
         ArrayList<FriendRequest> list = new ArrayList<>();
 
         //retrieve friend requests
@@ -178,7 +183,7 @@ public class FirebaseHandler {
         }).addOnFailureListener(listener::onRequestsFailed);
     }
 
-    public void retrieveUser(String UID, UserRetrievedListener listener) {
+    public void retrieveUser(String UID, @NonNull UserRetrievedListener listener) {
         mDatabase.child("Users").child(UID).get().addOnSuccessListener(dataSnapshot -> {
             User user = (dataSnapshot.getValue(User.class));
             if (user != null) {
@@ -252,5 +257,42 @@ public class FirebaseHandler {
                 }
             });
         });
+    }
+
+    //TODO: This solution does not scale, need to keep metadata of most recent quip and access that directly
+    //It still, however, works as a proof of concept and since this is the last thing before MVP
+    //I can accept it
+
+    public void getMostRecentQuipFromUser(String UID, @NonNull RecentQuipListener listener) {
+        Log.i(TAG, "UID: " + UID);
+        ArrayList<SharedQuip> sqs = new ArrayList<>();
+        //get all quips sent to you
+        mDatabase.child("SharedQuips").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnSuccessListener(dataSnapshot -> {
+            //find the quips in this list that match your friend
+            for (DataSnapshot sharedQuip : dataSnapshot.getChildren()) {
+                SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
+                //Log.i(TAG, "Pulled quip: " + sq.toString());
+                //add the quips that are to you AND from the desired user
+                if (sq.Sender.equals(UID)) {
+                    Log.i(TAG, "Adding");
+                    sqs.add(sq);
+                }
+            }
+            if (sqs.isEmpty()) {
+                Log.i(TAG, "Shared quips list is empty");
+                //if this list is empty no bitmap can exist
+                listener.onRetrieved(null);
+                return;
+            }
+            //obtain the URI of the most recent quip sent to you
+            String URI = Collections.max(sqs).URI;
+            StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl(URI);
+            final long ONE_MEGABYTE = 1024 * 1024;
+
+            httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> listener.onRetrieved(BitmapFactory.decodeByteArray(bytes, 0, bytes.length))).addOnFailureListener(e -> {
+                Log.i(TAG, "URL Download Failed");
+                e.printStackTrace();
+            });
+        }).addOnFailureListener(listener::onFailed);
     }
 }

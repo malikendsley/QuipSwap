@@ -3,7 +3,6 @@ package com.malikendsley.quipswap;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -25,7 +24,6 @@ public class QuipWidget extends AppWidgetProvider {
 
         new GetQuipTask(views, appWidgetId, appWidgetManager).execute(friendUID);
 
-        views.setImageViewBitmap(R.id.appwidget_image, BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_app_logo));
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
     }
