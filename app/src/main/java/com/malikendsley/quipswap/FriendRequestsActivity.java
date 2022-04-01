@@ -127,7 +127,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
         //delete friend request
         deleteFriend(position);
         //add the friend
-        Friendship f = new Friendship(mAuth.getUid(), requestList.get(position).getSender(), (new java.sql.Timestamp(System.currentTimeMillis()).toString()));
+        Friendship f = new Friendship(mAuth.getUid(), requestList.get(position).getSender(), System.currentTimeMillis());
         mDatabase.child("Friendships").push().setValue(f).addOnSuccessListener(unused -> Toast.makeText(this, "Friend Added", Toast.LENGTH_SHORT).show());
     }
 

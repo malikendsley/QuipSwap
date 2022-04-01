@@ -97,9 +97,10 @@ public class FirebaseHandler {
                         Log.i(TAG, "Quip Fail");
                         listener.onUploadFail(task.getException());
                     } else {
-                        SharedQuip sq = new SharedQuip(uri.toString(), mAuth.getUid(), recipientUID, Long.toString(time));
+                        SharedQuip sq = new SharedQuip(uri.toString(), mAuth.getUid(), recipientUID, time);
                         sq.QID = key;
-                        mDatabase.child("SharedQuips").push().setValue(sq).addOnCompleteListener(task1 -> {
+                        DatabaseReference dbr2 = mDatabase.child("SharedQuips").push();
+                        dbr2.setValue(sq).addOnCompleteListener(task1 -> {
                             if (!task1.isSuccessful()) {
                                 Log.i(TAG, "SharedQuip Fail");
                                 listener.onUploadFail(task1.getException());

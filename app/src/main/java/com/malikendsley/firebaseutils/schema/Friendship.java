@@ -10,7 +10,7 @@ public class Friendship {
 
     public String User1 = null;
     public String User2 = null;
-    public String timestamp = null;
+    public Long timestamp = null;
     @Exclude
     private String key = null;
 
@@ -20,7 +20,7 @@ public class Friendship {
         //necessary for firebase
     }
 
-    public Friendship(String User1, String User2, String timestamp) {
+    public Friendship(String User1, String User2, Long timestamp) {
         this.User1 = User1;
         this.User2 = User2;
         this.timestamp = timestamp;
