@@ -53,7 +53,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
             user = userSnapshot.getValue(User.class);
             //get whichever user is not you
             holder.FID.setText(correctID);
-            holder.username.setText(user.getUsername());
+            holder.username.setText(user.Username);
         });
     }
 

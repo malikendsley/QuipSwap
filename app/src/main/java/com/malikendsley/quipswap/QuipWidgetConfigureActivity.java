@@ -52,12 +52,14 @@ public class QuipWidgetConfigureActivity extends Activity {
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static String loadFriendUIDPref(Context context, int appWidgetId) {
+        //Log.i(TAG, "loadFriendUID called");
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String friendUID = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
         if (friendUID != null) {
             return friendUID;
         } else {
-            return context.getString(R.string.appwidget_text);
+            //Log.i(TAG, "friend UID is null");
+            return "WAIT";
         }
     }
 

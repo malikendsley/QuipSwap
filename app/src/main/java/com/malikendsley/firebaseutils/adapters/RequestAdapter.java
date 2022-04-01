@@ -52,17 +52,14 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             //populate the card with this user's data
             if (requestSnapshot.exists()) {
                 user = requestSnapshot.getValue(User.class);
-                Objects.requireNonNull(user).setUID(request.getRecipient());
                 holder.RID.setText(request.getSender());
-                holder.username.setText(user.getUsername());
+                holder.username.setText(user.Username);
             } else {
                 Log.i(TAG, "DB Read failed");
             }
         });
-
         boolean isExpandable = list.get(position).isExpandable();
         holder.expandingSection.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
-
     }
 
     @Override

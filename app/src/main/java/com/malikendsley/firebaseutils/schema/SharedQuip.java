@@ -6,7 +6,7 @@ import com.google.firebase.database.PropertyName;
 
 @SuppressWarnings("unused")
 
-public class SharedQuip {
+public class SharedQuip implements Comparable<SharedQuip>{
 
     @PropertyName("Sender")
     public String Sender;
@@ -41,5 +41,12 @@ public class SharedQuip {
     @NonNull
     public String toString() {
         return Sender + " " + Recipient + " " + URI;
+    }
+
+
+    @Override
+    public int compareTo(SharedQuip sharedQuip) {
+        //"max" sharedQuip should be soonest, with the highest timestamp
+        return (int) (Timestamp - sharedQuip.Timestamp);
     }
 }

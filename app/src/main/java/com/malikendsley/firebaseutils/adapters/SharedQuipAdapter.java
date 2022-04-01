@@ -44,7 +44,7 @@ public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.Sh
     public void onBindViewHolder(@NonNull SharedQuipViewHolder holder, int position) {
         //list is populated externally
         SharedQuip sq = list.get(position);
-        Log.i("Own", "onBind: " + sq.toString());
+        //Log.i("Own", "onBind: " + sq.toString());
 
         holder.UID.setText(isSent ? sq.Recipient : sq.Sender);
 
