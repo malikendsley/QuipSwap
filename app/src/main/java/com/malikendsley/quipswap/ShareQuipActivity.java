@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -15,13 +16,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.adapters.FriendAdapter;
-import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
+import com.malikendsley.firebaseutils.schema.Friendship;
 
 import java.util.ArrayList;
 
@@ -34,6 +36,8 @@ public class ShareQuipActivity extends AppCompatActivity {
     RecyclerView friendRecycler;
     FriendAdapter friendAdapter;
     DatabaseReference mDatabase;
+
+    LinearProgressIndicator progressIndicator;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -48,6 +52,7 @@ public class ShareQuipActivity extends AppCompatActivity {
         setContentView(R.layout.activity_share_quip);
 
         Button cancelButton = findViewById(R.id.shareQuipCancel);
+        progressIndicator = findViewById(R.id.quip_upload_progress_bar);
 
         Log.i(TAG, "Retrieving bitmap");
         //intent work
@@ -64,7 +69,11 @@ public class ShareQuipActivity extends AppCompatActivity {
         friendRecycler = findViewById(R.id.selectFriendsRecyclerView);
         friendRecycler.setHasFixedSize(true);
         friendRecycler.setLayoutManager(new LinearLayoutManager(this));
-        friendAdapter = new FriendAdapter(friendList, position -> shareQuip(friendList.get(position)));
+        friendAdapter = new FriendAdapter(friendList, position -> {
+            //show progress bar
+            progressIndicator.setVisibility(View.VISIBLE);
+            ShareQuipActivity.this.shareQuip(friendList.get(position));
+        });
         friendRecycler.setAdapter(friendAdapter);
 
         mdb.retrieveFriends(friendsList -> {
@@ -108,6 +117,9 @@ public class ShareQuipActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 ShareQuipActivity.this.finish();
+                //hide progress bar
+                progressIndicator.setVisibility(View.GONE);
+
             }
 
             @Override
@@ -115,6 +127,13 @@ public class ShareQuipActivity extends AppCompatActivity {
                 Toast.makeText(ShareQuipActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, e.toString());
                 e.printStackTrace();
+
+            }
+
+            @Override
+            public void onProgress(double progress) {
+                //update progress
+                progressIndicator.setProgressCompat((int) progress, true);
             }
         });
     }

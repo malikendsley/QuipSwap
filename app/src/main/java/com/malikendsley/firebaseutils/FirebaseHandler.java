@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
@@ -117,6 +118,10 @@ public class FirebaseHandler {
                     }
                 });
             });
+        }).addOnProgressListener(snapshot -> {
+            double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+            Log.i(TAG, "Handler: Upload is " + progress + "% done");
+            listener.onProgress(progress);
         });
     }
 
