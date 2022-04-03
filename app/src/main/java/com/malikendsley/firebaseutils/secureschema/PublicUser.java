@@ -5,15 +5,25 @@ import com.google.firebase.database.PropertyName;
 public class PublicUser {
 
     @PropertyName("Username")
-    private final String username;
+    private final String Username;
+    @PropertyName("Key")
+    private String Key;
 
     public PublicUser(String username) {
-        this.username = username;
+        this.Username = username;
+    }
+
+    public String getKey() {
+        return Key;
+    }
+
+    public void setKey(String key) {
+        Key = key;
     }
 
     @PropertyName("Username")
-    public String getUsername(){
-        return username;
+    public String getUsername() {
+        return Username;
     }
 
 }

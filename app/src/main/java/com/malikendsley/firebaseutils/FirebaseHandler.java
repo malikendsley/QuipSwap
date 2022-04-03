@@ -143,7 +143,6 @@ public class FirebaseHandler {
 
     public void retrieveSentQuips(QuipRetrieveListener listener) {
         ArrayList<SharedQuip> list = new ArrayList<>();
-
         mDatabase.child("SharedQuips").orderByChild("Sender").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 listener.onRetrieveFail(task.getException());

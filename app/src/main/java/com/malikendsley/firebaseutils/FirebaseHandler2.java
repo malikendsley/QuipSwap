@@ -1,12 +1,12 @@
 package com.malikendsley.firebaseutils;
 
+import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -21,11 +21,13 @@ import com.malikendsley.firebaseutils.secureinterfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.secureinterfaces.GetRequestsListener;
 import com.malikendsley.firebaseutils.secureinterfaces.QuipRetrieveListener;
 import com.malikendsley.firebaseutils.secureinterfaces.RecentQuipListener;
+import com.malikendsley.firebaseutils.secureinterfaces.RegisterUserListener;
 import com.malikendsley.firebaseutils.secureinterfaces.ResolveListener;
 import com.malikendsley.firebaseutils.secureinterfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
 import com.malikendsley.firebaseutils.secureschema.PrivateUser;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
+import com.malikendsley.firebaseutils.secureschema.PublicUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,9 +41,11 @@ public class FirebaseHandler2 {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase;
     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+    Activity mActivity;
 
-    public FirebaseHandler2(DatabaseReference ref) {
+    public FirebaseHandler2(DatabaseReference ref, Activity activity) {
         mDatabase = ref;
+        mActivity = activity;
     }
 
     //convert a UID to a username
@@ -122,14 +126,13 @@ public class FirebaseHandler2 {
 
                 //these can be set up at the same time, they would fail or succeed for the same reason
                 DatabaseReference publicQuipsReference = mDatabase.child("QuipsPublic").push();
-                DatabaseReference privateQuipsReference = mDatabase.child("QuipsPrivate").push();
-                privateQuip.setKey(privateQuipsReference.getKey());
+                privateQuip.setKey(publicQuipsReference.getKey());
                 publicQuip.setKey(publicQuipsReference.getKey());
                 publicQuipsReference.setValue(publicQuip).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            privateQuipsReference.setValue(privateQuip).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            mDatabase.child("QuipsPrivate").child(publicQuipsReference.getKey()).setValue(privateQuip).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
@@ -278,20 +281,18 @@ public class FirebaseHandler2 {
                 //obtain the URI of said quip
                 PublicQuip mostRecent = Collections.max(quipList);
                 //TODO: since this is likely to change, don't make a function for it
-                mDatabase.child("QuipsPrivate").child(mostRecent.getSender()).child(mostRecent.getKey()).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
-                    @Override
-                    public void onSuccess(DataSnapshot dataSnapshot) {
-                        PrivateQuip pq = dataSnapshot.getValue(PrivateQuip.class);
-                        String URI = pq.getURI();
-                        StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl(URI);
-                        //just in case someone managed to pull something
-                        final long ONE_MEGABYTE = 1024 * 1024;
+                mDatabase.child("QuipsPrivate").child(mostRecent.getSender()).child(mostRecent.getKey()).get().addOnSuccessListener(dataSnapshot -> {
 
-                        httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> listener.onRetrieved(BitmapFactory.decodeByteArray(bytes, 0, bytes.length))).addOnFailureListener(e -> {
-                            Log.i(TAG, "getLatestQuip: URL Download Failed");
-                            e.printStackTrace();
-                        });
-                    }
+                    PrivateQuip pq = dataSnapshot.getValue(PrivateQuip.class);
+                    String URI = pq.getURI();
+                    StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl(URI);
+                    //just in case someone managed to pull something
+                    final long ONE_MEGABYTE = 1024 * 1024;
+
+                    httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> listener.onRetrieved(BitmapFactory.decodeByteArray(bytes, 0, bytes.length))).addOnFailureListener(e -> {
+                        Log.i(TAG, "getLatestQuip: URL Download Failed");
+                        e.printStackTrace();
+                    });
                 });
             }
 
@@ -301,7 +302,57 @@ public class FirebaseHandler2 {
             }
         });
     }
+
     //TODO move these db ops into the handler
     //register a user
-    //sign a user in
+    public void registerUser(String username, String email, String password, RegisterUserListener listener) {
+        //prevent duplicate usernames
+        usernameToUID(username, new UsernameResolveListener() {
+            @Override
+            public void onUsernameResolved(String UID) {
+                if (UID == null) {
+                    mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(mActivity, task -> {
+                        if (task.isSuccessful()) {
+                            Log.i(TAG, "registerUser: User Registered");
+                            PublicUser publicUser = new PublicUser(username);
+                            PrivateUser privateUser = new PrivateUser(username, email);
+                            //set up destinations
+                            mDatabase.child("UsersPublic").child(mAuth.getUid()).setValue(publicUser).addOnCompleteListener(publicTask -> {
+                                if (publicTask.isSuccessful()) {
+                                    mDatabase.child("UsersPrivate").child(mAuth.getUid()).setValue(privateUser).addOnCompleteListener(privateTask -> {
+                                        if (privateTask.isSuccessful()) {
+                                            mDatabase.child("TakenUsernames").child(username).setValue(mAuth.getUid()).addOnCompleteListener(indexTask -> {
+                                                if (indexTask.isSuccessful()) {
+                                                    Log.i(TAG, "registerUser: success");
+                                                    listener.onResult("");
+                                                } else {
+                                                    Log.e(TAG, "registerUser: index failed");
+                                                }
+                                            });
+                                        } else {
+                                            //private record failed
+                                            Log.e(TAG, "registerUser: private write failed");
+                                            listener.onDBFail(privateTask.getException());
+                                        }
+                                    });
+                                } else {
+                                    //public record failed
+                                    Log.e(TAG, "registerUser: public write failed");
+                                    listener.onDBFail(publicTask.getException());
+                                }
+                            });
+                        } else {
+                            //create user failed
+                            Log.i(TAG, "registerUser: User not registered");
+                            listener.onDBFail(task.getException());
+                        }
+                    });
+                } else {
+                    //username taken
+                    Log.e(TAG, "registerUser: Username Taken");
+                    listener.onResult("Username already taken");
+                }
+            }
+        });
+    }
 }
