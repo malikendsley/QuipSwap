@@ -9,7 +9,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
@@ -278,7 +277,7 @@ public class FirebaseHandler {
                 SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
                 //Log.i(TAG, "Pulled quip: " + sq.toString());
                 //add the quips that are to you AND from the desired user
-                if (sq.Sender.equals(UID)) {
+                if (sq != null && sq.Sender.equals(UID)) {
                     Log.i(TAG, "Adding");
                     sqs.add(sq);
                 }

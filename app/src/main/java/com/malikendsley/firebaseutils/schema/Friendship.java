@@ -5,14 +5,12 @@ import androidx.annotation.NonNull;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
-@SuppressWarnings("unused")
 public class Friendship {
 
     public String User1 = null;
     public String User2 = null;
     public Long timestamp = null;
-    @Exclude
-    private String key = null;
+
 
 
     @SuppressWarnings("unused")
@@ -36,16 +34,9 @@ public class Friendship {
         return User2;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
 
     @NonNull
     public String toString() {
-        return ("Friendship w/ key " + key + "\nUser 1: " + User1 + " friends with " + User2);
+        return ("Friendship"+ "\nUser 1: " + User1 + " friends with " + User2);
     }
 }
