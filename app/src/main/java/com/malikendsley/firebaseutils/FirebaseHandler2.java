@@ -303,7 +303,6 @@ public class FirebaseHandler2 {
         });
     }
 
-    //TODO move these db ops into the handler
     //register a user
     public void registerUser(String username, String email, String password, RegisterUserListener listener) {
         //prevent duplicate usernames

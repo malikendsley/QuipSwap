@@ -22,15 +22,15 @@ import java.util.ArrayList;
 
 public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapter.SecureFriendViewHolder> {
     private static final String TAG = "Own";
-    private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private final RowClickListener listener;
-    private final Activity mActivity;
     ArrayList<String> list;
-    
+    FirebaseHandler2 mdb2;
+
     public SecureFriendAdapter(ArrayList<String> list, RowClickListener listener, Activity mActivity) {
         this.list = list;
         this.listener = listener;
-        this.mActivity = mActivity;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mdb2 = new FirebaseHandler2(mDatabase, mActivity);
     }
 
     @NonNull
@@ -42,11 +42,10 @@ public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapte
 
     @Override
     public void onBindViewHolder(@NonNull SecureFriendViewHolder holder, int position) {
-        FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, mActivity);
 
         //list is populated externally
         String friend = list.get(position);
-        //get username from Username aync
+        //get username from Username async
         mdb2.UIDtoUsername(friend, holder.username::setText);
     }
 
@@ -58,7 +57,7 @@ public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapte
     public static class SecureFriendViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final WeakReference<RowClickListener> listenerRef;
-        TextView FID, username;
+        TextView username;
         CardView row;
 
         public SecureFriendViewHolder(@NonNull View itemView, RowClickListener listener) {

@@ -24,7 +24,7 @@
         android:layout_marginTop="30dp"
         android:autofillHints=""
         android:ems="10"
-        android:hint="@string/username"
+        android:hint="@string/usernameColon"
         android:imeOptions="actionNext"
         android:inputType="text"
         android:minHeight="48dp"
