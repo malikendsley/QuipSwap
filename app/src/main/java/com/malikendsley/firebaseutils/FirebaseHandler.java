@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public class FirebaseHandler {
 
-    //TODO: augment db interface with caching logic (or leverage firebase's)
+    //augment db interface with caching logic (or leverage firebase's)
     private static final String TAG = "Own";
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase;
@@ -262,7 +262,7 @@ public class FirebaseHandler {
         });
     }
 
-    //TODO: This solution does not scale, need to keep metadata of most recent quip and access that directly
+    //This solution does not scale, need to keep metadata of most recent quip and access that directly
     //It still, however, works as a proof of concept and since this is the last thing before MVP
     //I can accept it
 

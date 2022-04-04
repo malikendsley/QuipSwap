@@ -19,9 +19,9 @@ public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
     private final RemoteViews views;
     private final int WidgetID;
     private final AppWidgetManager WidgetManager;
+    //TODO migrate
     FirebaseHandler mdb = new FirebaseHandler(mDatabase);
     Bitmap defaultBitmap;
-    //TODO Remove test URL
 
     @SuppressWarnings("deprecation")
     public GetQuipTask(RemoteViews views, int appWidgetID, AppWidgetManager appWidgetManager) {

@@ -47,6 +47,7 @@ public class SentFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //TODO migrate
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mdb = new FirebaseHandler(mDatabase);

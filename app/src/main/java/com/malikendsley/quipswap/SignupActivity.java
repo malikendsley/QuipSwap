@@ -25,7 +25,7 @@ import java.util.Objects;
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "Own";
-
+    //TODO migrate
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     FirebaseHandler mdb = new FirebaseHandler(mDatabase);
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();

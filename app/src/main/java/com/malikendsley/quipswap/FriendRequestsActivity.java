@@ -38,6 +38,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
     //firebase setup
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     ArrayList<FriendRequest> requestList = new ArrayList<>();
+    //TODO migrate
     FirebaseHandler mdb = new FirebaseHandler(mDatabase);
 
     @Override

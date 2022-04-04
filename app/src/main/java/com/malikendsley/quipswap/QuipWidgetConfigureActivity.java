@@ -36,6 +36,7 @@ public class QuipWidgetConfigureActivity extends Activity {
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     String mFriendUID;
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    //TODO migrate
     FirebaseHandler mdb = new FirebaseHandler(mDatabase);
 
     public QuipWidgetConfigureActivity() {
