@@ -17,9 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.ExpandableListItem;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
-import com.malikendsley.firebaseutils.schema.FriendRequest;
-import com.malikendsley.firebaseutils.schema.User;
-import com.malikendsley.firebaseutils.secureinterfaces.ResolveListener;
 import com.malikendsley.quipswap.R;
 
 import java.lang.ref.WeakReference;
@@ -34,7 +31,7 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
     FirebaseHandler2 mdb2;
 
     public SecureRequestAdapter(ArrayList<String> list, RequestClickListener listener, Activity mActivity) {
-        for(String UID : list){
+        for (String UID : list) {
             this.list.add(new ExpandableListItem(UID));
         }
         this.listener = listener;
@@ -53,9 +50,7 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
     public void onBindViewHolder(@NonNull RequestViewHolder holder, int position) {
         //list is populated externally
         String requestUID = (String) list.get(position).getObject();
-        mdb2.UIDtoUsername(requestUID, resolved -> {
-            holder.username.setText(resolved);
-        });
+        mdb2.UIDtoUsername(requestUID, resolved -> holder.username.setText(resolved));
         //search the database for this user
         holder.expandingSection.setVisibility(list.get(position).isExpanded() ? View.VISIBLE : View.GONE);
     }
