@@ -66,7 +66,6 @@ public class MakeQuipActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         paintView = findViewById(R.id.paintView);
-        //TODO Find out what this does exactly
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);

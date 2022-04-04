@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import javax.annotation.Nullable;
 
 public class ProfileFragment extends Fragment {
+    //TODO migrate
 
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     FirebaseHandler mdb = new FirebaseHandler(mDatabase);
