@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.RowClickListener;
@@ -29,8 +28,7 @@ public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapte
     public SecureFriendAdapter(ArrayList<String> list, RowClickListener listener, Activity mActivity) {
         this.list = list;
         this.listener = listener;
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mdb2 = new FirebaseHandler2(mDatabase, mActivity);
+        mdb2 = new FirebaseHandler2(FirebaseDatabase.getInstance().getReference(), mActivity);
     }
 
     @NonNull

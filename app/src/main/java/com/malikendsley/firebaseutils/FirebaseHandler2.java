@@ -19,7 +19,8 @@ import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
 import com.malikendsley.firebaseutils.secureinterfaces.FriendAddListener;
 import com.malikendsley.firebaseutils.secureinterfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.secureinterfaces.GetRequestsListener;
-import com.malikendsley.firebaseutils.secureinterfaces.QuipRetrieveListener;
+import com.malikendsley.firebaseutils.secureinterfaces.PrivateQuipRetrievedListener;
+import com.malikendsley.firebaseutils.secureinterfaces.PublicQuipRetrieveListener;
 import com.malikendsley.firebaseutils.secureinterfaces.RecentQuipListener;
 import com.malikendsley.firebaseutils.secureinterfaces.RegisterUserListener;
 import com.malikendsley.firebaseutils.secureinterfaces.ResolveListener;
@@ -92,6 +93,20 @@ public class FirebaseHandler2 {
         });
     }
 
+    public void getQuipByKey(String quipKey, PrivateQuipRetrievedListener listener) {
+        mDatabase.child("QuipsPrivate").child(quipKey).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful() || task.getResult().exists()) {
+                    listener.onRetrieveComplete(task.getResult().getValue(PrivateQuip.class));
+                } else {
+                    Log.e(TAG, "getQuipByKey: Read Failed");
+                    listener.onRetrieveFail(task.getException());
+                }
+            }
+        });
+    }
+
     //retrieve friends
     public void getFriends(FriendRetrieveListener listener) {
         mDatabase.child("FriendsPrivate").child(mAuth.getUid()).get().addOnCompleteListener(task -> {
@@ -160,7 +175,7 @@ public class FirebaseHandler2 {
     }
 
     //retrieve quips received
-    public void getReceivedQuips(QuipRetrieveListener listener) {
+    public void getReceivedQuips(PublicQuipRetrieveListener listener) {
         ArrayList<PublicQuip> l = new ArrayList<>();
         mDatabase.child("SharedQuips").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
@@ -176,7 +191,7 @@ public class FirebaseHandler2 {
     }
 
     //retrieve quips sent
-    public void getSentQuips(String UID, QuipRetrieveListener listener) {
+    public void getSentQuips(String UID, PublicQuipRetrieveListener listener) {
         ArrayList<PublicQuip> l = new ArrayList<>();
         mDatabase.child("SharedQuips").orderByChild("Sender").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
@@ -270,7 +285,7 @@ public class FirebaseHandler2 {
     public void getLatestQuip(String UID, RecentQuipListener listener) {
         ArrayList<PublicQuip> pqs = new ArrayList<>();
         //get all quips sent to you
-        getReceivedQuips(new QuipRetrieveListener() {
+        getReceivedQuips(new PublicQuipRetrieveListener() {
             @Override
             public void onRetrieveComplete(ArrayList<PublicQuip> quipList) {
                 if (quipList.isEmpty()) {

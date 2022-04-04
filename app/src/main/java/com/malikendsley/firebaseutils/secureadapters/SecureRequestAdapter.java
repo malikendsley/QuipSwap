@@ -23,7 +23,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 
-public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdapter.RequestViewHolder> {
+public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdapter.SecureRequestViewHolder> {
 
     private static final String TAG = "Own";
     private final RequestClickListener listener;
@@ -41,13 +41,13 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
 
     @NonNull
     @Override
-    public RequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SecureRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_friendrequest, parent, false);
-        return new RequestViewHolder(v, listener);
+        return new SecureRequestViewHolder(v, listener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RequestViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SecureRequestViewHolder holder, int position) {
         //list is populated externally
         String requestUID = (String) list.get(position).getObject();
         mdb2.UIDtoUsername(requestUID, resolved -> holder.username.setText(resolved));
@@ -60,7 +60,7 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
         return list.size();
     }
 
-    public class RequestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class SecureRequestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final WeakReference<RequestClickListener> listenerRef;
         TextView username;
@@ -69,7 +69,7 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
         Button acceptButton;
         Button denyButton;
 
-        public RequestViewHolder(@NonNull View itemView, RequestClickListener listener) {
+        public SecureRequestViewHolder(@NonNull View itemView, RequestClickListener listener) {
             super(itemView);
 
             listenerRef = new WeakReference<>(listener);
