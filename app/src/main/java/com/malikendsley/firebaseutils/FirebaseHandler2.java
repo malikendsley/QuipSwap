@@ -217,44 +217,54 @@ public class FirebaseHandler2 {
             if (resolvedUID.equals(mAuth.getUid())) {
                 Log.e(TAG, "trySendFriendRequest: Self Add detected");
                 listener.onResult("You cannot add yourself");
+                return;
             }
             //prevent add if already outgoing or incoming
-            mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).get().addOnCompleteListener(task -> {
-                ArrayList<DataSnapshot> ds = new ArrayList<>();
-                for (DataSnapshot child : task.getResult().getChildren()) {
-                    ds.add(child);
-                }
-                //just download all requests and check for the target UID, the number of requests will not scale
-                for (DataSnapshot child : ds) {
-                    if (Objects.requireNonNull(child.getKey()).equals(mAuth.getUid())) {
-                        Log.e(TAG, "trySendFriendRequest: Request already exists");
-                        listener.onResult("Friend request already exists");
+            //check your outgoing requests
+            mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Outgoing").child(resolvedUID).get().addOnCompleteListener(outgoingTask -> {
+                if (outgoingTask.isSuccessful()) {
+                    if (outgoingTask.getResult().getValue() != null) {
+                        listener.onResult("Request already sent");
                         return;
                     }
-                }
-                //make sure you are not friends with this user already
-                getFriends(new FriendRetrieveListener() {
-                    @Override
-                    public void onGetFriends(ArrayList<String> friendUIDList) {
-                        if (friendUIDList.contains(mAuth.getUid())) {
-                            Log.e(TAG, "trySendFriendRequest: already friends");
-                            listener.onResult("Already friends with this user");
-                        } else {
-                            //all clear
-                            Log.i(TAG, "trySendFriendRequest: Sending Request");
-                            //mark outgoing in our list
-                            mDatabase.child("RequestsPrivate").child(mAuth.getUid()).child("Outgoing").child(resolvedUID).setValue(true);
-                            //mark incoming in theirs
-                            mDatabase.child("RequestsPrivate").child(resolvedUID).child("Incoming").child(mAuth.getUid()).setValue(true);
-                            listener.onResult("");
-                        }
-                    }
+                    mDatabase.child("RequestsPrivate").child(resolvedUID).child("Outgoing").child(mAuth.getUid()).get().addOnCompleteListener(incomingTask -> {
+                        if (incomingTask.isSuccessful()) {
+                            if (incomingTask.getResult().getValue() != null) {
+                                listener.onResult("Accept the incoming request instead");
+                                return;
+                            }
+                            //make sure you are not friends with this user already
+                            getFriends(new FriendRetrieveListener() {
+                                @Override
+                                public void onGetFriends(ArrayList<String> friendUIDList) {
+                                    if (friendUIDList.contains(mAuth.getUid())) {
+                                        Log.e(TAG, "trySendFriendRequest: already friends");
+                                        listener.onResult("Already friends with this user");
+                                    } else {
+                                        //all clear
+                                        Log.i(TAG, "trySendFriendRequest: Sending Request");
+                                        //mark outgoing in our list
+                                        mDatabase.child("RequestsPrivate").child(mAuth.getUid()).child("Outgoing").child(resolvedUID).setValue(true);
+                                        //mark incoming in theirs
+                                        mDatabase.child("RequestsPrivate").child(resolvedUID).child("Incoming").child(mAuth.getUid()).setValue(true);
+                                        listener.onResult("");
+                                    }
+                                }
 
-                    @Override
-                    public void onGetFailed(Exception e) {
-                        listener.onDatabaseException(e);
-                    }
-                });
+                                @Override
+                                public void onGetFailed(Exception e) {
+                                    listener.onDatabaseException(e);
+                                }
+                            });
+                        } else {
+                            listener.onDatabaseException(incomingTask.getException());
+                            Log.e(TAG, "trySendFriendRequest: incoming requests check failed");
+                        }
+                    });
+                } else {
+                    listener.onDatabaseException(outgoingTask.getException());
+                    Log.e(TAG, "trySendFriendRequest: outgoing requests check failed");
+                }
             });
         });
     }
@@ -272,8 +282,8 @@ public class FirebaseHandler2 {
                     return;
                 }
                 //obtain the URI of said quip
-                for(PublicQuip quip : quipList){
-                    if(!quip.getSender().equals(UID)){
+                for (PublicQuip quip : quipList) {
+                    if (!quip.getSender().equals(UID)) {
                         quipList.remove(quip);
                     }
                 }

@@ -2,6 +2,7 @@ package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.malikendsley.firebaseutils.ExpandableListItem;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
 import com.malikendsley.firebaseutils.secureadapters.SecureRequestAdapter;
@@ -36,7 +38,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     //firebase setup
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    ArrayList<String> friendRequestList = new ArrayList<>();
+    ArrayList<ExpandableListItem> friendRequestList = new ArrayList<>();
     //TODO migrate complete
     FirebaseHandler2 mdb = new FirebaseHandler2(mDatabase, this);
 
@@ -50,12 +52,16 @@ public class FriendRequestsActivity extends AppCompatActivity {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRequests(ArrayList<String> requestList) {
+                Log.i("Own", "Friends retrieved");
                 if (requestList.isEmpty()) {
                     noFriendRequestsFlavor.setVisibility(View.VISIBLE);
                 } else {
+                    Log.i("Own", "Friends present");
                     noFriendRequestsFlavor.setVisibility(View.GONE);
                     friendRequestList.clear();
-                    friendRequestList.addAll(requestList);
+                    for (String UID : requestList) {
+                        friendRequestList.add(new ExpandableListItem(UID));
+                    }
                     requestAdapter.notifyDataSetChanged();
                 }
             }
@@ -64,7 +70,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
             public void onGetFail(Exception e) {
                 e.printStackTrace();
                 noFriendRequestsFlavor.setVisibility(View.VISIBLE);
-                //Log.("Own", "Request Retrieve Failed");
+                Log.e("Own", "Request Retrieve Failed");
                 Toast.makeText(FriendRequestsActivity.this, "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
             }
         });
@@ -77,6 +83,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
         requestRecycler = findViewById(R.id.requestList);
         requestRecycler.setHasFixedSize(true);
         requestRecycler.setLayoutManager(new LinearLayoutManager(this));
+
         requestAdapter = new SecureRequestAdapter(friendRequestList, new RequestClickListener() {
             @Override
             public void onAcceptClicked(int position) {
@@ -122,25 +129,27 @@ public class FriendRequestsActivity extends AppCompatActivity {
     }
 
     void acceptFriend(int position) {
-        deleteFriend(position);
         //TODO this should probably be a cloud function
         Long time = System.currentTimeMillis();
-        mDatabase.child("FriendsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child(friendRequestList.get(position)).setValue(time);
-        mDatabase.child("FriendsPrivate").child(friendRequestList.get(position)).child(mAuth.getUid()).setValue(time);
+        mDatabase.child("FriendsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child((String) friendRequestList.get(position).getObject()).setValue(time);
+        mDatabase.child("FriendsPrivate").child((String) friendRequestList.get(position).getObject()).child(mAuth.getUid()).setValue(time);
         Toast.makeText(this, "Accepted", Toast.LENGTH_SHORT).show();
+        deleteFriend(position);
     }
 
     void denyFriend(int position) {
-        deleteFriend(position);
         //remove incoming in our list
-        mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Incoming").child(friendRequestList.get(position)).removeValue();
+        mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Incoming").child((String) friendRequestList.get(position).getObject()).removeValue();
         //remove outgoing in theirs
-        mDatabase.child("RequestsPrivate").child(friendRequestList.get(position)).child("Outgoing").child(Objects.requireNonNull(mAuth.getUid())).removeValue();
+        mDatabase.child("RequestsPrivate").child((String) friendRequestList.get(position).getObject()).child("Outgoing").child(Objects.requireNonNull(mAuth.getUid())).removeValue();
         Toast.makeText(this, "Request Denied", Toast.LENGTH_SHORT).show();
+        deleteFriend(position);
     }
 
     void deleteFriend(int position) {
         friendRequestList.remove(position);
         requestAdapter.notifyItemRemoved(position);
+        noFriendRequestsFlavor.setVisibility(friendRequestList.isEmpty() ? View.VISIBLE : View.GONE);
+
     }
 }

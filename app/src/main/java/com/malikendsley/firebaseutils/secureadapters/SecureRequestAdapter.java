@@ -30,10 +30,8 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
     ArrayList<ExpandableListItem> list;
     FirebaseHandler2 mdb2;
 
-    public SecureRequestAdapter(ArrayList<String> list, RequestClickListener listener, Activity mActivity) {
-        for (String UID : list) {
-            this.list.add(new ExpandableListItem(UID));
-        }
+    public SecureRequestAdapter(ArrayList<ExpandableListItem> list, RequestClickListener listener, Activity mActivity) {
+        this.list = list;
         this.listener = listener;
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         mdb2 = new FirebaseHandler2(mDatabase, mActivity);
@@ -42,7 +40,7 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
     @NonNull
     @Override
     public SecureRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_friendrequest, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_secure_friendrequest, parent, false);
         return new SecureRequestViewHolder(v, listener);
     }
 
@@ -50,7 +48,8 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
     public void onBindViewHolder(@NonNull SecureRequestViewHolder holder, int position) {
         //list is populated externally
         String requestUID = (String) list.get(position).getObject();
-        mdb2.UIDtoUsername(requestUID, resolved -> holder.username.setText(resolved));
+        Log.i(TAG, "onBind: " + requestUID);
+        mdb2.UIDtoUsername(requestUID, holder.username::setText);
         //search the database for this user
         holder.expandingSection.setVisibility(list.get(position).isExpanded() ? View.VISIBLE : View.GONE);
     }
@@ -71,6 +70,7 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
 
         public SecureRequestViewHolder(@NonNull View itemView, RequestClickListener listener) {
             super(itemView);
+            Log.i("Own", "Adding..");
 
             listenerRef = new WeakReference<>(listener);
             username = itemView.findViewById(R.id.requestUsername);
