@@ -20,10 +20,11 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.adapters.FriendAdapter;
+import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
 import com.malikendsley.firebaseutils.schema.Friendship;
+import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
+import com.malikendsley.firebaseutils.secureinterfaces.FriendRetrieveListener;
 
 import java.util.ArrayList;
 
@@ -31,17 +32,17 @@ public class ShareQuipActivity extends AppCompatActivity {
 
     static final String TAG = "Own";
     //even in my own projects i can never escape him
-    FirebaseHandler mdb;
+    FirebaseHandler2 mdb2;
 
     RecyclerView friendRecycler;
-    FriendAdapter friendAdapter;
+    SecureFriendAdapter friendAdapter;
     DatabaseReference mDatabase;
 
     LinearProgressIndicator progressIndicator;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    ArrayList<Friendship> friendList = new ArrayList<>();
+    ArrayList<String> friendList = new ArrayList<>();
     byte[] byteArray;
     Bitmap bitmap;
 
@@ -60,32 +61,38 @@ public class ShareQuipActivity extends AppCompatActivity {
         byteArray = intent.getByteArrayExtra("BitmapImage");
         bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         Log.i(TAG, "Bitmap retrieved");
-        //TODO migrate
+        //TODO migrate complete
         //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mdb = new FirebaseHandler(mDatabase);
+        mdb2 = new FirebaseHandler2(mDatabase, this);
 
         //recycler setup
         friendRecycler = findViewById(R.id.selectFriendsRecyclerView);
         friendRecycler.setHasFixedSize(true);
         friendRecycler.setLayoutManager(new LinearLayoutManager(this));
-        friendAdapter = new FriendAdapter(friendList, position -> {
+        friendAdapter = new SecureFriendAdapter(friendList, position -> {
             //show progress bar
             progressIndicator.setVisibility(View.VISIBLE);
             ShareQuipActivity.this.shareQuip(friendList.get(position));
-        });
+        }, this);
         friendRecycler.setAdapter(friendAdapter);
 
-        mdb.retrieveFriends(friendsList -> {
-            Log.i(TAG, "FriendAdapter: Friends Retrieved");
-            if (friendsList != null) {
-                friendList.clear();
-                friendList.addAll(friendsList);
-                //Log.i(TAG, friendList.toString());
-            } else {
-                Log.i(TAG, "Retrieved Null");
+        //populate friends
+        mdb2.getFriends(new FriendRetrieveListener() {
+            @Override
+            public void onGetFriends(ArrayList<String> friendUIDList) {
+                if (friendUIDList != null) {
+                    friendList.clear();
+                    friendList.addAll(friendUIDList);
+                    friendAdapter.notifyDataSetChanged();
+                }
             }
-            friendAdapter.notifyDataSetChanged();
+
+            @Override
+            public void onGetFailed(Exception e) {
+                e.printStackTrace();
+                Toast.makeText(ShareQuipActivity.this, "Trouble retrieving friends", Toast.LENGTH_SHORT).show();
+            }
         });
 
 
@@ -106,10 +113,9 @@ public class ShareQuipActivity extends AppCompatActivity {
         alert.show();
     }
 
-    void shareQuip(Friendship recipient) {
-        String UID = (recipient.getUser1().equals(mAuth.getUid())) ? recipient.getUser2() : recipient.getUser1();
-        Log.e(TAG, "ShareQuip: " + UID);
-        mdb.shareQuip(UID, byteArray, new QuipUploadListener() {
+    void shareQuip(String recipientUID) {
+        Log.e(TAG, "ShareQuip: " + recipientUID);
+        mdb2.shareQuip(recipientUID, byteArray, new QuipUploadListener() {
             @Override
             public void onUploadComplete(String URI) {
                 Toast.makeText(ShareQuipActivity.this, "Quip Shared!", Toast.LENGTH_SHORT).show();
