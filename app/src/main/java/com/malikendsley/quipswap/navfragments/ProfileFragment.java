@@ -98,7 +98,6 @@ public class ProfileFragment extends Fragment {
             public void onUserRetrieved(PrivateUser user) {
                 Log.i(TAG, "onUserRetrieved");
                 username.setText(user.getUsername());
-                email.setText(user.getEmail());
             }
 
             @Override
@@ -119,9 +118,7 @@ public class ProfileFragment extends Fragment {
                     dataFetched = true;
                     friendAdapter.notifyDataSetChanged();
                 }
-
             }
-
             @Override
             public void onGetFailed(Exception e) {
                 e.printStackTrace();

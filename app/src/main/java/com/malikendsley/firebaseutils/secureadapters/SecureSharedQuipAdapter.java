@@ -45,7 +45,7 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
     @NonNull
     @Override
     public SecureSharedQuipViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_sharedquip, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_secure_sharedquip, parent, false);
         return new SecureSharedQuipViewHolder(v);
     }
 

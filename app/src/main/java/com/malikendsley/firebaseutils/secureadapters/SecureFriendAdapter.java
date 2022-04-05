@@ -34,7 +34,7 @@ public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapte
     @NonNull
     @Override
     public SecureFriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_friend, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_secure_friend, parent, false);
         return new SecureFriendViewHolder(v, listener);
     }
 
