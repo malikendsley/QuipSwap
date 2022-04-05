@@ -19,27 +19,26 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.adapters.RequestAdapter;
+import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
-import com.malikendsley.firebaseutils.interfaces.RequestRetrieveListener;
-import com.malikendsley.firebaseutils.schema.FriendRequest;
-import com.malikendsley.firebaseutils.schema.Friendship;
+import com.malikendsley.firebaseutils.secureadapters.SecureRequestAdapter;
+import com.malikendsley.firebaseutils.secureinterfaces.GetRequestsListener;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FriendRequestsActivity extends AppCompatActivity {
 
     TextView noFriendRequestsFlavor;
     //recycler
     RecyclerView requestRecycler;
-    RequestAdapter requestAdapter;
+    SecureRequestAdapter requestAdapter;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     //firebase setup
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    ArrayList<FriendRequest> requestList = new ArrayList<>();
-    //TODO migrate
-    FirebaseHandler mdb = new FirebaseHandler(mDatabase);
+    ArrayList<String> friendRequestList = new ArrayList<>();
+    //TODO migrate complete
+    FirebaseHandler2 mdb = new FirebaseHandler2(mDatabase, this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,22 +46,22 @@ public class FriendRequestsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_friend_requests);
 
         //retrieve friend requests and populate
-        mdb.retrieveReceivedRequests(new RequestRetrieveListener() {
+        mdb.getReceivedFriendRequests(new GetRequestsListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
-            public void onRequestsRetrieved(ArrayList<FriendRequest> requests) {
-                if (requests.isEmpty()) {
+            public void onRequests(ArrayList<String> requestList) {
+                if (requestList.isEmpty()) {
                     noFriendRequestsFlavor.setVisibility(View.VISIBLE);
                 } else {
                     noFriendRequestsFlavor.setVisibility(View.GONE);
-                    requestList.clear();
-                    requestList.addAll(requests);
+                    friendRequestList.clear();
+                    friendRequestList.addAll(requestList);
                     requestAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
-            public void onRequestsFailed(Exception e) {
+            public void onGetFail(Exception e) {
                 e.printStackTrace();
                 noFriendRequestsFlavor.setVisibility(View.VISIBLE);
                 //Log.("Own", "Request Retrieve Failed");
@@ -78,7 +77,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
         requestRecycler = findViewById(R.id.requestList);
         requestRecycler.setHasFixedSize(true);
         requestRecycler.setLayoutManager(new LinearLayoutManager(this));
-        requestAdapter = new RequestAdapter(requestList, new RequestClickListener() {
+        requestAdapter = new SecureRequestAdapter(friendRequestList, new RequestClickListener() {
             @Override
             public void onAcceptClicked(int position) {
                 acceptFriend(position);
@@ -88,10 +87,8 @@ public class FriendRequestsActivity extends AppCompatActivity {
             public void onDenyClicked(int position) {
                 denyFriend(position);
             }
-        });
+        }, this);
         requestRecycler.setAdapter(requestAdapter);
-
-        //change menu icon to filled in bell
     }
 
     //add options menu
@@ -125,26 +122,25 @@ public class FriendRequestsActivity extends AppCompatActivity {
     }
 
     void acceptFriend(int position) {
-        //delete friend request
         deleteFriend(position);
-        //add the friend
-        Friendship f = new Friendship(mAuth.getUid(), requestList.get(position).getSender(), System.currentTimeMillis());
-        mDatabase.child("Friendships").push().setValue(f).addOnSuccessListener(unused -> Toast.makeText(this, "Friend Added", Toast.LENGTH_SHORT).show());
+        //TODO this should probably be a cloud function
+        Long time = System.currentTimeMillis();
+        mDatabase.child("FriendsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child(friendRequestList.get(position)).setValue(time);
+        mDatabase.child("FriendsPrivate").child(friendRequestList.get(position)).child(mAuth.getUid()).setValue(time);
+        Toast.makeText(this, "Accepted", Toast.LENGTH_SHORT).show();
     }
 
     void denyFriend(int position) {
         deleteFriend(position);
-        //Log.i(TAG, "Request Denied");
+        //remove incoming in our list
+        mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Incoming").child(friendRequestList.get(position)).removeValue();
+        //remove outgoing in theirs
+        mDatabase.child("RequestsPrivate").child(friendRequestList.get(position)).child("Outgoing").child(Objects.requireNonNull(mAuth.getUid())).removeValue();
         Toast.makeText(this, "Request Denied", Toast.LENGTH_SHORT).show();
     }
 
     void deleteFriend(int position) {
-        String key = requestList.get(position).getKey();
-        //Log.i(TAG, "Delete request from " + key);
-        mDatabase.child("FriendRequests").child(key).removeValue().addOnSuccessListener(deleteRequest -> {
-            requestList.remove(position);
-            requestAdapter.notifyItemRemoved(position);
-        });
+        friendRequestList.remove(position);
+        requestAdapter.notifyItemRemoved(position);
     }
-
 }

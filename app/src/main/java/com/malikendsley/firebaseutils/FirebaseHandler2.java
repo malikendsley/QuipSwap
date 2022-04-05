@@ -206,7 +206,7 @@ public class FirebaseHandler2 {
     }
 
     //try to add a user as a friend
-    public void tryAddFriend(String username, FriendAddListener listener) {
+    public void trySendFriendRequest(String username, FriendAddListener listener) {
         usernameToUID(username, resolvedUID -> {
             //must exist
             if (resolvedUID == null) {
@@ -215,7 +215,7 @@ public class FirebaseHandler2 {
             }
             //prevent self add
             if (resolvedUID.equals(mAuth.getUid())) {
-                Log.e(TAG, "tryAddFriend: Self Add detected");
+                Log.e(TAG, "trySendFriendRequest: Self Add detected");
                 listener.onResult("You cannot add yourself");
             }
             //prevent add if already outgoing or incoming
@@ -227,7 +227,7 @@ public class FirebaseHandler2 {
                 //just download all requests and check for the target UID, the number of requests will not scale
                 for (DataSnapshot child : ds) {
                     if (Objects.requireNonNull(child.getKey()).equals(mAuth.getUid())) {
-                        Log.e(TAG, "tryAddFriend: Request already exists");
+                        Log.e(TAG, "trySendFriendRequest: Request already exists");
                         listener.onResult("Friend request already exists");
                         return;
                     }
@@ -237,11 +237,11 @@ public class FirebaseHandler2 {
                     @Override
                     public void onGetFriends(ArrayList<String> friendUIDList) {
                         if (friendUIDList.contains(mAuth.getUid())) {
-                            Log.e(TAG, "tryAddFriend: already friends");
+                            Log.e(TAG, "trySendFriendRequest: already friends");
                             listener.onResult("Already friends with this user");
                         } else {
                             //all clear
-                            Log.i(TAG, "tryAddFriend: Sending Request");
+                            Log.i(TAG, "trySendFriendRequest: Sending Request");
                             //mark outgoing in our list
                             mDatabase.child("RequestsPrivate").child(mAuth.getUid()).child("Outgoing").child(resolvedUID).setValue(true);
                             //mark incoming in theirs

@@ -131,7 +131,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void onAddFriend(String friend) {
-        mdb2.tryAddFriend(friend, new FriendAddListener() {
+        mdb2.trySendFriendRequest(friend, new FriendAddListener() {
             @Override
             public void onResult(String result) {
                 Toast.makeText(getContext(), (result.equals("")) ? "Request Sent" : result, Toast.LENGTH_SHORT).show();
