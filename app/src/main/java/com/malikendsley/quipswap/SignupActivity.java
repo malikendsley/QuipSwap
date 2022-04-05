@@ -4,7 +4,6 @@ package com.malikendsley.quipswap;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -13,22 +12,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.schema.User;
-
-import java.util.Objects;
+import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.secureinterfaces.RegisterUserListener;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private static final String TAG = "Own";
-    //TODO migrate
+    //private static final String TAG = "Own";
+    //TODO migrate done
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    FirebaseHandler mdb = new FirebaseHandler(mDatabase);
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, this);
     private EditText username;
     private EditText email;
     private EditText password;
@@ -78,48 +72,24 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
-    private void registerUser(String username, String email, String password) {
-        //prevent duplicate usernames
-        mdb.resolveUsername(username, resolvedUID -> {
-            if (resolvedUID == null) {
-                //try create user
-                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignupActivity.this, regTask -> {
-                    if (regTask.isSuccessful()) {
-                        Log.i(TAG, "SignupActivity: User registered");
-                        Toast.makeText(SignupActivity.this, "SignupActivity: Registration Successful", Toast.LENGTH_SHORT).show();
-                        //create record + index
-                        User user = new User(username, email);
-                        mDatabase.child("Users").child(Objects.requireNonNull(mAuth.getUid())).setValue(user).addOnCompleteListener(recordTask -> {
-                            if (recordTask.isSuccessful()) {
-                                Log.i(TAG, "Write Successful");
-                                //index can probably be handled via a cloud function later on, will reduce complexity
-                                mDatabase.child("TakenUsernames").child(username).setValue(mAuth.getUid()).addOnCompleteListener(indexTask -> {
-                                    if (indexTask.isSuccessful()) {
-                                        Log.i(TAG, "Index Update Successful");
-                                        //all database work is done, go home
-                                        startActivity(new Intent(SignupActivity.this, MainActivity.class));
-                                        finish();
-                                    } else {
-                                        Log.i(TAG, "Index Failed");
-                                        Toast.makeText(SignupActivity.this, "SignupActivity: Permission Denied", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            } else {
-                                //write failed (unlikely)
-                                Log.i(TAG, "Write Failed");
-                                Toast.makeText(SignupActivity.this, "SignupActivity: Permission Denied", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else {
-                        String code = ((FirebaseAuthException) Objects.requireNonNull(regTask.getException())).getErrorCode();
-                        Log.i(TAG, "SignupActivity: CreateUserWith failed");
-                        Toast.makeText(SignupActivity.this, code, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                //username taken
-                Log.i(TAG, "SignupActivity: Username Taken");
-                Toast.makeText(SignupActivity.this, "SignupActivity: Username taken", Toast.LENGTH_SHORT).show();
+
+    void registerUser(String username, String email, String password) {
+        mdb2.registerUser(username, email, password, new RegisterUserListener() {
+            @Override
+            public void onResult(String result) {
+                if (result.equals("")) {
+                    Toast.makeText(SignupActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                    finish();
+                } else {
+                    Toast.makeText(SignupActivity.this, result, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onDBFail(Exception e) {
+                e.printStackTrace();
+                Toast.makeText(SignupActivity.this, "Trouble signing up", Toast.LENGTH_SHORT).show();
             }
         });
     }

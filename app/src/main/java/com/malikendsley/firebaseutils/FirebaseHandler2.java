@@ -320,7 +320,9 @@ public class FirebaseHandler2 {
                                                 Log.i(TAG, "registerUser: success");
                                                 listener.onResult("");
                                             } else {
+                                                //username index failed
                                                 Log.e(TAG, "registerUser: index failed");
+                                                listener.onDBFail(indexTask.getException());
                                             }
                                         });
                                     } else {
