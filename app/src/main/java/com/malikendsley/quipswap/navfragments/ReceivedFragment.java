@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,10 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.adapters.SharedQuipAdapter;
-import com.malikendsley.firebaseutils.interfaces.QuipRetrieveListener;
-import com.malikendsley.firebaseutils.schema.SharedQuip;
+import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.secureadapters.SecureSharedQuipAdapter;
+import com.malikendsley.firebaseutils.secureinterfaces.PublicQuipRetrieveListener;
+import com.malikendsley.firebaseutils.secureschema.PublicQuip;
 import com.malikendsley.quipswap.MakeQuipActivity;
 import com.malikendsley.quipswap.R;
 
@@ -29,14 +30,16 @@ import java.util.ArrayList;
 public class ReceivedFragment extends Fragment {
 
     private static final String TAG = "Own";
-    FirebaseHandler mdb;
-    DatabaseReference mDatabase;
+    FirebaseHandler2 mdb2;
+    //TODO migrate complete
+
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     TextView noReceivedText;
     RecyclerView receivedRecycler;
-    SharedQuipAdapter sharedQuipAdapter;
+    SecureSharedQuipAdapter sharedQuipAdapter;
 
-    ArrayList<SharedQuip> sharedQuipList = new ArrayList<>();
+    ArrayList<PublicQuip> sharedQuipList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -47,10 +50,8 @@ public class ReceivedFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //TODO migrate
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mdb = new FirebaseHandler(mDatabase);
+        mdb2 = new FirebaseHandler2(mDatabase, getActivity());
 
         //flavor
         noReceivedText = requireActivity().findViewById(R.id.noReceivedSwapsText);
@@ -59,7 +60,7 @@ public class ReceivedFragment extends Fragment {
         receivedRecycler = requireActivity().findViewById(R.id.receivedSwapsRecycler);
         receivedRecycler.setHasFixedSize(true);
         receivedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        sharedQuipAdapter = new SharedQuipAdapter(false, getContext(), sharedQuipList);
+        sharedQuipAdapter = new SecureSharedQuipAdapter(false, getContext(), sharedQuipList, getActivity());
         receivedRecycler.setAdapter(sharedQuipAdapter);
 
         //fab
@@ -68,28 +69,25 @@ public class ReceivedFragment extends Fragment {
             ReceivedFragment.this.startActivity(new Intent(ReceivedFragment.this.getContext(), MakeQuipActivity.class));
         });
 
-        mdb.retrieveReceivedQuips(new QuipRetrieveListener() {
+
+        mdb2.getReceivedQuips(new PublicQuipRetrieveListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
-            public void onRetrieveComplete(ArrayList<SharedQuip> quips) {
-                Log.i(TAG, "Retrieve Complete");
-                //populate quip adapter
-                sharedQuipList.clear();
-                sharedQuipList.addAll(quips);
-                //notify
-                if(!sharedQuipList.isEmpty()){
+            public void onRetrieveComplete(ArrayList<PublicQuip> quipList) {
+                if (quipList.isEmpty()) {
+                    sharedQuipList.clear();
+                    sharedQuipList.addAll(quipList);
                     sharedQuipAdapter.notifyDataSetChanged();
                     noReceivedText.setVisibility(View.GONE);
                 } else {
                     noReceivedText.setVisibility(View.VISIBLE);
                 }
-                //TODO: speed this up, discovering how to "realtime" this would improve every adapter in the app
             }
 
             @Override
             public void onRetrieveFail(Exception e) {
                 e.printStackTrace();
-                Log.i(TAG, "Retrieve failed");
+                Toast.makeText(getContext(), "Troubl connecting to the database", Toast.LENGTH_SHORT).show();
             }
         });
     }
