@@ -9,6 +9,12 @@ public class PublicUser {
     @PropertyName("Key")
     private String Key;
 
+    @SuppressWarnings("unused")
+    public PublicUser() {
+        Username = "unset";
+        Key = "unset";
+    }
+
     public PublicUser(String username) {
         this.Username = username;
     }

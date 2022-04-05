@@ -34,7 +34,7 @@ import java.util.UUID;
 public class FirebaseHandler2 {
 
     //TODO: augment db interface with caching logic (or leverage firebase's)
-    private static final String TAG = "Firebase";
+    private static final String TAG = "FBH2";
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase;
     StorageReference storageRef = FirebaseStorage.getInstance().getReference();

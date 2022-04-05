@@ -16,6 +16,13 @@ public class PublicQuip implements Comparable<PublicQuip> {
     @PropertyName("Key")
     private String Key;
 
+    @SuppressWarnings("unused")
+    public PublicQuip() {
+        Sender = "unset";
+        Recipient = "unset";
+        Timestamp = -1;
+    }
+
     public PublicQuip(String sender, String recipient, long timestamp) {
         Sender = sender;
         Recipient = recipient;
@@ -42,13 +49,13 @@ public class PublicQuip implements Comparable<PublicQuip> {
         return Key;
     }
 
+    public void setKey(String key) {
+        Key = key;
+    }
+
     @Override
     public int compareTo(PublicQuip otherQuip) {
         //"max" sharedQuip should be soonest, with the highest timestamp
         return (int) (Timestamp - otherQuip.Timestamp);
-    }
-
-    public void setKey(String key) {
-        Key = key;
     }
 }

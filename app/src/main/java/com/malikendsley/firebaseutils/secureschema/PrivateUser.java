@@ -11,6 +11,13 @@ public class PrivateUser {
     @PropertyName("Key")
     private String Key;
 
+    @SuppressWarnings("unused")
+    //necessary for firebase
+    public PrivateUser(){
+        Email = "unset";
+        Username = "unset";
+    }
+
     public PrivateUser(String email, String username) {
         Email = email;
         Username = username;
