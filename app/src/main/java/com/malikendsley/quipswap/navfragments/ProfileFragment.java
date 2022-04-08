@@ -128,7 +128,11 @@ public class ProfileFragment extends Fragment {
     }
 
     private void onAddFriend(String friend) {
-        mdb2.trySendFriendRequest(friend, new FriendAddListener() {
+        if(!dataFetched){
+            Toast.makeText(getContext(), "Please wait a moment and try again", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mdb2.trySendFriendRequest(friendUIDList, friend, new FriendAddListener() {
             @Override
             public void onResult(String result) {
                 Toast.makeText(getContext(), (result.equals("")) ? "Request Sent" : result, Toast.LENGTH_SHORT).show();

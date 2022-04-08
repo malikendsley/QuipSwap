@@ -58,7 +58,8 @@ public class PrivateQuip {
         return Key;
     }
 
+    @PropertyName("Key")
     public void setKey(String key) {
-        Key = key;
+        this.Key = key;
     }
 }

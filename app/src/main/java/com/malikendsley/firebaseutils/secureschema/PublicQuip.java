@@ -49,8 +49,9 @@ public class PublicQuip implements Comparable<PublicQuip> {
         return Key;
     }
 
+    @PropertyName("Key")
     public void setKey(String key) {
-        Key = key;
+        this.Key = key;
     }
 
     @Override

@@ -206,7 +206,7 @@ public class FirebaseHandler2 {
     }
 
     //try to add a user as a friend
-    public void trySendFriendRequest(String username, FriendAddListener listener) {
+    public void trySendFriendRequest(ArrayList<String> friendsList, String username, FriendAddListener listener) {
         usernameToUID(username, resolvedUID -> {
             //must exist
             if (resolvedUID == null) {
@@ -219,6 +219,13 @@ public class FirebaseHandler2 {
                 listener.onResult("You cannot add yourself");
                 return;
             }
+            //prevent adding existing friend
+            if(friendsList.contains(resolvedUID)){
+                Log.e(TAG, "trySendFriendRequest: Friend already exists");
+                listener.onResult("Already friends with this user");
+                return;
+            }
+
             //prevent add if already outgoing or incoming
             //check your outgoing requests
             mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Outgoing").child(resolvedUID).get().addOnCompleteListener(outgoingTask -> {
