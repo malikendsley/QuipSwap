@@ -53,7 +53,7 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
     public void onBindViewHolder(@NonNull SecureSharedQuipViewHolder holder, int position) {
         //list is populated externally
         PublicQuip sq = list.get(position);
-        //Log.i("Own", "onBind: " + sq.toString());
+        Log.i("Own", "onBind: " + sq.toString());
 
         holder.username.setText(isSent ? sq.getRecipient() : sq.getSender());
         mdb2.getQuipByKey(sq.getKey(), new PrivateQuipRetrievedListener() {
@@ -89,7 +89,7 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
         public SecureSharedQuipViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            username = itemView.findViewById(R.id.UIDText);
+            username = itemView.findViewById(R.id.usernameText);
             Thumbnail = itemView.findViewById(R.id.receivedThumbnail);
 
         }

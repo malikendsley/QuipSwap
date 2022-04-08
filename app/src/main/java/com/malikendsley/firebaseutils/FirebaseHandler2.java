@@ -159,7 +159,7 @@ public class FirebaseHandler2 {
     //retrieve quips received
     public void getReceivedQuips(PublicQuipRetrieveListener listener) {
         ArrayList<PublicQuip> l = new ArrayList<>();
-        mDatabase.child("SharedQuips").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
+        mDatabase.child("QuipsPublic").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 listener.onRetrieveFail(task.getException());
             } else {
@@ -175,7 +175,7 @@ public class FirebaseHandler2 {
     //retrieve quips sent
     public void getSentQuips(PublicQuipRetrieveListener listener) {
         ArrayList<PublicQuip> l = new ArrayList<>();
-        mDatabase.child("SharedQuips").orderByChild("Sender").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
+        mDatabase.child("QuipsPublic").orderByChild("Sender").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 listener.onRetrieveFail(task.getException());
             } else {
@@ -220,7 +220,7 @@ public class FirebaseHandler2 {
                 return;
             }
             //prevent adding existing friend
-            if(friendsList.contains(resolvedUID)){
+            if (friendsList.contains(resolvedUID)) {
                 Log.e(TAG, "trySendFriendRequest: Friend already exists");
                 listener.onResult("Already friends with this user");
                 return;
@@ -326,7 +326,7 @@ public class FirebaseHandler2 {
                     if (task.isSuccessful()) {
                         Log.i(TAG, "registerUser: User Registered");
                         PublicUser publicUser = new PublicUser(username);
-                        PrivateUser privateUser = new PrivateUser(username, email);
+                        PrivateUser privateUser = new PrivateUser(email, username);
                         //set up destinations
                         mDatabase.child("UsersPublic").child(Objects.requireNonNull(mAuth.getUid())).setValue(publicUser).addOnCompleteListener(publicTask -> {
                             if (publicTask.isSuccessful()) {

@@ -74,7 +74,7 @@ public class ReceivedFragment extends Fragment {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRetrieveComplete(ArrayList<PublicQuip> quipList) {
-                if (quipList.isEmpty()) {
+                if (!quipList.isEmpty()) {
                     sharedQuipList.clear();
                     sharedQuipList.addAll(quipList);
                     sharedQuipAdapter.notifyDataSetChanged();
@@ -87,7 +87,7 @@ public class ReceivedFragment extends Fragment {
             @Override
             public void onRetrieveFail(Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getContext(), "Troubl connecting to the database", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
             }
         });
     }

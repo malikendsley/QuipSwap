@@ -5,10 +5,10 @@ import com.google.firebase.database.PropertyName;
 public class PublicQuip implements Comparable<PublicQuip> {
 
     @PropertyName("Sender")
-    private final String Sender;
+    private String Sender = "unset";
 
     @PropertyName("Recipient")
-    private final String Recipient;
+    private String Recipient = "unset";
 
     @PropertyName("Timestamp")
     private final long Timestamp;
@@ -18,8 +18,6 @@ public class PublicQuip implements Comparable<PublicQuip> {
 
     @SuppressWarnings("unused")
     public PublicQuip() {
-        Sender = "unset";
-        Recipient = "unset";
         Timestamp = -1;
     }
 
@@ -31,12 +29,12 @@ public class PublicQuip implements Comparable<PublicQuip> {
 
     @PropertyName("Sender")
     public String getSender() {
-        return Sender;
+        return this.Sender;
     }
 
     @PropertyName("Recipient")
     public String getRecipient() {
-        return Recipient;
+        return this.Recipient;
     }
 
     @PropertyName("Timestamp")

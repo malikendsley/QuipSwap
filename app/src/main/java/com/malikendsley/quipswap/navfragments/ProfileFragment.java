@@ -43,7 +43,6 @@ public class ProfileFragment extends Fragment {
     SecureFriendAdapter friendAdapter;
 
     TextView username;
-    TextView email;
 
     ArrayList<String> friendUIDList = new ArrayList<>();
     boolean dataFetched = false;
@@ -60,8 +59,7 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //profile data setup
-        username = requireActivity().findViewById(R.id.usernameText);
-        email = requireActivity().findViewById(R.id.profileEmailText);
+        username = requireActivity().findViewById(R.id.profileUsernameText);
 
         //friend request setup
         Button addFriendButton = requireActivity().findViewById(R.id.addFriendButton);
@@ -97,6 +95,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onUserRetrieved(PrivateUser user) {
                 Log.i(TAG, "onUserRetrieved");
+                Log.i(TAG, "username: " + user.getUsername());
                 username.setText(user.getUsername());
             }
 

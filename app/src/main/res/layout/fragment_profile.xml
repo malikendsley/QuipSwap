@@ -38,7 +38,7 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/usernameText"
+        android:id="@+id/profileUsernameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/usernameLabel"
@@ -51,38 +51,12 @@
         android:text=""
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/profileEmailLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/usernameLabel"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="10dp"
-        android:gravity="center_vertical"
-        android:text="@string/email"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/profileEmailText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/usernameText"
-        android:layout_alignStart="@+id/usernameText"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:singleLine="true"
-        android:text=""
-        android:textSize="16sp" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/profileDivider2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profileEmailLabel"
+        android:layout_below="@id/usernameLabel"
         android:layout_margin="8dp" />
 
     <TextView
