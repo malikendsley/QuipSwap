@@ -10,8 +10,8 @@ import android.widget.RemoteViews;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.RecentQuipListener;
+import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.secureinterfaces.RecentQuipListener;
 
 public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
 
@@ -19,8 +19,8 @@ public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
     private final RemoteViews views;
     private final int WidgetID;
     private final AppWidgetManager WidgetManager;
-    //TODO migrate
-    FirebaseHandler mdb = new FirebaseHandler(mDatabase);
+    //TODO migrate complete
+    FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase);
     Bitmap defaultBitmap;
 
     @SuppressWarnings("deprecation")
@@ -40,7 +40,7 @@ public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
         }
 
         Log.i(TAG, "background task running");
-        mdb.getMostRecentQuipFromUser(strings[0], new RecentQuipListener() {
+        mdb2.getLatestQuip(strings[0], new RecentQuipListener() {
             @Override
             public void onRetrieved(Bitmap bitmap) {
                 if (bitmap != null) {

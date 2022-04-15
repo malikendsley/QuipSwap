@@ -1,5 +1,6 @@
 package com.malikendsley.quipswap;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -7,16 +8,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.adapters.FriendAdapter;
-import com.malikendsley.firebaseutils.schema.Friendship;
+import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
+import com.malikendsley.firebaseutils.secureinterfaces.FriendRetrieveListener;
 import com.malikendsley.quipswap.databinding.QuipWidgetConfigureBinding;
 
 import java.util.ArrayList;
@@ -29,15 +30,14 @@ public class QuipWidgetConfigureActivity extends Activity {
     private static final String TAG = "Own";
     private static final String PREFS_NAME = "com.malikendsley.quipswap.QuipWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
+    private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     RecyclerView friendRecycler;
-    FriendAdapter friendAdapter;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    ArrayList<Friendship> friendList = new ArrayList<>();
+    SecureFriendAdapter friendAdapter;
+    ArrayList<String> friendList = new ArrayList<>();
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     String mFriendUID;
-    private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    //TODO migrate
-    FirebaseHandler mdb = new FirebaseHandler(mDatabase);
+    //TODO migrate complete
+    FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, QuipWidgetConfigureActivity.this);
 
     public QuipWidgetConfigureActivity() {
         super();
@@ -98,25 +98,31 @@ public class QuipWidgetConfigureActivity extends Activity {
             return;
         }
 
-        //populate friends
-        //populate friends
-        mdb.retrieveFriends(friendsList -> {
-            //Log.i(TAG, "Adapter: Friends Retrieved");
-            if (friendsList != null) {
-                friendList.clear();
-                friendList.addAll(friendsList);
-                //Log.i(TAG, friendList.toString());
+        mdb2.getFriends(new FriendRetrieveListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onGetFriends(ArrayList<String> friendUIDList) {
+                if (friendUIDList != null) {
+                    friendList.clear();
+                    friendList.addAll(friendUIDList);
+                }
+                friendAdapter.notifyDataSetChanged();
             }
-            friendAdapter.notifyDataSetChanged();
+
+            @Override
+            public void onGetFailed(Exception e) {
+                e.printStackTrace();
+                Toast.makeText(QuipWidgetConfigureActivity.this, "Having trouble connecting to the database", Toast.LENGTH_SHORT).show();
+            }
         });
 
         //set up recycler
         initFriendRecycler();
 
         //when a friend is selected, store their UID in preferences for the QuipWidget.java class to use
-        friendAdapter = new FriendAdapter(friendList, position -> {
+        friendAdapter = new SecureFriendAdapter(friendList, position -> {
 
-            mFriendUID = (friendList.get(position).getUser1().equals(mAuth.getUid())) ? friendList.get(position).getUser2() : friendList.get(position).getUser1();
+            mFriendUID = friendList.get(position);
             final Context context = QuipWidgetConfigureActivity.this;
             // When the button is clicked, store the string locally
             Log.i(TAG, "Row Clicked, storing " + mFriendUID + " in sharedPrefs");
@@ -129,7 +135,9 @@ public class QuipWidgetConfigureActivity extends Activity {
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
             QuipWidgetConfigureActivity.this.setResult(RESULT_OK, resultValue);
             QuipWidgetConfigureActivity.this.finish();
-        });
+        }, QuipWidgetConfigureActivity.this);
+
+
         friendRecycler.setAdapter(friendAdapter);
 
 

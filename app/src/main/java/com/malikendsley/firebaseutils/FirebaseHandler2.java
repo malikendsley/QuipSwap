@@ -45,6 +45,11 @@ public class FirebaseHandler2 {
         mActivity = activity;
     }
 
+    public FirebaseHandler2(DatabaseReference ref){
+        mDatabase = ref;
+        mActivity = null;
+    }
+
     //convert a UID to a username
     public void UIDtoUsername(String UID, ResolveListener listener) {
         mDatabase.child("UsersPublic").child(UID).child("Username").get().addOnCompleteListener(task -> {
@@ -319,6 +324,10 @@ public class FirebaseHandler2 {
 
     //register a user
     public void registerUser(String username, String email, String password, RegisterUserListener listener) {
+        if(mActivity == null){
+            Log.e(TAG, "registerUser: Called with null activity");
+            return;
+        }
         //prevent duplicate usernames
         usernameToUID(username, UID -> {
             if (UID == null) {
