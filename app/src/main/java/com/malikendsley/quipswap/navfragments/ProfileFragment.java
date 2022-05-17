@@ -118,6 +118,7 @@ public class ProfileFragment extends Fragment {
                     friendAdapter.notifyDataSetChanged();
                 }
             }
+
             @Override
             public void onGetFailed(Exception e) {
                 e.printStackTrace();
@@ -127,7 +128,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void onAddFriend(String friend) {
-        if(!dataFetched){
+        if (!dataFetched) {
             Toast.makeText(getContext(), "Please wait a moment and try again", Toast.LENGTH_SHORT).show();
             return;
         }

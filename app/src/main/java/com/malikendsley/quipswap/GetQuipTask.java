@@ -52,24 +52,14 @@ public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
 
             @Override
             public void onFailed(Exception e) {
+                Log.i(TAG, "GetQuipTask: Error retrieving, using standard bitmap");
+                views.setImageViewBitmap(R.id.appwidget_image, defaultBitmap);
+                WidgetManager.updateAppWidget(WidgetID, views);
                 e.printStackTrace();
             }
         });
-
-        if(defaultBitmap == null){
-            Log.i(TAG, "BITMAP IS NULL");
-        }
+        Log.i(TAG, "GetQuipTask: Task Concluding");
         return null;
     }
 
-//    @Override
-//    protected void onPostExecute(Bitmap bitmap) {
-//        if (isCancelled()) {
-//            Log.i(TAG, "cancelled");
-//            bitmap = null;
-//        }
-//        Log.i(TAG, "onPostExecute");
-//        views.setImageViewBitmap(R.id.appwidget_image, bitmap);
-//        WidgetManager.updateAppWidget(WidgetID, views);
-//    }
 }

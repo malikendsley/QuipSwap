@@ -284,6 +284,7 @@ public class FirebaseHandler2 {
     //TODO the scaling is not fixed at this point, still try to implement metadata
     //get most recent quip from user as a bitmap
     public void getLatestQuip(String UID, RecentQuipListener listener) {
+        Log.i(TAG, "Latest Quip Called");
         //get all quips sent to you
         getReceivedQuips(new PublicQuipRetrieveListener() {
             @Override
@@ -293,21 +294,22 @@ public class FirebaseHandler2 {
                     listener.onRetrieved(null);
                     return;
                 }
-                //obtain the URI of said quip
+                //filter for quips from a particular user
                 for (PublicQuip quip : quipList) {
                     if (!quip.getSender().equals(UID)) {
                         quipList.remove(quip);
                     }
                 }
+                //quips implement comparable by timestamp
                 PublicQuip mostRecent = Collections.max(quipList);
                 //TODO: since this is likely to change, don't make a function for it
-                mDatabase.child("QuipsPrivate").child(mostRecent.getSender()).child(mostRecent.getKey()).get().addOnSuccessListener(dataSnapshot -> {
+                mDatabase.child("QuipsPrivate").child(mostRecent.getKey()).get().addOnSuccessListener(dataSnapshot -> {
 
                     String URI = Objects.requireNonNull(dataSnapshot.getValue(PrivateQuip.class)).getURI();
                     StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl(URI);
                     //just in case someone managed to pull something
                     final long ONE_MEGABYTE = 1024 * 1024;
-
+                    Log.i(TAG, "Returning bitmap");
                     httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> listener.onRetrieved(BitmapFactory.decodeByteArray(bytes, 0, bytes.length))).addOnFailureListener(e -> {
                         Log.i(TAG, "getLatestQuip: URL Download Failed");
                         e.printStackTrace();

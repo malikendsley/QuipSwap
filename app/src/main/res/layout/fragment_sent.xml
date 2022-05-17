@@ -31,7 +31,9 @@
         android:id="@+id/sentSwapsRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/sentSwapsHeaderText" />
+        android:layout_below="@+id/sentSwapsHeaderText"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="560dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

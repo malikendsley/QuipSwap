@@ -138,15 +138,15 @@ public class FriendRequestsActivity extends AppCompatActivity {
     }
 
     void denyFriend(int position) {
-        //remove incoming in our list
-        mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Incoming").child((String) friendRequestList.get(position).getObject()).removeValue();
-        //remove outgoing in theirs
-        mDatabase.child("RequestsPrivate").child((String) friendRequestList.get(position).getObject()).child("Outgoing").child(Objects.requireNonNull(mAuth.getUid())).removeValue();
         Toast.makeText(this, "Request Denied", Toast.LENGTH_SHORT).show();
         deleteFriend(position);
     }
 
     void deleteFriend(int position) {
+        //remove incoming in our list
+        mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Incoming").child((String) friendRequestList.get(position).getObject()).removeValue();
+        //remove outgoing in theirs
+        mDatabase.child("RequestsPrivate").child((String) friendRequestList.get(position).getObject()).child("Outgoing").child(Objects.requireNonNull(mAuth.getUid())).removeValue();
         friendRequestList.remove(position);
         requestAdapter.notifyItemRemoved(position);
         noFriendRequestsFlavor.setVisibility(friendRequestList.isEmpty() ? View.VISIBLE : View.GONE);
