@@ -2,9 +2,12 @@ package com.malikendsley.quipswap;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 /**
  * Implementation of App Widget functionality.
@@ -12,6 +15,8 @@ import android.widget.RemoteViews;
  */
 public class QuipWidget extends AppWidgetProvider {
 
+
+    public static final String ACTION_AUTO_UPDATE = "AUTO_UPDATE";
     final static String TAG = "Own";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
@@ -22,10 +27,22 @@ public class QuipWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.quip_widget);
 
+        //begin the task that updates a widget
         new GetQuipTask(views, appWidgetId, appWidgetManager).execute(friendUID);
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+
+        if (intent.getAction().equals(ACTION_AUTO_UPDATE)) {
+            // DO SOMETHING
+            Log.i(TAG, "QuipWidget: Auto Update Detected");
+            Toast.makeText(context, "Auto Update...", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -42,15 +59,25 @@ public class QuipWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             QuipWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
         }
+        // stop alarm only if all widgets have been disabled
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName thisAppWidgetComponentName = new ComponentName(context.getPackageName(), getClass().getName());
+        int[] appWidgetIdsAlarm = appWidgetManager.getAppWidgetIds(thisAppWidgetComponentName);
+        if (appWidgetIdsAlarm.length == 0) {
+            // stop alarm
+            AppWidgetAlarm appWidgetAlarm = new AppWidgetAlarm(context.getApplicationContext());
+            appWidgetAlarm.stopAlarm();
+            Log.i(TAG, "QuipWidget: Alarm Stopped, onDeleted()");
+            Toast.makeText(context, "Alarm Killed...", Toast.LENGTH_SHORT).show();
+        }
+
     }
+
 
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
+        AppWidgetAlarm appWidgetAlarm = new AppWidgetAlarm(context.getApplicationContext());
+        appWidgetAlarm.startAlarm();
     }
 }

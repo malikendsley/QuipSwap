@@ -99,20 +99,6 @@ public class ShareQuipActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(view -> finish());
     }
 
-    @SuppressWarnings("unused")
-    void debugQuip(Friendship friendship) {
-        Log.i(TAG, "Displaying Dialog");
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setIcon(new BitmapDrawable(this.getResources(), bitmap));
-        builder.setTitle("Preview Quip");
-        builder.setMessage(((friendship.getUser1().equals(mAuth.getUid())) ? friendship.getUser2() : friendship.getUser1()));
-        builder.setPositiveButton("Accept", (dialog, i) -> dialog.dismiss());
-        builder.setNegativeButton("Deny", (dialog, i) -> dialog.dismiss());
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     void shareQuip(String recipientUID) {
         Log.e(TAG, "ShareQuip: " + recipientUID);
         mdb2.shareQuip(recipientUID, byteArray, new QuipUploadListener() {
