@@ -9,7 +9,7 @@
     <string name="not_a_user">Not a user?</string>
     <string name="register">Register</string>
     <string name="log_out">Log Out</string>
-    <string name="usernameColon">Username:</string>
+    <string name="usernameColon">Username</string>
     <string name="new_quip">New Quip</string>
     <string name="about_us">About Us</string>
     <string name="settings">Settings</string>
@@ -30,7 +30,7 @@
     <string name="select_which_friend">Select which friend whose quips you would like to see in this widget.</string>
     <string name="cancel">Cancel</string>
     <string name="select_source">Select Source</string>
-    <string name="loading">loading...</string>
+    <string name="loading">Loading…</string>
     <string name="deny">Deny</string>
     <string name="accept">Accept</string>
 </resources>
