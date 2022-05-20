@@ -8,11 +8,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Sent Swaps"
+        android:layout_margin="8dp"
+        android:text="@string/sent_swaps"
         android:textSize="30sp" />
 
     <TextView
@@ -22,7 +19,7 @@
         android:layout_centerInParent="true"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:text="You haven't sent any swaps. Click the + icon to get started!"
+        android:text="@string/noSwapsSentFlavor"
         android:textSize="16sp"
         android:visibility="visible" />
 
@@ -31,9 +28,7 @@
         android:id="@+id/sentSwapsRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/sentSwapsHeaderText"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="560dp" />
+        android:layout_below="@+id/sentSwapsHeaderText" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

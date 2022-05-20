@@ -33,4 +33,8 @@
     <string name="loading">Loading…</string>
     <string name="deny">Deny</string>
     <string name="accept">Accept</string>
+    <string name="sent_swaps">Sent Swaps</string>
+    <string name="noSwapsSentFlavor">You haven\'t sent any swaps. Click the + icon to get started!</string>
+    <string name="received_swaps">Received Swaps</string>
+    <string name="noReceivedSwapsFlavor">You haven\'t received any swaps. Ask your friends to send you some!</string>
 </resources>
