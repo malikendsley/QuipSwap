@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import javax.annotation.Nullable;
 
 public class ProfileFragment extends Fragment {
-    //TODO migrate complete
 
     private static final String TAG = "Own";
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();

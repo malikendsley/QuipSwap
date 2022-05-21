@@ -75,8 +75,8 @@ public class QuipWidget extends AppWidgetProvider {
             // stop alarm
             AppWidgetAlarm appWidgetAlarm = new AppWidgetAlarm(context.getApplicationContext());
             appWidgetAlarm.stopAlarm();
-            Log.i(TAG, "QuipWidget: Alarm Stopped, onDeleted()");
-            //Toast.makeText(context, "Alarm Killed...", Toast.LENGTH_SHORT).show();
+            //Log.i(TAG, "QuipWidget: Alarm Stopped, onDeleted()");
+            Toast.makeText(context, "Alarm Killed...", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -84,8 +84,8 @@ public class QuipWidget extends AppWidgetProvider {
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
         AppWidgetAlarm appWidgetAlarm = new AppWidgetAlarm(context.getApplicationContext());
-        Log.i(TAG, "QuipWidget: Alarm Starting");
-        //Toast.makeText(context, "Alarm Starting", Toast.LENGTH_SHORT).show();
+        //Log.i(TAG, "QuipWidget: Alarm Starting");
+        Toast.makeText(context, "Alarm Starting", Toast.LENGTH_SHORT).show();
         appWidgetAlarm.startAlarm();
     }
 }

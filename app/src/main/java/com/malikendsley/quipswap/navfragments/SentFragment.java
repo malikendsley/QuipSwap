@@ -31,7 +31,6 @@ public class SentFragment extends Fragment {
 
     private static final String TAG = "Own";
     FirebaseHandler2 mdb2;
-    //TODO migrate complete
 
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 

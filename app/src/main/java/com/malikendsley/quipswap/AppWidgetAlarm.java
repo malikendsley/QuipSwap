@@ -43,7 +43,7 @@ public class AppWidgetAlarm {
     @SuppressLint("UnspecifiedImmutableFlag")
     public void stopAlarm() {
         Intent alarmIntent = new Intent(QuipWidget.ACTION_AUTO_UPDATE);
-        PendingIntent pendingIntent = null;
+        PendingIntent pendingIntent;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             pendingIntent = PendingIntent.getBroadcast(mContext, ALARM_ID, alarmIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
         } else {

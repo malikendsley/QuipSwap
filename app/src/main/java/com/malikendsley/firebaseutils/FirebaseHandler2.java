@@ -45,7 +45,7 @@ public class FirebaseHandler2 {
         mActivity = activity;
     }
 
-    public FirebaseHandler2(DatabaseReference ref){
+    public FirebaseHandler2(DatabaseReference ref) {
         mDatabase = ref;
         mActivity = null;
     }
@@ -295,10 +295,14 @@ public class FirebaseHandler2 {
                     return;
                 }
                 //filter for quips from a particular user
+                ArrayList<PublicQuip> toRemove = new ArrayList<>();
                 for (PublicQuip quip : quipList) {
                     if (!quip.getSender().equals(UID)) {
-                        quipList.remove(quip);
+                        toRemove.add(quip);
                     }
+                }
+                if (!toRemove.isEmpty()) {
+                    quipList.removeAll(toRemove);
                 }
                 //quips implement comparable by timestamp
                 PublicQuip mostRecent = Collections.max(quipList);
@@ -326,7 +330,7 @@ public class FirebaseHandler2 {
 
     //register a user
     public void registerUser(String username, String email, String password, RegisterUserListener listener) {
-        if(mActivity == null){
+        if (mActivity == null) {
             Log.e(TAG, "registerUser: Called with null activity");
             return;
         }

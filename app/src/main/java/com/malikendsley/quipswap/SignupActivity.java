@@ -20,7 +20,6 @@ import com.malikendsley.firebaseutils.secureinterfaces.RegisterUserListener;
 public class SignupActivity extends AppCompatActivity {
 
     //private static final String TAG = "Own";
-    //TODO migrate complete
     private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, this);
     private EditText username;

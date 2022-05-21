@@ -61,7 +61,6 @@ public class ShareQuipActivity extends AppCompatActivity {
         byteArray = intent.getByteArrayExtra("BitmapImage");
         bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         Log.i(TAG, "Bitmap retrieved");
-        //TODO migrate complete
         //firebase setup
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mdb2 = new FirebaseHandler2(mDatabase, this);

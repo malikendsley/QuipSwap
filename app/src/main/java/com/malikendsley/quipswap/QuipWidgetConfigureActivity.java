@@ -41,7 +41,6 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
     ArrayList<String> friendList = new ArrayList<>();
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     String mFriendUID;
-    //TODO migrate complete
     FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, QuipWidgetConfigureActivity.this);
 
     public QuipWidgetConfigureActivity() {
