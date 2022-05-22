@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SplashScreen.installSplashScreen(this);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            invalidateOptionsMenu();
+        }
         setContentView(R.layout.activity_main);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.findItem(R.id.logoutOption).setVisible(user != null);
         return true;
     }
 

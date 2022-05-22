@@ -20,7 +20,6 @@ import com.malikendsley.firebaseutils.secureinterfaces.PublicQuipRetrieveListene
 import com.malikendsley.firebaseutils.secureinterfaces.RecentQuipListener;
 import com.malikendsley.firebaseutils.secureinterfaces.RegisterUserListener;
 import com.malikendsley.firebaseutils.secureinterfaces.ResolveListener;
-import com.malikendsley.firebaseutils.secureinterfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
 import com.malikendsley.firebaseutils.secureschema.PrivateUser;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
@@ -341,7 +340,6 @@ public class FirebaseHandler2 {
             }
         });
     }
-
 
 
     //register a user
