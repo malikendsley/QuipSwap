@@ -24,6 +24,7 @@ import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
 import com.malikendsley.firebaseutils.secureinterfaces.FriendAddListener;
 import com.malikendsley.firebaseutils.secureinterfaces.FriendRetrieveListener;
+import com.malikendsley.firebaseutils.secureinterfaces.ResolveListener;
 import com.malikendsley.firebaseutils.secureinterfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.secureschema.PrivateUser;
 import com.malikendsley.quipswap.R;
@@ -90,20 +91,10 @@ public class ProfileFragment extends Fragment {
         friendRecycler.setAdapter(friendAdapter);
 
         //resolve user
-        mdb2.getUser(mAuth.getUid(), new UserRetrievedListener() {
-            @Override
-            public void onUserRetrieved(PrivateUser user) {
-                Log.i(TAG, "onUserRetrieved");
-                Log.i(TAG, "username: " + user.getUsername());
-                username.setText(user.getUsername());
-            }
-
-            @Override
-            public void onRetrieveFailed(Exception e) {
-                e.printStackTrace();
-                //Log.i(TAG, "Profile: Resolve User failed");
-                Toast.makeText(getContext(), "Profile: Having trouble connecting to database", Toast.LENGTH_SHORT).show();
-            }
+        mdb2.UIDtoUsername(mAuth.getUid(), user -> {
+            Log.i(TAG, "onUserRetrieved");
+            Log.i(TAG, "username: " + user);
+            username.setText(user);
         });
 
         //populate friends

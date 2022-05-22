@@ -86,7 +86,7 @@ public class ReceivedFragment extends Fragment {
             @Override
             public void onRetrieveFail(Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
             }
         });
     }

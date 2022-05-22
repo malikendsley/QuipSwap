@@ -65,7 +65,7 @@ public class FirebaseHandler2 {
 
     //convert a username to a UID
     public void usernameToUID(String username, UsernameResolveListener listener) {
-        mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(task -> {
+        mDatabase.child("UidLookup").child(username).get().addOnCompleteListener(task -> {
             String UID = (String) task.getResult().getValue();
             Log.i(TAG, "usernameToUID Resolved: " + UID);
             if (UID != null) {
@@ -77,19 +77,33 @@ public class FirebaseHandler2 {
         });
     }
 
-    //get a user
-    public void getUser(String UID, UserRetrievedListener listener) {
-        mDatabase.child("UsersPrivate").child(UID).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.i(TAG, "getUser: succeeded");
-                PrivateUser p = task.getResult().getValue(PrivateUser.class);
-                listener.onUserRetrieved(p);
+    //check if a username is taken
+    public void isTaken(String username, UsernameResolveListener listener) {
+        mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(task -> {
+            String UID = (String) task.getResult().getValue();
+            if (UID != null) {
+                Log.i(TAG, "usernameToUID Resolved: " + UID);
+                listener.onUsernameResolved("taken");
             } else {
-                Log.e(TAG, "getUser: failed");
-                listener.onRetrieveFailed(task.getException());
+                listener.onUsernameResolved(null);
+                Log.e(TAG, "UID Null");
             }
         });
     }
+//      this is useful but i don't ever care about an email at the moment
+//    //get a user
+//    public void getUser(String UID, UserRetrievedListener listener) {
+//        mDatabase.child("UsersPrivate").child(UID).get().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                Log.i(TAG, "getUser: succeeded");
+//                PrivateUser p = task.getResult().getValue(PrivateUser.class);
+//                listener.onUserRetrieved(p);
+//            } else {
+//                Log.e(TAG, "getUser: failed");
+//                listener.onRetrieveFailed(task.getException());
+//            }
+//        });
+//    }
 
     public void getQuipByKey(String quipKey, PrivateQuipRetrievedListener listener) {
         mDatabase.child("QuipsPrivate").child(quipKey).get().addOnCompleteListener(task -> {
@@ -328,6 +342,8 @@ public class FirebaseHandler2 {
         });
     }
 
+
+
     //register a user
     public void registerUser(String username, String email, String password, RegisterUserListener listener) {
         if (mActivity == null) {
@@ -335,7 +351,7 @@ public class FirebaseHandler2 {
             return;
         }
         //prevent duplicate usernames
-        usernameToUID(username, UID -> {
+        isTaken(username, UID -> {
             if (UID == null) {
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(mActivity, task -> {
                     if (task.isSuccessful()) {
@@ -347,13 +363,21 @@ public class FirebaseHandler2 {
                             if (publicTask.isSuccessful()) {
                                 mDatabase.child("UsersPrivate").child(mAuth.getUid()).setValue(privateUser).addOnCompleteListener(privateTask -> {
                                     if (privateTask.isSuccessful()) {
-                                        mDatabase.child("TakenUsernames").child(username).setValue(mAuth.getUid()).addOnCompleteListener(indexTask -> {
+                                        mDatabase.child("UidLookup").child(username).setValue(mAuth.getUid()).addOnCompleteListener(indexTask -> {
                                             if (indexTask.isSuccessful()) {
-                                                Log.i(TAG, "registerUser: success");
-                                                listener.onResult("");
+                                                mDatabase.child("TakenUsernames").child(username).setValue(true).addOnCompleteListener(takenTask -> {
+                                                    if (takenTask.isSuccessful()) {
+                                                        Log.i(TAG, "registerUser: success");
+                                                        listener.onResult("");
+                                                    } else {
+                                                        //first index failed
+                                                        Log.e(TAG, "registerUser: UID lookup index failed");
+                                                        listener.onDBFail(takenTask.getException());
+                                                    }
+                                                });
                                             } else {
-                                                //username index failed
-                                                Log.e(TAG, "registerUser: index failed");
+                                                //second index failed
+                                                Log.e(TAG, "registerUser: UID lookup index failed");
                                                 listener.onDBFail(indexTask.getException());
                                             }
                                         });

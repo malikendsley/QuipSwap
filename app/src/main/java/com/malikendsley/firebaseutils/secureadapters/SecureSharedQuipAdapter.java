@@ -19,9 +19,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.secureinterfaces.PrivateQuipRetrievedListener;
-import com.malikendsley.firebaseutils.secureinterfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
-import com.malikendsley.firebaseutils.secureschema.PrivateUser;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
 import com.malikendsley.quipswap.R;
 
@@ -58,17 +56,7 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
         Log.i("Own", "onBind: " + sq.toString());
 
 
-        mdb2.getUser(isSent ? sq.getRecipient() : sq.getSender(), new UserRetrievedListener() {
-            @Override
-            public void onUserRetrieved(PrivateUser user) {
-                holder.username.setText(user.getUsername());
-            }
-
-            @Override
-            public void onRetrieveFailed(Exception e) {
-                holder.username.setText(R.string.loading);
-            }
-        });
+        mdb2.UIDtoUsername(isSent ? sq.getRecipient() : sq.getSender(), holder.username::setText);
 
         mdb2.getQuipByKey(sq.getKey(), new PrivateQuipRetrievedListener() {
             @Override
