@@ -20,6 +20,7 @@ import com.malikendsley.firebaseutils.secureinterfaces.PublicQuipRetrieveListene
 import com.malikendsley.firebaseutils.secureinterfaces.RecentQuipListener;
 import com.malikendsley.firebaseutils.secureinterfaces.RegisterUserListener;
 import com.malikendsley.firebaseutils.secureinterfaces.ResolveListener;
+import com.malikendsley.firebaseutils.secureinterfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
 import com.malikendsley.firebaseutils.secureschema.PrivateUser;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
@@ -65,13 +66,18 @@ public class FirebaseHandler2 {
     //convert a username to a UID
     public void usernameToUID(String username, UsernameResolveListener listener) {
         mDatabase.child("UidLookup").child(username).get().addOnCompleteListener(task -> {
-            String UID = (String) task.getResult().getValue();
-            Log.i(TAG, "usernameToUID Resolved: " + UID);
-            if (UID != null) {
-                listener.onUsernameResolved(UID);
+            if(task.isSuccessful()){
+                String UID = (String) task.getResult().getValue();
+                Log.i(TAG, "usernameToUID Resolved: " + UID);
+                if (UID != null) {
+                    listener.onUsernameResolved(UID);
+                } else {
+                    listener.onUsernameResolved(null);
+                    Log.e(TAG, "UID Null");
+                }
             } else {
                 listener.onUsernameResolved(null);
-                Log.e(TAG, "UID Null");
+                Log.e(TAG, "UID Failed, effectively null");
             }
         });
     }
@@ -79,30 +85,37 @@ public class FirebaseHandler2 {
     //check if a username is taken
     public void isTaken(String username, UsernameResolveListener listener) {
         mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(task -> {
-            String UID = (String) task.getResult().getValue();
-            if (UID != null) {
-                Log.i(TAG, "usernameToUID Resolved: " + UID);
-                listener.onUsernameResolved("taken");
+            if(task.isSuccessful()){
+                String UID = (String) task.getResult().getValue();
+                if (UID != null) {
+                    Log.i(TAG, "usernameToUID Resolved: " + UID);
+                    listener.onUsernameResolved("taken");
+                } else {
+                    listener.onUsernameResolved(null);
+                    Log.e(TAG, "UID Null");
+                }
             } else {
                 listener.onUsernameResolved(null);
-                Log.e(TAG, "UID Null");
+                Log.e(TAG, "UID Failed, effectively null");
             }
         });
     }
-//      this is useful but i don't ever care about an email at the moment
-//    //get a user
-//    public void getUser(String UID, UserRetrievedListener listener) {
-//        mDatabase.child("UsersPrivate").child(UID).get().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                Log.i(TAG, "getUser: succeeded");
-//                PrivateUser p = task.getResult().getValue(PrivateUser.class);
-//                listener.onUserRetrieved(p);
-//            } else {
-//                Log.e(TAG, "getUser: failed");
-//                listener.onRetrieveFailed(task.getException());
-//            }
-//        });
-//    }
+
+    //get a user
+    @SuppressWarnings("unused")
+    public void getUser(String UID, UserRetrievedListener listener) {
+        mDatabase.child("UsersPrivate").child(UID).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.i(TAG, "getUser: succeeded");
+                PrivateUser p = task.getResult().getValue(PrivateUser.class);
+                listener.onUserRetrieved(p);
+            } else {
+                Log.e(TAG, "getUser: failed");
+                listener.onRetrieveFailed(task.getException());
+            }
+        });
+    }
+
 
     public void getQuipByKey(String quipKey, PrivateQuipRetrievedListener listener) {
         mDatabase.child("QuipsPrivate").child(quipKey).get().addOnCompleteListener(task -> {
@@ -333,14 +346,12 @@ public class FirebaseHandler2 {
                     });
                 });
             }
-
             @Override
             public void onRetrieveFail(Exception e) {
                 listener.onFailed(e);
             }
         });
     }
-
 
     //register a user
     public void registerUser(String username, String email, String password, RegisterUserListener listener) {
