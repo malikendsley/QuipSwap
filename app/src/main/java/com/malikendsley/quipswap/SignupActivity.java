@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
-import com.malikendsley.firebaseutils.secureinterfaces.RegisterUserListener;
+import com.malikendsley.firebaseutils.interfaces.RegisterUserListener;
 
 public class SignupActivity extends AppCompatActivity {
 

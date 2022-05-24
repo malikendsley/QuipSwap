@@ -24,7 +24,7 @@ import com.malikendsley.firebaseutils.ExpandableListItem;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
 import com.malikendsley.firebaseutils.secureadapters.SecureRequestAdapter;
-import com.malikendsley.firebaseutils.secureinterfaces.GetRequestsListener;
+import com.malikendsley.firebaseutils.interfaces.GetRequestsListener;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -127,10 +127,10 @@ public class FriendRequestsActivity extends AppCompatActivity {
         return true;
     }
 
+    //TODO Refactor
     void acceptFriend(int position) {
-        //TODO this should probably be a cloud function
         Long time = System.currentTimeMillis();
-        mDatabase.child("FriendsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child((String) friendRequestList.get(position).getObject()).setValue(time);
+        mDatabase.child("FriendRequests").child(Objects.requireNonNull(mAuth.getUid())).child((String) friendRequestList.get(position).getObject()).setValue(time);
         mDatabase.child("FriendsPrivate").child((String) friendRequestList.get(position).getObject()).child(mAuth.getUid()).setValue(time);
         Toast.makeText(this, "Accepted", Toast.LENGTH_SHORT).show();
         deleteFriend(position);

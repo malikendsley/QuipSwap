@@ -11,7 +11,7 @@ import android.widget.RemoteViews;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
-import com.malikendsley.firebaseutils.secureinterfaces.RecentQuipListener;
+import com.malikendsley.firebaseutils.interfaces.RecentQuipListener;
 
 public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
 

@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.secureadapters.SecureSharedQuipAdapter;
-import com.malikendsley.firebaseutils.secureinterfaces.PublicQuipRetrieveListener;
+import com.malikendsley.firebaseutils.interfaces.PublicQuipRetrieveListener;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
 import com.malikendsley.quipswap.MakeQuipActivity;
 import com.malikendsley.quipswap.R;

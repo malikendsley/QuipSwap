@@ -18,7 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
-import com.malikendsley.firebaseutils.secureinterfaces.PrivateQuipRetrievedListener;
+import com.malikendsley.firebaseutils.interfaces.PrivateQuipRetrievedListener;
 import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
 import com.malikendsley.quipswap.R;

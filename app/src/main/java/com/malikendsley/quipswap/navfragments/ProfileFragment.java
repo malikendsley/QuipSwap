@@ -22,11 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
-import com.malikendsley.firebaseutils.secureinterfaces.FriendAddListener;
-import com.malikendsley.firebaseutils.secureinterfaces.FriendRetrieveListener;
-import com.malikendsley.firebaseutils.secureinterfaces.ResolveListener;
-import com.malikendsley.firebaseutils.secureinterfaces.UserRetrievedListener;
-import com.malikendsley.firebaseutils.secureschema.PrivateUser;
+import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
+import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;

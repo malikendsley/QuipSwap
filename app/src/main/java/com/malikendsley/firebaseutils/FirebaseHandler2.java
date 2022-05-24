@@ -10,17 +10,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
+import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
+import com.malikendsley.firebaseutils.interfaces.GetRequestsListener;
+import com.malikendsley.firebaseutils.interfaces.PrivateQuipRetrievedListener;
+import com.malikendsley.firebaseutils.interfaces.PublicQuipRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
+import com.malikendsley.firebaseutils.interfaces.RecentQuipListener;
+import com.malikendsley.firebaseutils.interfaces.RegisterUserListener;
+import com.malikendsley.firebaseutils.interfaces.ResolveListener;
+import com.malikendsley.firebaseutils.interfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
-import com.malikendsley.firebaseutils.secureinterfaces.FriendAddListener;
-import com.malikendsley.firebaseutils.secureinterfaces.FriendRetrieveListener;
-import com.malikendsley.firebaseutils.secureinterfaces.GetRequestsListener;
-import com.malikendsley.firebaseutils.secureinterfaces.PrivateQuipRetrievedListener;
-import com.malikendsley.firebaseutils.secureinterfaces.PublicQuipRetrieveListener;
-import com.malikendsley.firebaseutils.secureinterfaces.RecentQuipListener;
-import com.malikendsley.firebaseutils.secureinterfaces.RegisterUserListener;
-import com.malikendsley.firebaseutils.secureinterfaces.ResolveListener;
-import com.malikendsley.firebaseutils.secureinterfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
 import com.malikendsley.firebaseutils.secureschema.PrivateUser;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
@@ -63,10 +63,10 @@ public class FirebaseHandler2 {
         });
     }
 
-    //convert a username to a UID
+    /*convert a username to a UID
     public void usernameToUID(String username, UsernameResolveListener listener) {
         mDatabase.child("UidLookup").child(username).get().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
+            if (task.isSuccessful()) {
                 String UID = (String) task.getResult().getValue();
                 Log.i(TAG, "usernameToUID Resolved: " + UID);
                 if (UID != null) {
@@ -77,15 +77,16 @@ public class FirebaseHandler2 {
                 }
             } else {
                 listener.onUsernameResolved(null);
-                Log.e(TAG, "UID Failed, effectively null");
+                Log.e(TAG, "usernameToUID Failed, effectively null");
             }
         });
     }
+    */
 
     //check if a username is taken
     public void isTaken(String username, UsernameResolveListener listener) {
         mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
+            if (task.isSuccessful()) {
                 String UID = (String) task.getResult().getValue();
                 if (UID != null) {
                     Log.i(TAG, "usernameToUID Resolved: " + UID);
@@ -96,7 +97,7 @@ public class FirebaseHandler2 {
                 }
             } else {
                 listener.onUsernameResolved(null);
-                Log.e(TAG, "UID Failed, effectively null");
+                Log.e(TAG, "isTaken Failed, effectively null");
             }
         });
     }
@@ -130,19 +131,20 @@ public class FirebaseHandler2 {
 
     //retrieve friends
     public void getFriends(FriendRetrieveListener listener) {
-        mDatabase.child("FriendsPrivate").child(Objects.requireNonNull(mAuth.getUid())).get().addOnCompleteListener(task -> {
+        UIDtoUsername(mAuth.getUid(), resolved -> mDatabase.child("FriendsPrivate").child(resolved).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 ArrayList<String> l = new ArrayList<>();
                 for (DataSnapshot child : task.getResult().getChildren()) {
                     Log.i(TAG, "getFriends Retrieved: " + child.getKey());
                     l.add(child.getKey());
                 }
+                Log.i(TAG, l.toString());
                 listener.onGetFriends(l);
             } else {
                 Log.e(TAG, "getFriends: failed");
                 listener.onGetFailed(task.getException());
             }
-        });
+        }));
     }
 
     //share a quip to a user
@@ -220,6 +222,7 @@ public class FirebaseHandler2 {
     }
 
     //retrieve incoming friend requests
+    //TODO Refactor
     public void getReceivedFriendRequests(GetRequestsListener listener) {
         mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Incoming").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -237,73 +240,60 @@ public class FirebaseHandler2 {
     }
 
     //try to add a user as a friend
+    //Requires a string of usernames
     public void trySendFriendRequest(ArrayList<String> friendsList, String username, FriendAddListener listener) {
-        usernameToUID(username, resolvedUID -> {
-            //must exist
-            if (resolvedUID == null) {
-                listener.onResult("User does not exist");
-                return;
-            }
-            //prevent self add
-            if (resolvedUID.equals(mAuth.getUid())) {
+        //retrieve own username
+        UIDtoUsername(mAuth.getUid(), ownUsername -> {
+            if (ownUsername.equals(username)) {
+                //prevent self-add
                 Log.e(TAG, "trySendFriendRequest: Self Add detected");
                 listener.onResult("You cannot add yourself");
-                return;
-            }
-            //prevent adding existing friend
-            if (friendsList.contains(resolvedUID)) {
-                Log.e(TAG, "trySendFriendRequest: Friend already exists");
-                listener.onResult("Already friends with this user");
-                return;
-            }
-
-            //prevent add if already outgoing or incoming
-            //check your outgoing requests
-            mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Outgoing").child(resolvedUID).get().addOnCompleteListener(outgoingTask -> {
-                if (outgoingTask.isSuccessful()) {
-                    if (outgoingTask.getResult().getValue() != null) {
-                        listener.onResult("Request already sent");
-                        return;
-                    }
-                    mDatabase.child("RequestsPrivate").child(resolvedUID).child("Outgoing").child(mAuth.getUid()).get().addOnCompleteListener(incomingTask -> {
-                        if (incomingTask.isSuccessful()) {
-                            if (incomingTask.getResult().getValue() != null) {
-                                listener.onResult("Accept the incoming request instead");
-                                return;
+            } else {
+                //check if user exists
+                isTaken(username, taken -> {
+                    if (taken == null) {
+                        //only allow adding users that exist
+                        Log.e(TAG, "trySendFriendRequest: User DNE");
+                        listener.onResult("User does not exist");
+                    } else if (friendsList.contains(username)) {
+                        Log.e(TAG, "trySendFriendRequest: Friend already exists");
+                        listener.onResult("Already friends with this user");
+                    } else {
+                        mDatabase.child("FriendRequests").child(username).child("Outgoing").child(ownUsername).get().addOnCompleteListener(outgoingTask -> {
+                            if (outgoingTask.isSuccessful()) {
+                                //prevent duplicate requests
+                                if (outgoingTask.getResult().getValue() != null) {
+                                    Log.e(TAG, "trySendFriendRequest: Already sent");
+                                    listener.onResult("Request already sent");
+                                } else {
+                                    mDatabase.child("FriendRequests").child(ownUsername).child("Outgoing").child(username).get().addOnCompleteListener(incomingTask -> {
+                                        if (incomingTask.isSuccessful()) {
+                                            //prevent cross-send
+                                            if (incomingTask.getResult().getValue() != null) {
+                                                Log.e(TAG, "trySendFriendRequest: Already incoming");
+                                                listener.onResult("Accept the incoming request instead");
+                                            } else {
+                                                //all clear
+                                                Log.i(TAG, "trySendFriendRequest: Sending Request");//mark outgoing in our list
+                                                mDatabase.child("FriendRequests").child(ownUsername).child("Outgoing").child(username).setValue(true);//mark incoming in theirs
+                                                mDatabase.child("FriendRequests").child(username).child("Incoming").child(ownUsername).setValue(true);//mark outgoing in ours
+                                                listener.onResult("");
+                                            }
+                                        } else {
+                                            listener.onDatabaseException(incomingTask.getException());
+                                            Log.e(TAG, "trySendFriendRequest: incoming requests check failed");
+                                        }
+                                    });
+                                }
+                            } else {
+                                listener.onDatabaseException(outgoingTask.getException());
+                                Log.e(TAG, "trySendFriendRequest: outgoing requests check failed");
                             }
-                            //make sure you are not friends with this user already
-                            getFriends(new FriendRetrieveListener() {
-                                @Override
-                                public void onGetFriends(ArrayList<String> friendUIDList) {
-                                    if (friendUIDList.contains(mAuth.getUid())) {
-                                        Log.e(TAG, "trySendFriendRequest: already friends");
-                                        listener.onResult("Already friends with this user");
-                                    } else {
-                                        //all clear
-                                        Log.i(TAG, "trySendFriendRequest: Sending Request");
-                                        //mark outgoing in our list
-                                        mDatabase.child("RequestsPrivate").child(mAuth.getUid()).child("Outgoing").child(resolvedUID).setValue(true);
-                                        //mark incoming in theirs
-                                        mDatabase.child("RequestsPrivate").child(resolvedUID).child("Incoming").child(mAuth.getUid()).setValue(true);
-                                        listener.onResult("");
-                                    }
-                                }
+                        });
+                    }
 
-                                @Override
-                                public void onGetFailed(Exception e) {
-                                    listener.onDatabaseException(e);
-                                }
-                            });
-                        } else {
-                            listener.onDatabaseException(incomingTask.getException());
-                            Log.e(TAG, "trySendFriendRequest: incoming requests check failed");
-                        }
-                    });
-                } else {
-                    listener.onDatabaseException(outgoingTask.getException());
-                    Log.e(TAG, "trySendFriendRequest: outgoing requests check failed");
-                }
-            });
+                });
+            }
         });
     }
 
@@ -346,6 +336,7 @@ public class FirebaseHandler2 {
                     });
                 });
             }
+
             @Override
             public void onRetrieveFail(Exception e) {
                 listener.onFailed(e);

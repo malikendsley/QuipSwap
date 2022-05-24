@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils.secureinterfaces;
+package com.malikendsley.firebaseutils.interfaces;
 
 import java.util.ArrayList;
 

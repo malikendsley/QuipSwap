@@ -4,14 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,9 +20,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
-import com.malikendsley.firebaseutils.schema.Friendship;
 import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
-import com.malikendsley.firebaseutils.secureinterfaces.FriendRetrieveListener;
+import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 
 import java.util.ArrayList;
 

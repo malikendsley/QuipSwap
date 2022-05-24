@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils.secureinterfaces;
+package com.malikendsley.firebaseutils.interfaces;
 
 import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
 
