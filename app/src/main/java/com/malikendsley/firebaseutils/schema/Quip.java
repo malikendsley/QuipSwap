@@ -3,6 +3,7 @@ package com.malikendsley.firebaseutils.schema;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
+
 @SuppressWarnings("unused")
 
 public class Quip {

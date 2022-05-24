@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.malikendsley.firebaseutils.interfaces.AddFriendListener;
 import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.GetRequestsListener;
@@ -19,7 +20,6 @@ import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
 import com.malikendsley.firebaseutils.interfaces.RecentQuipListener;
 import com.malikendsley.firebaseutils.interfaces.RegisterUserListener;
 import com.malikendsley.firebaseutils.interfaces.ResolveListener;
-import com.malikendsley.firebaseutils.interfaces.UserRetrievedListener;
 import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
 import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
 import com.malikendsley.firebaseutils.secureschema.PrivateUser;
@@ -102,22 +102,6 @@ public class FirebaseHandler2 {
         });
     }
 
-    //get a user
-    @SuppressWarnings("unused")
-    public void getUser(String UID, UserRetrievedListener listener) {
-        mDatabase.child("UsersPrivate").child(UID).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.i(TAG, "getUser: succeeded");
-                PrivateUser p = task.getResult().getValue(PrivateUser.class);
-                listener.onUserRetrieved(p);
-            } else {
-                Log.e(TAG, "getUser: failed");
-                listener.onRetrieveFailed(task.getException());
-            }
-        });
-    }
-
-
     public void getQuipByKey(String quipKey, PrivateQuipRetrievedListener listener) {
         mDatabase.child("QuipsPrivate").child(quipKey).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() || task.getResult().exists()) {
@@ -131,14 +115,13 @@ public class FirebaseHandler2 {
 
     //retrieve friends
     public void getFriends(FriendRetrieveListener listener) {
-        UIDtoUsername(mAuth.getUid(), resolved -> mDatabase.child("FriendsPrivate").child(resolved).get().addOnCompleteListener(task -> {
+        UIDtoUsername(mAuth.getUid(), resolved -> mDatabase.child("Friends").child(resolved).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 ArrayList<String> l = new ArrayList<>();
                 for (DataSnapshot child : task.getResult().getChildren()) {
                     Log.i(TAG, "getFriends Retrieved: " + child.getKey());
                     l.add(child.getKey());
                 }
-                Log.i(TAG, l.toString());
                 listener.onGetFriends(l);
             } else {
                 Log.e(TAG, "getFriends: failed");
@@ -223,8 +206,8 @@ public class FirebaseHandler2 {
 
     //retrieve incoming friend requests
     //TODO Refactor
-    public void getReceivedFriendRequests(GetRequestsListener listener) {
-        mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Incoming").get().addOnCompleteListener(task -> {
+    public void getFriendRequests(GetRequestsListener listener) {
+        UIDtoUsername(mAuth.getUid(), ownUsername -> mDatabase.child("FriendRequests").child(ownUsername).child("Incoming").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 ArrayList<String> l = new ArrayList<>();
                 for (DataSnapshot child : task.getResult().getChildren()) {
@@ -233,14 +216,35 @@ public class FirebaseHandler2 {
                 }
                 listener.onRequests(l);
             } else {
-                Log.e(TAG, "getReceivedFriendRequests: Failed");
+                Log.e(TAG, "getFriendRequests: Failed");
                 listener.onGetFail(task.getException());
             }
+        }));
+    }
+
+    //add a friend to self
+    public void acceptFriend(String username, AddFriendListener listener) {
+        UIDtoUsername(mAuth.getUid(), ownUsername -> {
+            Long time = System.currentTimeMillis();
+            //add the friend to the system
+            mDatabase.child("Friends").child(username).child(ownUsername).setValue(time);
+            mDatabase.child("Friends").child(ownUsername).child(username).setValue(time);
+            //remove the friend request from the system
+            denyFriend(username);
+            listener.onAdd();
+        });
+    }
+
+    //delete a friend request
+    public void denyFriend(String username) {
+        UIDtoUsername(mAuth.getUid(), ownUsername -> {
+            mDatabase.child("FriendRequests").child(username).child("Outgoing").child(ownUsername).removeValue();
+            mDatabase.child("FriendRequests").child(ownUsername).child("Incoming").child(username).removeValue();
         });
     }
 
     //try to add a user as a friend
-    //Requires a string of usernames
+    //Requires a string of usernames as the friendsList argument
     public void trySendFriendRequest(ArrayList<String> friendsList, String username, FriendAddListener listener) {
         //retrieve own username
         UIDtoUsername(mAuth.getUid(), ownUsername -> {

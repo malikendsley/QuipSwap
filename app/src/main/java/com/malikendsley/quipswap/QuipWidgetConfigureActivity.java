@@ -20,8 +20,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
-import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
+import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
 import com.malikendsley.quipswap.databinding.QuipWidgetConfigureBinding;
 import com.malikendsley.quipswap.navfragments.SignInFragment;
 

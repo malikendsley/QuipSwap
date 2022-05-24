@@ -5,7 +5,7 @@ public class ExpandableListItem {
     private Object object;
     private boolean isExpanded;
 
-    public ExpandableListItem(Object object){
+    public ExpandableListItem(Object object) {
         this.object = object;
     }
 

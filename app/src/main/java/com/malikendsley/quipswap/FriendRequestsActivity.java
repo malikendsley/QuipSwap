@@ -22,12 +22,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.ExpandableListItem;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.interfaces.GetRequestsListener;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
 import com.malikendsley.firebaseutils.secureadapters.SecureRequestAdapter;
-import com.malikendsley.firebaseutils.interfaces.GetRequestsListener;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class FriendRequestsActivity extends AppCompatActivity {
 
@@ -39,7 +38,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
     //firebase setup
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     ArrayList<ExpandableListItem> friendRequestList = new ArrayList<>();
-    FirebaseHandler2 mdb = new FirebaseHandler2(mDatabase, this);
+    FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +46,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_friend_requests);
 
         //retrieve friend requests and populate
-        mdb.getReceivedFriendRequests(new GetRequestsListener() {
+        mdb2.getFriendRequests(new GetRequestsListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRequests(ArrayList<String> requestList) {
@@ -58,8 +57,8 @@ public class FriendRequestsActivity extends AppCompatActivity {
                     Log.i("Own", "Friends present");
                     noFriendRequestsFlavor.setVisibility(View.GONE);
                     friendRequestList.clear();
-                    for (String UID : requestList) {
-                        friendRequestList.add(new ExpandableListItem(UID));
+                    for (String username : requestList) {
+                        friendRequestList.add(new ExpandableListItem(username));
                     }
                     requestAdapter.notifyDataSetChanged();
                 }
@@ -93,7 +92,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
             public void onDenyClicked(int position) {
                 denyFriend(position);
             }
-        }, this);
+        });
         requestRecycler.setAdapter(requestAdapter);
     }
 
@@ -127,25 +126,21 @@ public class FriendRequestsActivity extends AppCompatActivity {
         return true;
     }
 
-    //TODO Refactor
     void acceptFriend(int position) {
-        Long time = System.currentTimeMillis();
-        mDatabase.child("FriendRequests").child(Objects.requireNonNull(mAuth.getUid())).child((String) friendRequestList.get(position).getObject()).setValue(time);
-        mDatabase.child("FriendsPrivate").child((String) friendRequestList.get(position).getObject()).child(mAuth.getUid()).setValue(time);
-        Toast.makeText(this, "Accepted", Toast.LENGTH_SHORT).show();
+        String user = (String) friendRequestList.get(position).getObject();
+        mdb2.acceptFriend(user, () -> deleteFriend(position));
+        Toast.makeText(this, "Request Accepted", Toast.LENGTH_SHORT).show();
         deleteFriend(position);
     }
 
     void denyFriend(int position) {
+        String user = (String) friendRequestList.get(position).getObject();
+        mdb2.denyFriend(user);
         Toast.makeText(this, "Request Denied", Toast.LENGTH_SHORT).show();
         deleteFriend(position);
     }
 
     void deleteFriend(int position) {
-        //remove incoming in our list
-        mDatabase.child("RequestsPrivate").child(Objects.requireNonNull(mAuth.getUid())).child("Incoming").child((String) friendRequestList.get(position).getObject()).removeValue();
-        //remove outgoing in theirs
-        mDatabase.child("RequestsPrivate").child((String) friendRequestList.get(position).getObject()).child("Outgoing").child(Objects.requireNonNull(mAuth.getUid())).removeValue();
         friendRequestList.remove(position);
         requestAdapter.notifyItemRemoved(position);
         noFriendRequestsFlavor.setVisibility(friendRequestList.isEmpty() ? View.VISIBLE : View.GONE);

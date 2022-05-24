@@ -8,18 +8,16 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.RecentQuipListener;
 
 public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
 
-    final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private final RemoteViews views;
     private final int WidgetID;
     private final AppWidgetManager WidgetManager;
-    FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase);
+    FirebaseHandler2 mdb2 = new FirebaseHandler2(FirebaseDatabase.getInstance().getReference());
     Bitmap defaultBitmap;
 
     @SuppressWarnings("deprecation")

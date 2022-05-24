@@ -2,7 +2,6 @@ package com.malikendsley.firebaseutils.schema;
 
 import androidx.annotation.NonNull;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
 public class Friendship {
@@ -10,7 +9,6 @@ public class Friendship {
     public String User1 = null;
     public String User2 = null;
     public Long timestamp = null;
-
 
 
     @SuppressWarnings("unused")
@@ -37,6 +35,6 @@ public class Friendship {
 
     @NonNull
     public String toString() {
-        return ("Friendship"+ "\nUser 1: " + User1 + " friends with " + User2);
+        return ("Friendship" + "\nUser 1: " + User1 + " friends with " + User2);
     }
 }

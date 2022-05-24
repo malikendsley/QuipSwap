@@ -13,7 +13,7 @@ public class PrivateUser {
 
     @SuppressWarnings("unused")
     //necessary for firebase
-    public PrivateUser(){
+    public PrivateUser() {
         Email = "unset";
         Username = "unset";
     }

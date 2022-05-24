@@ -40,11 +40,10 @@ public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapte
 
     @Override
     public void onBindViewHolder(@NonNull SecureFriendViewHolder holder, int position) {
-
         //list is populated externally
         String friend = list.get(position);
         //get username from Username async
-        mdb2.UIDtoUsername(friend, holder.username::setText);
+        holder.username.setText(friend);
     }
 
     @Override

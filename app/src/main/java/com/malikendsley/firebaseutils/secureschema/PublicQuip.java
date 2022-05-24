@@ -4,15 +4,12 @@ import com.google.firebase.database.PropertyName;
 
 public class PublicQuip implements Comparable<PublicQuip> {
 
-    @PropertyName("Sender")
-    private String Sender = "unset";
-
-    @PropertyName("Recipient")
-    private String Recipient = "unset";
-
     @PropertyName("Timestamp")
     private final long Timestamp;
-
+    @PropertyName("Sender")
+    private String Sender = "unset";
+    @PropertyName("Recipient")
+    private String Recipient = "unset";
     @PropertyName("Key")
     private String Key;
 

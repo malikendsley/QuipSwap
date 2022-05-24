@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.RegisterUserListener;
@@ -20,8 +19,7 @@ import com.malikendsley.firebaseutils.interfaces.RegisterUserListener;
 public class SignupActivity extends AppCompatActivity {
 
     //private static final String TAG = "Own";
-    private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, this);
+    FirebaseHandler2 mdb2 = new FirebaseHandler2(FirebaseDatabase.getInstance().getReference(), this);
     private EditText username;
     private EditText email;
     private EditText password;

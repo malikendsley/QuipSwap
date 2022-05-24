@@ -6,7 +6,7 @@ import com.google.firebase.database.PropertyName;
 
 @SuppressWarnings("unused")
 
-public class SharedQuip implements Comparable<SharedQuip>{
+public class SharedQuip implements Comparable<SharedQuip> {
 
     @PropertyName("Sender")
     public String Sender;

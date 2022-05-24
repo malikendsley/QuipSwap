@@ -14,20 +14,20 @@
         android:textSize="30sp" />
 
     <com.google.android.material.divider.MaterialDivider
-        android:layout_margin="8dp"
         android:id="@+id/FRGuideline"
-        android:layout_below="@id/requestsTitleText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/requestsTitleText"
+        android:layout_margin="8dp" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/noPendingRequestsFlavor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="visible"
         android:text="@string/you_have_no_pending_friend_requests"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/requestList"

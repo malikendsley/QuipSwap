@@ -13,5 +13,5 @@
         android:layout_centerVertical="true"
         android:layout_margin="8dp"
         android:contentDescription="Quip Image"
-        android:src="@drawable/ic_app_logo"/>
+        android:src="@drawable/ic_app_logo" />
 </RelativeLayout>
