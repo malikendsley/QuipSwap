@@ -17,9 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
 import com.malikendsley.quipswap.databinding.QuipWidgetConfigureBinding;
@@ -35,13 +34,12 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
     private static final String TAG = "Own";
     private static final String PREFS_NAME = "com.malikendsley.quipswap.QuipWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
-    private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     RecyclerView friendRecycler;
     SecureFriendAdapter friendAdapter;
     ArrayList<String> friendList = new ArrayList<>();
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     String mFriendUID;
-    FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, QuipWidgetConfigureActivity.this);
+    FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), QuipWidgetConfigureActivity.this);
 
     public QuipWidgetConfigureActivity() {
         super();
@@ -111,7 +109,6 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
             if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
                 finish();
                 Log.i(TAG, "QuipConfigure: No appwidget ID");
-                //TODO This may occur because the user is not logged in, so consider blowing up a fragment in here
                 return;
             }
 

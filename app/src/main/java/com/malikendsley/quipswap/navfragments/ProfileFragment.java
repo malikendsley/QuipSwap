@@ -18,9 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
@@ -33,8 +32,7 @@ import javax.annotation.Nullable;
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = "Own";
-    private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, getActivity());
+    FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     RecyclerView friendRecycler;
     SecureFriendAdapter friendAdapter;

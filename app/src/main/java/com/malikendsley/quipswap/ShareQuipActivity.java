@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
 import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
@@ -29,15 +27,12 @@ public class ShareQuipActivity extends AppCompatActivity {
 
     static final String TAG = "Own";
     //even in my own projects i can never escape him
-    FirebaseHandler2 mdb2;
+    FirebaseHandler mdb2;
 
     RecyclerView friendRecycler;
     SecureFriendAdapter friendAdapter;
-    DatabaseReference mDatabase;
 
     LinearProgressIndicator progressIndicator;
-
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     ArrayList<String> friendList = new ArrayList<>();
     byte[] byteArray;
@@ -59,7 +54,7 @@ public class ShareQuipActivity extends AppCompatActivity {
         bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         Log.i(TAG, "Bitmap retrieved");
         //firebase setup
-        mdb2 = new FirebaseHandler2(FirebaseDatabase.getInstance().getReference(), this);
+        mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), this);
 
         //recycler setup
         friendRecycler = findViewById(R.id.selectFriendsRecyclerView);

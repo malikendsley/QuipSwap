@@ -15,9 +15,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.PublicQuipRetrieveListener;
 import com.malikendsley.firebaseutils.secureadapters.SecureSharedQuipAdapter;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
@@ -29,9 +28,7 @@ import java.util.ArrayList;
 public class SentFragment extends Fragment {
 
     private static final String TAG = "Own";
-    FirebaseHandler2 mdb2;
-
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    FirebaseHandler mdb2;
 
     TextView noSentText;
     RecyclerView sentRecycler;
@@ -49,7 +46,7 @@ public class SentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mdb2 = new FirebaseHandler2(mDatabase, getActivity());
+        mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
 
         //flavor
         noSentText = requireActivity().findViewById(R.id.noSentSwapsText);

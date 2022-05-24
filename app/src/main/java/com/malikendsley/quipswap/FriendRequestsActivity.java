@@ -17,14 +17,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.ExpandableListItem;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.GetRequestsListener;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
 import com.malikendsley.firebaseutils.secureadapters.SecureRequestAdapter;
+import com.malikendsley.firebaseutils.secureschema.ExpandableListItem;
 
 import java.util.ArrayList;
 
@@ -34,11 +32,9 @@ public class FriendRequestsActivity extends AppCompatActivity {
     //recycler
     RecyclerView requestRecycler;
     SecureRequestAdapter requestAdapter;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     //firebase setup
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     ArrayList<ExpandableListItem> friendRequestList = new ArrayList<>();
-    FirebaseHandler2 mdb2 = new FirebaseHandler2(mDatabase, this);
+    FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -7,4 +7,5 @@ public interface GetRequestsListener {
     void onRequests(ArrayList<String> requestList);
 
     void onGetFail(Exception e);
+
 }

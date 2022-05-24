@@ -13,13 +13,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.RegisterUserListener;
 
 public class SignupActivity extends AppCompatActivity {
 
     //private static final String TAG = "Own";
-    FirebaseHandler2 mdb2 = new FirebaseHandler2(FirebaseDatabase.getInstance().getReference(), this);
+    FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), this);
     private EditText username;
     private EditText email;
     private EditText password;

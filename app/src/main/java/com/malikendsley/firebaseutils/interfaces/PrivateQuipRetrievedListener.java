@@ -7,4 +7,5 @@ public interface PrivateQuipRetrievedListener {
     void onRetrieveComplete(PrivateQuip quip);
 
     void onRetrieveFail(Exception e);
+
 }

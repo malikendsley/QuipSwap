@@ -11,8 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.malikendsley.firebaseutils.ExpandableListItem;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
+import com.malikendsley.firebaseutils.secureschema.ExpandableListItem;
 import com.malikendsley.quipswap.R;
 
 import java.lang.ref.WeakReference;

@@ -10,14 +10,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.PublicQuipRetrieveListener;
 import com.malikendsley.firebaseutils.secureadapters.SecureSharedQuipAdapter;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
@@ -29,9 +27,7 @@ import java.util.ArrayList;
 public class ReceivedFragment extends Fragment {
 
     private static final String TAG = "Own";
-    FirebaseHandler2 mdb2;
-
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    FirebaseHandler mdb2;
 
     TextView noReceivedText;
     RecyclerView receivedRecycler;
@@ -39,17 +35,16 @@ public class ReceivedFragment extends Fragment {
 
     ArrayList<PublicQuip> sharedQuipList = new ArrayList<>();
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_received, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mdb2 = new FirebaseHandler2(mDatabase, getActivity());
+        mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
 
         //flavor
         noReceivedText = requireActivity().findViewById(R.id.noReceivedSwapsText);

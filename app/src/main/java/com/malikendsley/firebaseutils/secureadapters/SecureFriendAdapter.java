@@ -12,7 +12,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.RowClickListener;
 import com.malikendsley.quipswap.R;
 
@@ -23,12 +23,12 @@ public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapte
     private static final String TAG = "Own";
     private final RowClickListener listener;
     ArrayList<String> list;
-    FirebaseHandler2 mdb2;
+    FirebaseHandler mdb2;
 
     public SecureFriendAdapter(ArrayList<String> list, RowClickListener listener, Activity mActivity) {
         this.list = list;
         this.listener = listener;
-        mdb2 = new FirebaseHandler2(FirebaseDatabase.getInstance().getReference(), mActivity);
+        mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), mActivity);
     }
 
     @NonNull

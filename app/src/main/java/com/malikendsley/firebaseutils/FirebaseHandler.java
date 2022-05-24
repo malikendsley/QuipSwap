@@ -31,21 +31,20 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
-public class FirebaseHandler2 {
+public class FirebaseHandler {
 
-    //TODO: augment db interface with caching logic (or leverage firebase's)
     private static final String TAG = "FBH2";
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase;
     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     Activity mActivity;
 
-    public FirebaseHandler2(DatabaseReference ref, Activity activity) {
+    public FirebaseHandler(DatabaseReference ref, Activity activity) {
         mDatabase = ref;
         mActivity = activity;
     }
 
-    public FirebaseHandler2(DatabaseReference ref) {
+    public FirebaseHandler(DatabaseReference ref) {
         mDatabase = ref;
         mActivity = null;
     }
@@ -205,7 +204,6 @@ public class FirebaseHandler2 {
     }
 
     //retrieve incoming friend requests
-    //TODO Refactor
     public void getFriendRequests(GetRequestsListener listener) {
         UIDtoUsername(mAuth.getUid(), ownUsername -> mDatabase.child("FriendRequests").child(ownUsername).child("Incoming").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -301,7 +299,6 @@ public class FirebaseHandler2 {
         });
     }
 
-    //TODO the scaling is not fixed at this point, still try to implement metadata
     //get most recent quip from user as a bitmap
     public void getLatestQuip(String UID, RecentQuipListener listener) {
         Log.i(TAG, "Latest Quip Called");
@@ -326,7 +323,6 @@ public class FirebaseHandler2 {
                 }
                 //quips implement comparable by timestamp
                 PublicQuip mostRecent = Collections.max(quipList);
-                //TODO: since this is likely to change, don't make a function for it
                 mDatabase.child("QuipsPrivate").child(mostRecent.getKey()).get().addOnSuccessListener(dataSnapshot -> {
 
                     String URI = Objects.requireNonNull(dataSnapshot.getValue(PrivateQuip.class)).getURI();
