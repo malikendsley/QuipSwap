@@ -62,7 +62,6 @@ public class FirebaseHandler {
         });
     }
 
-    /*convert a username to a UID
     public void usernameToUID(String username, UsernameResolveListener listener) {
         mDatabase.child("UidLookup").child(username).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -80,15 +79,14 @@ public class FirebaseHandler {
             }
         });
     }
-    */
 
     //check if a username is taken
     public void isTaken(String username, UsernameResolveListener listener) {
         mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                String UID = (String) task.getResult().getValue();
-                if (UID != null) {
-                    Log.i(TAG, "usernameToUID Resolved: " + UID);
+                Boolean taken = (Boolean) task.getResult().getValue();
+                if (Boolean.TRUE.equals(taken)) {
+                    Log.i(TAG, "username taken");
                     listener.onUsernameResolved("taken");
                 } else {
                     listener.onUsernameResolved(null);
@@ -176,6 +174,7 @@ public class FirebaseHandler {
         ArrayList<PublicQuip> l = new ArrayList<>();
         mDatabase.child("QuipsPublic").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
+                Log.e(TAG, "FBH: getReceivedQuips Failed");
                 listener.onRetrieveFail(task.getException());
             } else {
                 for (DataSnapshot child : task.getResult().getChildren()) {
@@ -265,15 +264,15 @@ public class FirebaseHandler {
                             if (outgoingTask.isSuccessful()) {
                                 //prevent duplicate requests
                                 if (outgoingTask.getResult().getValue() != null) {
-                                    Log.e(TAG, "trySendFriendRequest: Already sent");
-                                    listener.onResult("Request already sent");
+                                    Log.e(TAG, "trySendFriendRequest: Accept the incoming request instead");
+                                    listener.onResult("Accept the incoming request instead");
                                 } else {
                                     mDatabase.child("FriendRequests").child(ownUsername).child("Outgoing").child(username).get().addOnCompleteListener(incomingTask -> {
                                         if (incomingTask.isSuccessful()) {
                                             //prevent cross-send
                                             if (incomingTask.getResult().getValue() != null) {
-                                                Log.e(TAG, "trySendFriendRequest: Already incoming");
-                                                listener.onResult("Accept the incoming request instead");
+                                                Log.e(TAG, "trySendFriendRequest: Request already sent");
+                                                listener.onResult("Request already sent");
                                             } else {
                                                 //all clear
                                                 Log.i(TAG, "trySendFriendRequest: Sending Request");//mark outgoing in our list

@@ -63,7 +63,7 @@ public class ShareQuipActivity extends AppCompatActivity {
         friendAdapter = new SecureFriendAdapter(friendList, position -> {
             //show progress bar
             progressIndicator.setVisibility(View.VISIBLE);
-            ShareQuipActivity.this.shareQuip(friendList.get(position));
+            shareQuip(friendList.get(position));
         }, this);
         friendRecycler.setAdapter(friendAdapter);
 
@@ -89,34 +89,36 @@ public class ShareQuipActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(view -> finish());
     }
 
-    void shareQuip(String recipientUID) {
-        Log.e(TAG, "ShareQuip: " + recipientUID);
-        mdb2.shareQuip(recipientUID, byteArray, new QuipUploadListener() {
-            @Override
-            public void onUploadComplete(String URI) {
-                Toast.makeText(ShareQuipActivity.this, "Quip Shared!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ShareQuipActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                ShareQuipActivity.this.finish();
-                //hide progress bar
-                progressIndicator.setVisibility(View.GONE);
+    void shareQuip(String recipientUsername) {
+        mdb2.usernameToUID(recipientUsername, resolved -> {
+            Log.e(TAG, "ShareQuip: " + resolved);
+            mdb2.shareQuip(resolved, byteArray, new QuipUploadListener() {
+                @Override
+                public void onUploadComplete(String URI) {
+                    Toast.makeText(ShareQuipActivity.this, "Quip Shared!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ShareQuipActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    ShareQuipActivity.this.finish();
+                    //hide progress bar
+                    progressIndicator.setVisibility(View.GONE);
 
-            }
+                }
 
-            @Override
-            public void onUploadFail(Exception e) {
-                Toast.makeText(ShareQuipActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
-                Log.e(TAG, e.toString());
-                e.printStackTrace();
+                @Override
+                public void onUploadFail(Exception e) {
+                    Toast.makeText(ShareQuipActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, e.toString());
+                    e.printStackTrace();
 
-            }
+                }
 
-            @Override
-            public void onProgress(double progress) {
-                //update progress
-                progressIndicator.setProgressCompat((int) progress, true);
-            }
+                @Override
+                public void onProgress(double progress) {
+                    //update progress
+                    progressIndicator.setProgressCompat((int) progress, true);
+                }
+            });
         });
     }
 }

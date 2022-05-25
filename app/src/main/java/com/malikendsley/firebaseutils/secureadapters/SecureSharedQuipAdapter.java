@@ -53,7 +53,7 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
     public void onBindViewHolder(@NonNull SecureSharedQuipViewHolder holder, int position) {
         //list is populated externally
         PublicQuip sq = list.get(position);
-        Log.i("Own", "onBind: " + sq.toString());
+        Log.i("Own", "onBind: Quip from " + sq.getSender() + " to " + sq.getRecipient());
 
 
         mdb2.UIDtoUsername(isSent ? sq.getRecipient() : sq.getSender(), holder.username::setText);

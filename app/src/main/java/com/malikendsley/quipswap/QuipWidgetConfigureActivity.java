@@ -38,7 +38,7 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
     SecureFriendAdapter friendAdapter;
     ArrayList<String> friendList = new ArrayList<>();
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    String mFriendUID;
+    String username;
     FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), QuipWidgetConfigureActivity.this);
 
     public QuipWidgetConfigureActivity() {
@@ -136,22 +136,23 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
             //when a friend is selected, store their UID in preferences for the QuipWidget.java class to use
             friendAdapter = new SecureFriendAdapter(friendList, position -> {
 
-                mFriendUID = friendList.get(position);
-                final Context context = QuipWidgetConfigureActivity.this;
-                // When the button is clicked, store the string locally
-                Log.i(TAG, "Row Clicked, storing " + mFriendUID + " in sharedPrefs");
-                saveFriendUIDPref(context, mAppWidgetId, mFriendUID);
-                // It is the responsibility of the configuration activity to update the app widget
-                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-                QuipWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
-                // Make sure we pass back the original appWidgetId
-                Intent resultValue = new Intent();
-                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                QuipWidgetConfigureActivity.this.setResult(RESULT_OK, resultValue);
-                QuipWidgetConfigureActivity.this.finish();
+                username = friendList.get(position);
+                mdb2.usernameToUID(username, mFriendUID -> {
+                    final Context context = QuipWidgetConfigureActivity.this;
+                    // When the button is clicked, store the string locally
+                    Log.i(TAG, "Row Clicked, storing " + mFriendUID + " in sharedPrefs");
+                    saveFriendUIDPref(context, mAppWidgetId, mFriendUID);
+                    // It is the responsibility of the configuration activity to update the app widget
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+                    QuipWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
+                    // Make sure we pass back the original appWidgetId
+                    Intent resultValue = new Intent();
+                    resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                    QuipWidgetConfigureActivity.this.setResult(RESULT_OK, resultValue);
+                    QuipWidgetConfigureActivity.this.finish();
+                });
             }, QuipWidgetConfigureActivity.this);
-
-
+            
             friendRecycler.setAdapter(friendAdapter);
 
         }

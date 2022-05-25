@@ -126,7 +126,6 @@ public class FriendRequestsActivity extends AppCompatActivity {
         String user = (String) friendRequestList.get(position).getObject();
         mdb2.acceptFriend(user, () -> deleteFriend(position));
         Toast.makeText(this, "Request Accepted", Toast.LENGTH_SHORT).show();
-        deleteFriend(position);
     }
 
     void denyFriend(int position) {
