@@ -9,6 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -22,7 +24,6 @@
                 android:layout_weight="1" />
 
             <com.malikendsley.fingerpainting.PaintView
-
                 android:id="@+id/paintView"
                 android:layout_width="300dp"
                 android:layout_height="300dp"
@@ -32,6 +33,74 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/redButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/line_selector"
+                android:contentDescription="@string/set_the_pen_to_red"
+                android:src="@color/Red" />
+
+            <ImageButton
+                android:id="@+id/orangeButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/line_selector"
+                android:contentDescription="@string/set_the_pen_to_orange"
+                android:src="@color/Orange" />
+
+            <ImageButton
+                android:id="@+id/yellowButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/line_selector"
+                android:contentDescription="@string/set_the_pen_to_yellow"
+                android:src="@color/Yellow" />
+
+            <ImageButton
+                android:id="@+id/greenButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/line_selector"
+                android:contentDescription="@string/set_the_pen_to_green"
+                android:src="@color/Green" />
+
+            <ImageButton
+                android:id="@+id/blueButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/line_selector"
+                android:contentDescription="@string/set_the_pen_to_blue"
+                android:src="@color/Blue" />
+
+            <ImageButton
+                android:id="@+id/purpleButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/line_selector"
+                android:contentDescription="@string/set_the_pen_to_purple"
+                android:src="@color/purple_500" />
         </LinearLayout>
 
         <Button

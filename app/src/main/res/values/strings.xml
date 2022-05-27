@@ -37,4 +37,10 @@
     <string name="noSwapsSentFlavor">You haven\'t sent any swaps. Click the + icon to get started!</string>
     <string name="received_swaps">Received Swaps</string>
     <string name="noReceivedSwapsFlavor">You haven\'t received any swaps. Ask your friends to send you some!</string>
+    <string name="set_the_pen_to_red">Set the pen to Red</string>
+    <string name="set_the_pen_to_orange">Set the pen to Orange</string>
+    <string name="set_the_pen_to_yellow">Set the pen to Yellow</string>
+    <string name="set_the_pen_to_green">Set the pen to Green</string>
+    <string name="set_the_pen_to_blue">Set the pen to Blue</string>
+    <string name="set_the_pen_to_purple">Set the pen to Purple</string>
 </resources>

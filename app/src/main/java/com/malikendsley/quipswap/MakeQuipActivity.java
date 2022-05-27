@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,13 @@ public class MakeQuipActivity extends AppCompatActivity {
     public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
     private static final String TAG = "Own";
     PaintView paintView;
+    //colored buttons
+    ImageButton redButton;
+    ImageButton orangeButton;
+    ImageButton yellowButton;
+    ImageButton greenButton;
+    ImageButton blueButton;
+    ImageButton purpleButton;
     private SimpleDateFormat dateFormatter;
 
     public static File commonDocumentDirPath(String FolderName) {
@@ -61,6 +69,9 @@ public class MakeQuipActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_quip);
 
+        //color dots
+
+        //ui buttons
         Button shareButton = findViewById(R.id.shareButton);
         Button saveButton = findViewById(R.id.clearButton);
 
@@ -72,6 +83,45 @@ public class MakeQuipActivity extends AppCompatActivity {
         dateFormatter = new SimpleDateFormat(
                 DATE_FORMAT, Locale.US);
 
+        //colored buttons
+        redButton = findViewById(R.id.redButton);
+        orangeButton = findViewById(R.id.orangeButton);
+        yellowButton = findViewById(R.id.yellowButton);
+        greenButton = findViewById(R.id.greenButton);
+        blueButton = findViewById(R.id.blueButton);
+        purpleButton = findViewById(R.id.purpleButton);
+        redButton.setSelected(true);
+
+        redButton.setOnClickListener(view -> {
+            paintView.setCurrentColor(getResources().getColor(R.color.Red));
+            clearAllSelected();
+            redButton.setSelected(true);
+        });
+        orangeButton.setOnClickListener(view -> {
+            paintView.setCurrentColor(getResources().getColor(R.color.Orange));
+            clearAllSelected();
+            orangeButton.setSelected(true);
+        });
+        yellowButton.setOnClickListener(view -> {
+            paintView.setCurrentColor(getResources().getColor(R.color.Yellow));
+            clearAllSelected();
+            yellowButton.setSelected(true);
+        });
+        greenButton.setOnClickListener(view -> {
+            paintView.setCurrentColor(getResources().getColor(R.color.Green));
+            clearAllSelected();
+            greenButton.setSelected(true);
+        });
+        blueButton.setOnClickListener(view -> {
+            paintView.setCurrentColor(getResources().getColor(R.color.Blue));
+            clearAllSelected();
+            blueButton.setSelected(true);
+        });
+        purpleButton.setOnClickListener(view -> {
+            paintView.setCurrentColor(getResources().getColor(R.color.purple_500));
+            clearAllSelected();
+            purpleButton.setSelected(true);
+        });
 
         shareButton.setOnClickListener(view -> {
             if (user == null) {
@@ -85,10 +135,20 @@ public class MakeQuipActivity extends AppCompatActivity {
             Log.i(TAG, "Starting new activity");
             startActivity(intent);
         });
+
         saveButton.setOnClickListener(view -> {
             String URI = saveImageToMyQuips(100);
             Toast.makeText(MakeQuipActivity.this, "Image Saved to " + URI, Toast.LENGTH_SHORT).show();
         });
+    }
+
+    void clearAllSelected() {
+        redButton.setSelected(false);
+        orangeButton.setSelected(false);
+        yellowButton.setSelected(false);
+        greenButton.setSelected(false);
+        blueButton.setSelected(false);
+        purpleButton.setSelected(false);
     }
 
     @Override
