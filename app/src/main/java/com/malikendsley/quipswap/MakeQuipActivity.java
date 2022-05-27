@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.slider.Slider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.malikendsley.fingerpainting.PaintView;
@@ -69,7 +70,6 @@ public class MakeQuipActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_quip);
 
-        //color dots
 
         //ui buttons
         Button shareButton = findViewById(R.id.shareButton);
@@ -90,7 +90,18 @@ public class MakeQuipActivity extends AppCompatActivity {
         greenButton = findViewById(R.id.greenButton);
         blueButton = findViewById(R.id.blueButton);
         purpleButton = findViewById(R.id.purpleButton);
+        //default
         redButton.setSelected(true);
+
+        //TODO vet
+        //slider
+        Slider sizeSlider = findViewById(R.id.penSizeSlider);
+        sizeSlider.addOnChangeListener(new Slider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                paintView.setStrokeWidth(value);
+            }
+        });
 
         redButton.setOnClickListener(view -> {
             paintView.setCurrentColor(getResources().getColor(R.color.Red));
@@ -141,6 +152,8 @@ public class MakeQuipActivity extends AppCompatActivity {
             Toast.makeText(MakeQuipActivity.this, "Image Saved to " + URI, Toast.LENGTH_SHORT).show();
         });
     }
+
+
 
     void clearAllSelected() {
         redButton.setSelected(false);

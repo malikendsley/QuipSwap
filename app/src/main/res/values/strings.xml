@@ -43,4 +43,12 @@
     <string name="set_the_pen_to_green">Set the pen to Green</string>
     <string name="set_the_pen_to_blue">Set the pen to Blue</string>
     <string name="set_the_pen_to_purple">Set the pen to Purple</string>
+    <string name="pen_size">Pen Size</string>
+    <string name="share">Share</string>
+    <string name="save">Save</string>
+    <string name="clear_canvas">Clear Canvas</string>
+    <string name="normal">Normal</string>
+    <string name="soft">Soft</string>
+    <string name="blurred_circle">Blurred circle</string>
+    <string name="solid_circle">Solid Circle</string>
 </resources>

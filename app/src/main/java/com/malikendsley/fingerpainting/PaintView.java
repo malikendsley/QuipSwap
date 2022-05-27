@@ -89,7 +89,10 @@ public class PaintView extends View {
     public void setCurrentColor(int COLOR){
         currentColor = COLOR;
     }
-
+    //TODO vet
+    public void setStrokeWidth(float width) {
+        strokeWidth = (int) width / 2;
+    }
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
