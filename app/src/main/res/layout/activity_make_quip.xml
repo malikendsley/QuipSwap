@@ -47,6 +47,7 @@
 
             <ImageButton
                 android:id="@+id/redButton"
+                style="@style/Widget.Material3.MaterialTimePicker.ImageButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
@@ -57,6 +58,7 @@
 
             <ImageButton
                 android:id="@+id/orangeButton"
+                style="@style/Widget.Material3.MaterialTimePicker.ImageButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
@@ -67,6 +69,7 @@
 
             <ImageButton
                 android:id="@+id/yellowButton"
+                style="@style/Widget.Material3.MaterialTimePicker.ImageButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
@@ -77,6 +80,7 @@
 
             <ImageButton
                 android:id="@+id/greenButton"
+                style="@style/Widget.Material3.MaterialTimePicker.ImageButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
@@ -87,6 +91,7 @@
 
             <ImageButton
                 android:id="@+id/blueButton"
+                style="@style/Widget.Material3.MaterialTimePicker.ImageButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
@@ -97,6 +102,7 @@
 
             <ImageButton
                 android:id="@+id/purpleButton"
+                style="@style/Widget.Material3.MaterialTimePicker.ImageButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
@@ -119,65 +125,126 @@
                 android:textSize="18sp" />
 
             <com.google.android.material.slider.Slider
+                android:value="50"
                 android:id="@+id/penSizeSlider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:valueFrom="0"
                 android:valueTo="100" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButtonToggleGroup
+            app:selectionRequired="true"
+            android:id="@+id/brushStyleToggleGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:checkedButton="@id/normalButton">
+            app:checkedButton="@id/normalButton"
+            app:singleSelection="true">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/normalButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="4dp"
-                android:layout_weight="3"
-                android:text="@string/normal" />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/hard"
+                app:icon="@drawable/ic_baseline_circle_24" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/blurButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_weight="3"
-                android:text="@string/soft"/>
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/soft"
+                app:icon="@drawable/ic_baseline_lens_blur_24" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/eraserButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/erase"
+                app:icon="@drawable/eraser" />
+
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        <com.google.android.material.button.MaterialButton
-            android:textSize="16sp"
-            android:id="@+id/canvasClearButton"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/clear_canvas" />
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/undoButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:text="@string/undo"
+                app:icon="@drawable/ic_baseline_undo_24" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/redoButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:text="@string/redo"
+                app:icon="@drawable/ic_baseline_redo_24" />
+        </LinearLayout>
+        <!--
+        <Button
+            style="bu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:text="Choose Image..." />
+            -->
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <Button
-            android:id="@+id/clearButton"
-            style="?android:attr/buttonBarButtonStyle"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/canvasClearButton"
+            style="button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/save" />
+            android:layout_marginHorizontal="8dp"
+            android:text="@string/clear_canvas"
+            android:textSize="16sp" />
 
-        <Button
-            android:id="@+id/shareButton"
-            style="?android:attr/buttonBarButtonStyle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/share" />
+            android:layout_marginHorizontal="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/saveButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/save" />
+
+            <Button
+                android:id="@+id/shareButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/share" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

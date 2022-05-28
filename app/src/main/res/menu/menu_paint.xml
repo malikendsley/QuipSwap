@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <item
-        android:id="@+id/normal"
-        android:title="Normal"
+        android:id="@+id/makeQuipHelpMenuButton"
+        android:title="@string/help"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/blur"
-        android:title="Blur"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/clear"
-        android:title="Clear"
-        app:showAsAction="never" />
-
 </menu>

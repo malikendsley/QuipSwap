@@ -51,4 +51,9 @@
     <string name="soft">Soft</string>
     <string name="blurred_circle">Blurred circle</string>
     <string name="solid_circle">Solid Circle</string>
+    <string name="erase">Erase</string>
+    <string name="help">Help</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+    <string name="hard">Hard</string>
 </resources>

@@ -22,7 +22,7 @@ public class PaintView extends View {
     public static final int DEFAULT_COLOR = Color.RED;
     public static final int DEFAULT_BG_COLOR = Color.WHITE;
     private static final float TOUCH_TOLERANCE = 4;
-    public static int BRUSH_SIZE = 20;
+    public static int BRUSH_SIZE = 25;
     private final Paint mPaint;
     private final ArrayList<FingerPath> paths = new ArrayList<>();
     private final MaskFilter mEmboss;
@@ -89,7 +89,7 @@ public class PaintView extends View {
     public void setCurrentColor(int COLOR){
         currentColor = COLOR;
     }
-    //TODO vet
+
     public void setStrokeWidth(float width) {
         strokeWidth = (int) width / 2;
     }

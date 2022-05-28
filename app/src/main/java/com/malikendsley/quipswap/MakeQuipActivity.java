@@ -21,8 +21,10 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.slider.Slider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,6 +43,7 @@ public class MakeQuipActivity extends AppCompatActivity {
     public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
     private static final String TAG = "Own";
     PaintView paintView;
+
     //colored buttons
     ImageButton redButton;
     ImageButton orangeButton;
@@ -65,6 +68,7 @@ public class MakeQuipActivity extends AppCompatActivity {
         return dir;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,15 +77,14 @@ public class MakeQuipActivity extends AppCompatActivity {
 
         //ui buttons
         Button shareButton = findViewById(R.id.shareButton);
-        Button saveButton = findViewById(R.id.clearButton);
+        Button saveButton = findViewById(R.id.saveButton);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         paintView = findViewById(R.id.paintView);
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
-        dateFormatter = new SimpleDateFormat(
-                DATE_FORMAT, Locale.US);
+        dateFormatter = new SimpleDateFormat(DATE_FORMAT, Locale.US);
 
         //colored buttons
         redButton = findViewById(R.id.redButton);
@@ -90,18 +93,40 @@ public class MakeQuipActivity extends AppCompatActivity {
         greenButton = findViewById(R.id.greenButton);
         blueButton = findViewById(R.id.blueButton);
         purpleButton = findViewById(R.id.purpleButton);
-        //default
+
+        //default to red
         redButton.setSelected(true);
 
-        //TODO vet
         //slider
         Slider sizeSlider = findViewById(R.id.penSizeSlider);
-        sizeSlider.addOnChangeListener(new Slider.OnChangeListener() {
-            @Override
-            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                paintView.setStrokeWidth(value);
+        sizeSlider.addOnChangeListener((slider, value, fromUser) -> paintView.setStrokeWidth(value));
+
+        //clear button
+        Button clearButton = findViewById(R.id.canvasClearButton);
+
+        //brush group
+        MaterialButtonToggleGroup buttonGroup = findViewById(R.id.brushStyleToggleGroup);
+
+        //undo and redo buttons
+        Button undoButton = findViewById(R.id.undoButton);
+        Button redoButton = findViewById(R.id.redoButton);
+
+        //button functionality
+        buttonGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            switch (checkedId) {
+                case R.id.normalButton:
+                    paintView.normal();
+                    break;
+                case R.id.blurButton:
+                    paintView.blur();
+                    break;
+                case R.id.eraserButton:
+                    paintView.setCurrentColor(getResources().getColor(R.color.PureWhite));
+                    sizeSlider.setValue(100);
             }
         });
+
+        clearButton.setOnClickListener(view -> paintView.clear());
 
         redButton.setOnClickListener(view -> {
             paintView.setCurrentColor(getResources().getColor(R.color.Red));
@@ -154,7 +179,6 @@ public class MakeQuipActivity extends AppCompatActivity {
     }
 
 
-
     void clearAllSelected() {
         redButton.setSelected(false);
         orangeButton.setSelected(false);
@@ -174,16 +198,11 @@ public class MakeQuipActivity extends AppCompatActivity {
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.normal:
-                paintView.normal();
-                return true;
-            case R.id.blur:
-                paintView.blur();
-                return true;
-            case R.id.clear:
-                paintView.clear();
-                return true;
+        if (item.getItemId() == R.id.makeQuipHelpMenuButton) {
+            //unlikely but if this presents a perf issue can pre-build
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Help").setMessage("This is where I will explain how to use the quip canvas").setCancelable(true).show();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
