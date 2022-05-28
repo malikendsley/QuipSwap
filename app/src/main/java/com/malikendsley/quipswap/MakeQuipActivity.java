@@ -51,6 +51,8 @@ public class MakeQuipActivity extends AppCompatActivity {
     ImageButton greenButton;
     ImageButton blueButton;
     ImageButton purpleButton;
+    int lastColor = 1;
+    int currentBrush = 1;
     private SimpleDateFormat dateFormatter;
 
     public static File commonDocumentDirPath(String FolderName) {
@@ -68,7 +70,6 @@ public class MakeQuipActivity extends AppCompatActivity {
         return dir;
     }
 
-    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +94,7 @@ public class MakeQuipActivity extends AppCompatActivity {
         greenButton = findViewById(R.id.greenButton);
         blueButton = findViewById(R.id.blueButton);
         purpleButton = findViewById(R.id.purpleButton);
+        //1 = red, 6 = purple, etc
 
         //default to red
         redButton.setSelected(true);
@@ -112,53 +114,87 @@ public class MakeQuipActivity extends AppCompatActivity {
         Button redoButton = findViewById(R.id.redoButton);
 
         //button functionality
+        undoButton.setOnClickListener(view -> paintView.onClickUndo());
+        redoButton.setOnClickListener(view -> paintView.onClickRedo());
+
+        //brush style
         buttonGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            switch (checkedId) {
-                case R.id.normalButton:
+            if (isChecked) {
+                if (checkedId == R.id.normalButton) {
                     paintView.normal();
-                    break;
-                case R.id.blurButton:
+                    Log.i(TAG, "Normal pressed, last color: " + lastColor);
+                    paintView.setCurrentColor(getResources().getColor(resolveColor(lastColor)));
+                    paintView.setStrokeWidth(sizeSlider.getValue());
+                    currentBrush = 1;
+                } else if (checkedId == R.id.blurButton) {
                     paintView.blur();
-                    break;
-                case R.id.eraserButton:
+                    paintView.setCurrentColor(getResources().getColor(resolveColor(lastColor)));
+                    paintView.setStrokeWidth(sizeSlider.getValue());
+                    currentBrush = 2;
+                } else if (checkedId == R.id.eraserButton) {
                     paintView.setCurrentColor(getResources().getColor(R.color.PureWhite));
-                    sizeSlider.setValue(100);
+                    paintView.setStrokeWidth(100);
+                    currentBrush = 3;
+                }
             }
         });
 
+        //clear button
         clearButton.setOnClickListener(view -> paintView.clear());
 
+        //color buttons
         redButton.setOnClickListener(view -> {
-            paintView.setCurrentColor(getResources().getColor(R.color.Red));
+
+            if (currentBrush != 3) {
+                paintView.setCurrentColor(getResources().getColor(R.color.Red));
+            }
             clearAllSelected();
             redButton.setSelected(true);
+            lastColor = 1;
         });
         orangeButton.setOnClickListener(view -> {
-            paintView.setCurrentColor(getResources().getColor(R.color.Orange));
-            clearAllSelected();
+            if (currentBrush != 3) {
+                paintView.setCurrentColor(getResources().getColor(R.color.Orange));
+                clearAllSelected();
+            }
             orangeButton.setSelected(true);
+            lastColor = 2;
+
         });
         yellowButton.setOnClickListener(view -> {
-            paintView.setCurrentColor(getResources().getColor(R.color.Yellow));
+            if (currentBrush != 3) {
+                paintView.setCurrentColor(getResources().getColor(R.color.Yellow));
+            }
             clearAllSelected();
             yellowButton.setSelected(true);
+            lastColor = 3;
         });
         greenButton.setOnClickListener(view -> {
-            paintView.setCurrentColor(getResources().getColor(R.color.Green));
+            if (currentBrush != 3) {
+                paintView.setCurrentColor(getResources().getColor(R.color.Green));
+            }
             clearAllSelected();
             greenButton.setSelected(true);
+            lastColor = 4;
         });
         blueButton.setOnClickListener(view -> {
-            paintView.setCurrentColor(getResources().getColor(R.color.Blue));
+            if (currentBrush != 3) {
+                paintView.setCurrentColor(getResources().getColor(R.color.Blue));
+            }
             clearAllSelected();
             blueButton.setSelected(true);
+            lastColor = 5;
         });
         purpleButton.setOnClickListener(view -> {
-            paintView.setCurrentColor(getResources().getColor(R.color.purple_500));
+            if (currentBrush != 3) {
+                paintView.setCurrentColor(getResources().getColor(R.color.purple_500));
+            }
             clearAllSelected();
             purpleButton.setSelected(true);
+            lastColor = 6;
         });
 
+        //share and save buttons
         shareButton.setOnClickListener(view -> {
             if (user == null) {
                 Log.i(TAG, "Null user, sign up instead");
@@ -186,6 +222,26 @@ public class MakeQuipActivity extends AppCompatActivity {
         greenButton.setSelected(false);
         blueButton.setSelected(false);
         purpleButton.setSelected(false);
+    }
+
+    //given 1 through 6 return the right color
+    int resolveColor(int colorCode) {
+        switch (colorCode) {
+            case 1:
+                return R.color.Red;
+            case 2:
+                return R.color.Orange;
+            case 3:
+                return R.color.Yellow;
+            case 4:
+                return R.color.Green;
+            case 5:
+                return R.color.Blue;
+            case 6:
+                return R.color.purple_500;
+            default:
+                return -1;
+        }
     }
 
     @Override

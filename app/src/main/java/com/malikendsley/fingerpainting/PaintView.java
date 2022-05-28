@@ -14,6 +14,8 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 
 //don't use emboss, it causes lag
@@ -24,10 +26,11 @@ public class PaintView extends View {
     private static final float TOUCH_TOLERANCE = 4;
     public static int BRUSH_SIZE = 25;
     private final Paint mPaint;
-    private final ArrayList<FingerPath> paths = new ArrayList<>();
     private final MaskFilter mEmboss;
     private final MaskFilter mBlur;
     private final Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+    private final ArrayList<FingerPath> paths = new ArrayList<>();
+    private final ArrayList<FingerPath> undonePaths = new ArrayList<>();
     private float mX, mY;
     private Path mPath;
     private int currentColor;
@@ -86,13 +89,33 @@ public class PaintView extends View {
         invalidate();
     }
 
-    public void setCurrentColor(int COLOR){
+    public void setCurrentColor(int COLOR) {
         currentColor = COLOR;
+    }
+
+    //this could be a stack but not necessary
+    public void onClickUndo() {
+        if (paths.size() > 0) {
+            undonePaths.add(paths.remove(paths.size() - 1));
+            invalidate();
+        } else {
+            Snackbar.make(this, "Nothing to undo", Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onClickRedo() {
+        if (undonePaths.size() > 0) {
+            paths.add(undonePaths.remove(undonePaths.size() - 1));
+            invalidate();
+        } else {
+            Snackbar.make(this, "Nothing to redo", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     public void setStrokeWidth(float width) {
         strokeWidth = (int) width / 2;
     }
+
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
@@ -120,7 +143,7 @@ public class PaintView extends View {
         mPath = new Path();
         FingerPath fp = new FingerPath(currentColor, emboss, blur, strokeWidth, mPath);
         paths.add(fp);
-
+        undonePaths.clear();
         mPath.reset();
         mPath.moveTo(x, y);
         mX = x;
