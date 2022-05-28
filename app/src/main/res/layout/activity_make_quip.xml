@@ -125,21 +125,21 @@
                 android:textSize="18sp" />
 
             <com.google.android.material.slider.Slider
-                android:value="50"
                 android:id="@+id/penSizeSlider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:value="50"
                 android:valueFrom="0"
                 android:valueTo="100" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButtonToggleGroup
-            app:selectionRequired="true"
             android:id="@+id/brushStyleToggleGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:checkedButton="@id/normalButton"
+            app:selectionRequired="true"
             app:singleSelection="true">
 
             <com.google.android.material.button.MaterialButton

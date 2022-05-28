@@ -152,7 +152,7 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
                     QuipWidgetConfigureActivity.this.finish();
                 });
             }, QuipWidgetConfigureActivity.this);
-            
+
             friendRecycler.setAdapter(friendAdapter);
 
         }
