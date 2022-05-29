@@ -2,7 +2,7 @@ package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,11 +46,11 @@ public class FriendRequestsActivity extends AppCompatActivity {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRequests(ArrayList<String> requestList) {
-                Log.i("Own", "Friends retrieved");
+                //Log.i("Own", "Friends retrieved");
                 if (requestList.isEmpty()) {
                     noFriendRequestsFlavor.setVisibility(View.VISIBLE);
                 } else {
-                    Log.i("Own", "Friends present");
+                    //Log.i("Own", "Friends present");
                     noFriendRequestsFlavor.setVisibility(View.GONE);
                     friendRequestList.clear();
                     for (String username : requestList) {
@@ -62,9 +62,9 @@ public class FriendRequestsActivity extends AppCompatActivity {
 
             @Override
             public void onGetFail(Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 noFriendRequestsFlavor.setVisibility(View.VISIBLE);
-                Log.e("Own", "Request Retrieve Failed");
+                //Log.e("Own", "Request Retrieve Failed");
                 Toast.makeText(FriendRequestsActivity.this, "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
             }
         });

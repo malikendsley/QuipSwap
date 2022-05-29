@@ -1,11 +1,9 @@
 package com.malikendsley.quipswap;
 
-import static com.malikendsley.quipswap.ShareQuipActivity.TAG;
-
 import android.appwidget.AppWidgetManager;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,19 +27,19 @@ public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
 
     @Override
     protected Bitmap doInBackground(String... strings) {
-        Log.i(TAG, "User: " + strings[0]);
+        //Log.i(TAG, "User: " + strings[0]);
         //Sometimes this task is created before needed, detect this and ignore it
         if (strings[0].equals("WAIT")) {
             cancel(true);
             return null;
         }
 
-        Log.i(TAG, "background task running");
+        //Log.i(TAG, "background task running");
         mdb2.getLatestQuip(strings[0], new RecentQuipListener() {
             @Override
             public void onRetrieved(Bitmap bitmap) {
                 if (bitmap != null) {
-                    Log.i(TAG, "bitmap retrieved");
+                    //Log.i(TAG, "bitmap retrieved");
                     views.setImageViewBitmap(R.id.appwidget_image, bitmap);
                     WidgetManager.updateAppWidget(WidgetID, views);
                 }
@@ -49,13 +47,13 @@ public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
 
             @Override
             public void onFailed(Exception e) {
-                Log.i(TAG, "GetQuipTask: Error retrieving, using standard bitmap");
+                //Log.i(TAG, "GetQuipTask: Error retrieving, using standard bitmap");
                 views.setImageViewBitmap(R.id.appwidget_image, defaultBitmap);
                 WidgetManager.updateAppWidget(WidgetID, views);
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         });
-        Log.i(TAG, "GetQuipTask: Task Concluding");
+        //Log.i(TAG, "GetQuipTask: Task Concluding");
         return null;
     }
 

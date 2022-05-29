@@ -3,7 +3,7 @@ package com.malikendsley.quipswap.navfragments;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +58,7 @@ public class ReceivedFragment extends Fragment {
 
         //fab
         requireView().findViewById(R.id.fab).setOnClickListener(view1 -> {
-            Log.i(TAG, "Fab clicked");
+            //Log.i(TAG, "Fab clicked");
             ReceivedFragment.this.startActivity(new Intent(ReceivedFragment.this.getContext(), MakeQuipActivity.class));
         });
 
@@ -79,7 +79,7 @@ public class ReceivedFragment extends Fragment {
 
             @Override
             public void onRetrieveFail(Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 //Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
             }
         });

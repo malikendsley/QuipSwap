@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class ShareQuipActivity extends AppCompatActivity {
 
-    static final String TAG = "Own";
+    //static final String TAG = "Own";
     //even in my own projects i can never escape him
     FirebaseHandler mdb2;
 
@@ -47,12 +47,12 @@ public class ShareQuipActivity extends AppCompatActivity {
         Button cancelButton = findViewById(R.id.shareQuipCancel);
         progressIndicator = findViewById(R.id.quip_upload_progress_bar);
 
-        Log.i(TAG, "Retrieving bitmap");
+        //Log.i(TAG, "Retrieving bitmap");
         //intent work
         Intent intent = getIntent();
         byteArray = intent.getByteArrayExtra("BitmapImage");
         bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        Log.i(TAG, "Bitmap retrieved");
+        //Log.i(TAG, "Bitmap retrieved");
         //firebase setup
         mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), this);
 
@@ -80,7 +80,7 @@ public class ShareQuipActivity extends AppCompatActivity {
 
             @Override
             public void onGetFailed(Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 Toast.makeText(ShareQuipActivity.this, "Trouble retrieving friends", Toast.LENGTH_SHORT).show();
             }
         });
@@ -91,7 +91,7 @@ public class ShareQuipActivity extends AppCompatActivity {
 
     void shareQuip(String recipientUsername) {
         mdb2.usernameToUID(recipientUsername, resolved -> {
-            Log.e(TAG, "ShareQuip: " + resolved);
+            //Log.e(TAG, "ShareQuip: " + resolved);
             mdb2.shareQuip(resolved, byteArray, new QuipUploadListener() {
                 @Override
                 public void onUploadComplete(String URI) {
@@ -108,8 +108,8 @@ public class ShareQuipActivity extends AppCompatActivity {
                 @Override
                 public void onUploadFail(Exception e) {
                     Toast.makeText(ShareQuipActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, e.toString());
-                    e.printStackTrace();
+                    //Log.e(TAG, e.toString());
+                    //e.printStackTrace();
 
                 }
 

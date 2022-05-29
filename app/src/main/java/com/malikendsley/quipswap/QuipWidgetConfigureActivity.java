@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -31,7 +31,7 @@ import java.util.ArrayList;
  */
 public class QuipWidgetConfigureActivity extends AppCompatActivity {
 
-    private static final String TAG = "Own";
+    //private static final String TAG = "Own";
     private static final String PREFS_NAME = "com.malikendsley.quipswap.QuipWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
     RecyclerView friendRecycler;
@@ -83,7 +83,7 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Log.i(TAG, "QuipWidgetConfigure: User Not Logged In, Redirecting");
+            //Log.i(TAG, "QuipWidgetConfigure: User Not Logged In, Redirecting");
 
             //make the empty frame visible and display a login fragment
             binding.configureLoginContainer.setVisibility(View.VISIBLE);
@@ -108,7 +108,7 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
             // If this activity was started with an intent without an app widget ID, finish with an error.
             if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
                 finish();
-                Log.i(TAG, "QuipConfigure: No appwidget ID");
+                //Log.i(TAG, "QuipConfigure: No appwidget ID");
                 return;
             }
 
@@ -125,7 +125,7 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
 
                 @Override
                 public void onGetFailed(Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     Toast.makeText(QuipWidgetConfigureActivity.this, "Having trouble connecting to the database", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -140,7 +140,7 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
                 mdb2.usernameToUID(username, mFriendUID -> {
                     final Context context = QuipWidgetConfigureActivity.this;
                     // When the button is clicked, store the string locally
-                    Log.i(TAG, "Row Clicked, storing " + mFriendUID + " in sharedPrefs");
+                    //Log.i(TAG, "Row Clicked, storing " + mFriendUID + " in sharedPrefs");
                     saveFriendUIDPref(context, mAppWidgetId, mFriendUID);
                     // It is the responsibility of the configuration activity to update the app widget
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);

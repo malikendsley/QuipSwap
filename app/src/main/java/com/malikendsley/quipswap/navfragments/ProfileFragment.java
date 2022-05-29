@@ -2,7 +2,7 @@ package com.malikendsley.quipswap.navfragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,8 +87,8 @@ public class ProfileFragment extends Fragment {
 
         //resolve user
         mdb2.UIDtoUsername(mAuth.getUid(), user -> {
-            Log.i(TAG, "onUserRetrieved");
-            Log.i(TAG, "username: " + user);
+            //Log.i(TAG, "onUserRetrieved");
+            //Log.i(TAG, "username: " + user);
             username.setText(user);
         });
 
@@ -106,7 +106,7 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onGetFailed(Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 Toast.makeText(getContext(), "Trouble retrieving friends", Toast.LENGTH_SHORT).show();
             }
         });
@@ -126,7 +126,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDatabaseException(Exception e) {
                 //Log.i(TAG, "Database Error");
-                e.printStackTrace();
+                //e.printStackTrace();
                 Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
             }
         });

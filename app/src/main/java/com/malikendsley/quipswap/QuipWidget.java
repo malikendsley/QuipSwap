@@ -5,9 +5,8 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 /**
  * Implementation of App Widget functionality.
@@ -17,13 +16,13 @@ public class QuipWidget extends AppWidgetProvider {
 
 
     public static final String ACTION_AUTO_UPDATE = "AUTO_UPDATE";
-    final static String TAG = "Own";
+    //final static String TAG = "Own";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        Log.i(TAG, "updateAppWidget called");
+        //Log.i(TAG, "updateAppWidget called");
         //load the UID that this widget should pull from
         String friendUID = QuipWidgetConfigureActivity.loadFriendUIDPref(context, appWidgetId);
-        Log.i(TAG, "Loaded " + friendUID + " from sharedPrefs");
+        //Log.i(TAG, "Loaded " + friendUID + " from sharedPrefs");
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.quip_widget);
 
@@ -40,8 +39,8 @@ public class QuipWidget extends AppWidgetProvider {
 
         if (intent.getAction().equals(ACTION_AUTO_UPDATE)) {
             // DO SOMETHING
-            Log.i(TAG, "QuipWidget: Auto Update Detected");
-            Toast.makeText(context, "Auto Update...", Toast.LENGTH_SHORT).show();
+            //Log.i(TAG, "QuipWidget: Auto Update Detected");
+            //Toast.makeText(context, "Auto Update...", Toast.LENGTH_SHORT).show();
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             onUpdate(context, appWidgetManager, appWidgetManager.getAppWidgetIds(new ComponentName(context, QuipWidget.class)));
 
@@ -76,7 +75,7 @@ public class QuipWidget extends AppWidgetProvider {
             AppWidgetAlarm appWidgetAlarm = new AppWidgetAlarm(context.getApplicationContext());
             appWidgetAlarm.stopAlarm();
             //Log.i(TAG, "QuipWidget: Alarm Stopped, onDeleted()");
-            Toast.makeText(context, "Alarm Killed...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Alarm Killed...", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -85,7 +84,7 @@ public class QuipWidget extends AppWidgetProvider {
         // Enter relevant functionality for when the first widget is created
         AppWidgetAlarm appWidgetAlarm = new AppWidgetAlarm(context.getApplicationContext());
         //Log.i(TAG, "QuipWidget: Alarm Starting");
-        Toast.makeText(context, "Alarm Starting", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Alarm Starting", Toast.LENGTH_SHORT).show();
         appWidgetAlarm.startAlarm();
     }
 }

@@ -3,7 +3,7 @@ package com.malikendsley.firebaseutils.secureadapters;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +53,7 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
     public void onBindViewHolder(@NonNull SecureSharedQuipViewHolder holder, int position) {
         //list is populated externally
         PublicQuip sq = list.get(position);
-        Log.i("Own", "onBind: Quip from " + sq.getSender() + " to " + sq.getRecipient());
+        //Log.i("Own", "onBind: Quip from " + sq.getSender() + " to " + sq.getRecipient());
 
 
         mdb2.UIDtoUsername(isSent ? sq.getRecipient() : sq.getSender(), holder.username::setText);
@@ -65,14 +65,14 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
                 final long FIVE_MEGABYTES = 1024 * 1024 * 5;
 
                 httpsReference.getBytes(FIVE_MEGABYTES).addOnSuccessListener(bytes -> holder.Thumbnail.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length))).addOnFailureListener(e -> {
-                    Log.i(TAG, "URL Download Failed");
-                    e.printStackTrace();
+                    //Log.i(TAG, "URL Download Failed");
+                    //e.printStackTrace();
                 });
             }
 
             @Override
             public void onRetrieveFail(Exception e) {
-                Log.e(TAG, "onBind: Database Trouble");
+                //Log.e(TAG, "onBind: Database Trouble");
                 Toast.makeText(context, "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
             }
         });

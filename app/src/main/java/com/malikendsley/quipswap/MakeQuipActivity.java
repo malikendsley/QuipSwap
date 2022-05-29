@@ -11,7 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,7 +42,7 @@ import java.util.Locale;
 public class MakeQuipActivity extends AppCompatActivity {
 
     public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
-    private static final String TAG = "Own";
+    //private static final String TAG = "Own";
     PaintView paintView;
 
     //colored buttons
@@ -59,12 +59,12 @@ public class MakeQuipActivity extends AppCompatActivity {
     public static File commonDocumentDirPath(String FolderName) {
         File dir;
         dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + FolderName);
-        Log.i(TAG, "Full path: " + dir);
+        //Log.i(TAG, "Full path: " + dir);
 
         if (!dir.exists()) {
             boolean success = dir.mkdirs();
             if (!success) {
-                Log.i(TAG, "mkdirs() Failed");
+                //Log.i(TAG, "mkdirs() Failed");
                 dir = null;
             }
         }
@@ -123,7 +123,7 @@ public class MakeQuipActivity extends AppCompatActivity {
             if (isChecked) {
                 if (checkedId == R.id.normalButton) {
                     paintView.normal();
-                    Log.i(TAG, "Normal pressed, last color: " + lastColor);
+                    //Log.i(TAG, "Normal pressed, last color: " + lastColor);
                     paintView.setCurrentColor(getResources().getColor(resolveColor(lastColor)));
                     paintView.setStrokeWidth(sizeSlider.getValue());
                     currentBrush = 1;
@@ -198,14 +198,14 @@ public class MakeQuipActivity extends AppCompatActivity {
         //share and save buttons
         shareButton.setOnClickListener(view -> {
             if (user == null) {
-                Log.i(TAG, "Null user, sign up instead");
+                //Log.i(TAG, "Null user, sign up instead");
                 startActivity(new Intent(this, SignupActivity.class));
                 finish();
                 return;
             }
             Intent intent = new Intent(this, ShareQuipActivity.class);
             intent.putExtra("BitmapImage", getBitmap());
-            Log.i(TAG, "Starting new activity");
+            //Log.i(TAG, "Starting new activity");
             startActivity(intent);
         });
 
@@ -280,19 +280,19 @@ public class MakeQuipActivity extends AppCompatActivity {
                 requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, 1);
             }
             if (folder == null) {
-                Log.i(TAG, "Image Write Failed Folder Null");
+                //Log.i(TAG, "Image Write Failed Folder Null");
             } else {
                 fOut = new FileOutputStream(file);
                 //This line writes the Bitmap, do your compression prior to here
                 bm.compress(Bitmap.CompressFormat.JPEG, PreferenceManager.getDefaultSharedPreferences(this).getInt("pref_quip_quality", 100), fOut);
                 fOut.flush();
                 fOut.close();
-                Log.e(TAG, "Image written to " + file.getAbsolutePath());
+                //Log.e(TAG, "Image written to " + file.getAbsolutePath());
                 return file.getAbsolutePath();
             }
         } catch (Exception e) {
-            Log.i(TAG, "Image Write Failed Stack Trace");
-            e.printStackTrace();
+            //Log.i(TAG, "Image Write Failed Stack Trace");
+            //e.printStackTrace();
             return null;
         }
         return file.getAbsolutePath();

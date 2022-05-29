@@ -2,7 +2,7 @@ package com.malikendsley.quipswap.navfragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +69,7 @@ public class SignInFragment extends Fragment {
 
     private void validateUser(String email, String password) {
         if (email.matches("") || password.matches("")) {
-            Log.i(TAG, "Empty Field Submitted");
+            //Log.i(TAG, "Empty Field Submitted");
             Toast.makeText(getContext(), "You must provide both an email and a password", Toast.LENGTH_SHORT).show();
         } else {
             loginUser(email, password);
@@ -77,7 +77,7 @@ public class SignInFragment extends Fragment {
     }
 
     private void loginUser(String email, String password) {
-        Log.i(TAG, "Attempting to log in");
+        //Log.i(TAG, "Attempting to log in");
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(getActivity(), "Login Successful", Toast.LENGTH_SHORT).show();
@@ -85,7 +85,7 @@ public class SignInFragment extends Fragment {
                 startActivity(new Intent(getActivity(), MainActivity.class));
                 requireActivity().finish();
             } else {
-                Log.i(TAG, "Login Failed");
+                //Log.i(TAG, "Login Failed");
                 String code = ((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode();
                 switch (code) {
 

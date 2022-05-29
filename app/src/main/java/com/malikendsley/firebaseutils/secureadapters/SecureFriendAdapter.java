@@ -1,7 +1,7 @@
 package com.malikendsley.firebaseutils.secureadapters;
 
 import android.app.Activity;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,10 +72,10 @@ public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapte
         public void onClick(View v) {
             row.setClickable(false);
             if (v.getId() == row.getId()) {
-                Log.i(TAG, "Row " + getAdapterPosition() + " clicked");
+                //Log.i(TAG, "Row " + getAdapterPosition() + " clicked");
                 listenerRef.get().onRowClicked(getAdapterPosition());
             } else {
-                Log.i(TAG, "Friend Adapter Problem");
+                //Log.i(TAG, "Friend Adapter Problem");
             }
         }
     }

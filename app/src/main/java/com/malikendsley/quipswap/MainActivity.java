@@ -5,7 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         //when a navigation item is selected, set the selected fragment to the one whose ID is a match so that fragment can be displayed
         switch (item.getItemId()) {
             case R.id.nav_received_swaps:
-                Log.i(TAG, "Received selected");
+                //Log.i(TAG, "Received selected");
                 if (recFragment == null) {
                     //Log.i(TAG, "Generating");
                     recFragment = new ReceivedFragment();
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = recFragment;
                 break;
             case R.id.nav_sent_swaps:
-                Log.i(TAG, "Sent selected");
+                //Log.i(TAG, "Sent selected");
                 if (sentFragment == null) {
                     //Log.i(TAG, "Generating");
                     sentFragment = new SentFragment();
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = sentFragment;
                 break;
             case R.id.nav_profile:
-                Log.i(TAG, "Profile Selected");
+                //Log.i(TAG, "Profile Selected");
                 //send the right fragment based on whether user is logged in
                 if (user != null) {
                     if (loggedInFragment == null) {
@@ -68,14 +68,14 @@ public class MainActivity extends AppCompatActivity {
                         loggedInFragment = new ProfileFragment();
                     }
                     //User is Logged in
-                    Log.d(TAG, "onNavigationItemSelected User logged in");
+                    //Log.d(TAG, "onNavigationItemSelected User logged in");
                     selectedFragment = loggedInFragment;
                 } else {
                     if (signInFragment == null) {
                         //Log.i(TAG, "Generating");
                         signInFragment = new SignInFragment();
                     }
-                    Log.d(TAG, "onNavigationItemSelected No user logged in");
+                    //Log.d(TAG, "onNavigationItemSelected No user logged in");
                     //No User is Logged in
                     selectedFragment = signInFragment;
                 }

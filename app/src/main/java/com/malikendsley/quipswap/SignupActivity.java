@@ -85,7 +85,7 @@ public class SignupActivity extends AppCompatActivity {
 
             @Override
             public void onDBFail(Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 Toast.makeText(SignupActivity.this, "Trouble signing up", Toast.LENGTH_SHORT).show();
             }
         });

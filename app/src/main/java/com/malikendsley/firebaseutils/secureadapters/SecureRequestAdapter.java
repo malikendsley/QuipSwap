@@ -1,6 +1,6 @@
 package com.malikendsley.firebaseutils.secureadapters;
 
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +41,7 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
     public void onBindViewHolder(@NonNull SecureRequestViewHolder holder, int position) {
         //list is populated externally
         String requestUsername = (String) list.get(position).getObject();
-        Log.i(TAG, "onBind: " + requestUsername);
+        //Log.i(TAG, "onBind: " + requestUsername);
 
         holder.username.setText(requestUsername);
         holder.expandingSection.setVisibility(list.get(position).isExpanded() ? View.VISIBLE : View.GONE);
@@ -63,7 +63,7 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
 
         public SecureRequestViewHolder(@NonNull View itemView, RequestClickListener listener) {
             super(itemView);
-            Log.i("Own", "Adding..");
+            //Log.i("Own", "Adding..");
 
             listenerRef = new WeakReference<>(listener);
             username = itemView.findViewById(R.id.requestUsername);
@@ -86,13 +86,13 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
         @Override
         public void onClick(View v) {
             if (v.getId() == acceptButton.getId()) {
-                Log.i(TAG, "Accept Request in Adapter");
+                //Log.i(TAG, "Accept Request in Adapter");
                 listenerRef.get().onAcceptClicked(getAdapterPosition());
             } else if (v.getId() == denyButton.getId()) {
-                Log.i(TAG, "Deny Request in Adapter");
+                //Log.i(TAG, "Deny Request in Adapter");
                 listenerRef.get().onDenyClicked(getAdapterPosition());
             } else {
-                Log.i(TAG, "Request Adapter Problem");
+                //Log.i(TAG, "Request Adapter Problem");
             }
         }
     }
