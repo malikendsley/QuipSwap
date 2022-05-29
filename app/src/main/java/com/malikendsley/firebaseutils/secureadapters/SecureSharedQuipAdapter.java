@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
-import com.malikendsley.firebaseutils.secureinterfaces.PrivateQuipRetrievedListener;
+import com.malikendsley.firebaseutils.FirebaseHandler;
+import com.malikendsley.firebaseutils.interfaces.PrivateQuipRetrievedListener;
 import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
 import com.malikendsley.firebaseutils.secureschema.PublicQuip;
 import com.malikendsley.quipswap.R;
@@ -31,21 +31,21 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
     ArrayList<PublicQuip> list;
     boolean isSent;
     Context context;
-    FirebaseHandler2 mdb2;
+    FirebaseHandler mdb2;
 
     //if isSending = 1, populate with outgoing data, else incoming data
     public SecureSharedQuipAdapter(boolean isSent, Context context, ArrayList<PublicQuip> list, Activity mActivity) {
         this.isSent = isSent;
         this.list = list;
         this.context = context;
-        mdb2 = new FirebaseHandler2(FirebaseDatabase.getInstance().getReference(), mActivity);
+        mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), mActivity);
 
     }
 
     @NonNull
     @Override
     public SecureSharedQuipViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_sharedquip, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_secure_sharedquip, parent, false);
         return new SecureSharedQuipViewHolder(v);
     }
 
@@ -53,9 +53,11 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
     public void onBindViewHolder(@NonNull SecureSharedQuipViewHolder holder, int position) {
         //list is populated externally
         PublicQuip sq = list.get(position);
-        //Log.i("Own", "onBind: " + sq.toString());
+        Log.i("Own", "onBind: Quip from " + sq.getSender() + " to " + sq.getRecipient());
 
-        holder.username.setText(isSent ? sq.getRecipient() : sq.getSender());
+
+        mdb2.UIDtoUsername(isSent ? sq.getRecipient() : sq.getSender(), holder.username::setText);
+
         mdb2.getQuipByKey(sq.getKey(), new PrivateQuipRetrievedListener() {
             @Override
             public void onRetrieveComplete(PrivateQuip quip) {
@@ -89,7 +91,7 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
         public SecureSharedQuipViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            username = itemView.findViewById(R.id.UIDText);
+            username = itemView.findViewById(R.id.usernameText);
             Thumbnail = itemView.findViewById(R.id.receivedThumbnail);
 
         }

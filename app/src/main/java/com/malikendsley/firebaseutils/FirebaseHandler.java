@@ -1,9 +1,8 @@
 package com.malikendsley.firebaseutils;
 
+import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -11,19 +10,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.malikendsley.firebaseutils.interfaces.AddFriendListener;
 import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
 import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
-import com.malikendsley.firebaseutils.interfaces.QuipRetrieveListener;
+import com.malikendsley.firebaseutils.interfaces.GetRequestsListener;
+import com.malikendsley.firebaseutils.interfaces.PrivateQuipRetrievedListener;
+import com.malikendsley.firebaseutils.interfaces.PublicQuipRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
 import com.malikendsley.firebaseutils.interfaces.RecentQuipListener;
-import com.malikendsley.firebaseutils.interfaces.RequestRetrieveListener;
-import com.malikendsley.firebaseutils.interfaces.UserRetrievedListener;
+import com.malikendsley.firebaseutils.interfaces.RegisterUserListener;
+import com.malikendsley.firebaseutils.interfaces.ResolveListener;
 import com.malikendsley.firebaseutils.interfaces.UsernameResolveListener;
-import com.malikendsley.firebaseutils.schema.FriendRequest;
-import com.malikendsley.firebaseutils.schema.Friendship;
-import com.malikendsley.firebaseutils.schema.Quip;
-import com.malikendsley.firebaseutils.schema.SharedQuip;
-import com.malikendsley.firebaseutils.schema.User;
+import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
+import com.malikendsley.firebaseutils.secureschema.PrivateUser;
+import com.malikendsley.firebaseutils.secureschema.PublicQuip;
+import com.malikendsley.firebaseutils.secureschema.PublicUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,270 +33,376 @@ import java.util.UUID;
 
 public class FirebaseHandler {
 
-    //TODO: augment db interface with caching logic (or leverage firebase's)
-    private static final String TAG = "Own";
+    private static final String TAG = "FBH2";
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase;
     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+    Activity mActivity;
+
+    public FirebaseHandler(DatabaseReference ref, Activity activity) {
+        mDatabase = ref;
+        mActivity = activity;
+    }
 
     public FirebaseHandler(DatabaseReference ref) {
         mDatabase = ref;
+        mActivity = null;
     }
 
-    //retrieve a list of a User's friends
-    public void retrieveFriends(FriendRetrieveListener listener) {
-        ArrayList<Friendship> friendList = new ArrayList<>();
-
-        Log.i(TAG, "Retrieving friends");
-        //retrieve friends and populate
-        mDatabase.child("Friendships").orderByChild("User1").equalTo(mAuth.getUid()).get().addOnSuccessListener(user1snapshot -> {
-            for (DataSnapshot child : user1snapshot.getChildren()) {
-                friendList.add(child.getValue(Friendship.class));
-                //Log.i(TAG, "Friend Loaded");
+    //convert a UID to a username
+    public void UIDtoUsername(String UID, ResolveListener listener) {
+        mDatabase.child("UsersPublic").child(UID).child("Username").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                String username = String.valueOf(task.getResult().getValue());
+                listener.onResolved(username);
+                Log.i(TAG, "UIDtoUsername Resolved: " + username);
+            } else {
+                Log.e(TAG, "UIDtoUsername: failed");
             }
-            //Log.i(TAG, "User1 loaded");
-            mDatabase.child("Friendships").orderByChild("User2").equalTo(mAuth.getUid()).get().addOnSuccessListener(user2snapshot -> {
-                for (DataSnapshot child : user2snapshot.getChildren()) {
-                    friendList.add(child.getValue(Friendship.class));
-                    //Log.i(TAG, "Friend Loaded");
-                }
-                //Log.i(TAG, "User2 loaded");
-
-                listener.onFriendsRetrieved(friendList);
-            });
         });
     }
 
-    //Resolve a username to a UID
-    public void resolveUsername(String username, UsernameResolveListener listener) {
-        mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(task -> {
-            String UID = (String) task.getResult().getValue();
-            Log.i(TAG, "UID: " + UID);
-            if (UID != null) {
-                listener.onUsernameResolved(UID);
+    public void usernameToUID(String username, UsernameResolveListener listener) {
+        mDatabase.child("UidLookup").child(username).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                String UID = (String) task.getResult().getValue();
+                Log.i(TAG, "usernameToUID Resolved: " + UID);
+                if (UID != null) {
+                    listener.onUsernameResolved(UID);
+                } else {
+                    listener.onUsernameResolved(null);
+                    Log.e(TAG, "UID Null");
+                }
             } else {
                 listener.onUsernameResolved(null);
-                Log.e(TAG, "UID Null");
+                Log.e(TAG, "usernameToUID Failed, effectively null");
             }
         });
     }
 
-    //Create a quip in the storage database and if successful, share it
-    public void shareQuip(String recipientUID, byte[] byteArray, @NonNull QuipUploadListener listener) {
+    //check if a username is taken
+    public void isTaken(String username, UsernameResolveListener listener) {
+        mDatabase.child("TakenUsernames").child(username).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Boolean taken = (Boolean) task.getResult().getValue();
+                if (Boolean.TRUE.equals(taken)) {
+                    Log.i(TAG, "username taken");
+                    listener.onUsernameResolved("taken");
+                } else {
+                    listener.onUsernameResolved(null);
+                    Log.e(TAG, "UID Null");
+                }
+            } else {
+                listener.onUsernameResolved(null);
+                Log.e(TAG, "isTaken Failed, effectively null");
+            }
+        });
+    }
+
+    public void getQuipByKey(String quipKey, PrivateQuipRetrievedListener listener) {
+        mDatabase.child("QuipsPrivate").child(quipKey).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() || task.getResult().exists()) {
+                listener.onRetrieveComplete(task.getResult().getValue(PrivateQuip.class));
+            } else {
+                Log.e(TAG, "getQuipByKey: Read Failed");
+                listener.onRetrieveFail(task.getException());
+            }
+        });
+    }
+
+    //retrieve friends
+    public void getFriends(FriendRetrieveListener listener) {
+        UIDtoUsername(mAuth.getUid(), resolved -> mDatabase.child("Friends").child(resolved).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<String> l = new ArrayList<>();
+                for (DataSnapshot child : task.getResult().getChildren()) {
+                    Log.i(TAG, "getFriends Retrieved: " + child.getKey());
+                    l.add(child.getKey());
+                }
+                listener.onGetFriends(l);
+            } else {
+                Log.e(TAG, "getFriends: failed");
+                listener.onGetFailed(task.getException());
+            }
+        }));
+    }
+
+    //share a quip to a user
+    public void shareQuip(String recipientUID, byte[] byteArray, QuipUploadListener listener) {
         //upload the image to the database
         String path = "users/" + mAuth.getUid() + "/quips/" + UUID.randomUUID() + ".jpeg";
-        Log.i(TAG, "Submitting image to " + path);
+        Log.i(TAG, "shareQuip: Path: " + path);
         StorageReference imageRef = storageRef.child(path);
         UploadTask uploadTask = imageRef.putBytes(byteArray);
-        //on fail, notify and on complete, continue with DB op
-        uploadTask.addOnFailureListener(listener::onUploadFail).addOnSuccessListener(taskSnapshot -> {
-            //the storage database now contains a quip, so add a realtime entry and a shared entry
-            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                //asynchronously retrieve the URL of the image
-                Log.i(TAG, "URI: " + uri);
-                long time = System.currentTimeMillis();
-                Quip q = new Quip(uri.toString(), mAuth.getUid(), Long.toString(time));
-                DatabaseReference dbr = mDatabase.child("Quips").push();
-                String key = dbr.getKey();
-                dbr.setValue(q).addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.i(TAG, "Quip Fail");
-                        listener.onUploadFail(task.getException());
-                    } else {
-                        SharedQuip sq = new SharedQuip(uri.toString(), mAuth.getUid(), recipientUID, time);
-                        sq.QID = key;
-                        DatabaseReference dbr2 = mDatabase.child("SharedQuips").push();
-                        dbr2.setValue(sq).addOnCompleteListener(task1 -> {
-                            if (!task1.isSuccessful()) {
-                                Log.i(TAG, "SharedQuip Fail");
-                                listener.onUploadFail(task1.getException());
-                            } else {
-                                Log.i(TAG, "Quip Shared to: " + recipientUID);
-                                listener.onUploadComplete(uri.toString());
-                            }
-                        });
-                    }
-                });
+        //on fail notify, on success, write to database
+        uploadTask.addOnFailureListener(listener::onUploadFail).addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            //log the URI in the appropriate section
+            long time = System.currentTimeMillis();
+            PrivateQuip privateQuip = new PrivateQuip(mAuth.getUid(), recipientUID, time, uri.toString());
+            PublicQuip publicQuip = new PublicQuip(mAuth.getUid(), recipientUID, time);
+
+            //these can be set up at the same time, they would fail or succeed for the same reason
+            DatabaseReference publicQuipsReference = mDatabase.child("QuipsPublic").push();
+            privateQuip.setKey(publicQuipsReference.getKey());
+            publicQuip.setKey(publicQuipsReference.getKey());
+            publicQuipsReference.setValue(publicQuip).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    mDatabase.child("QuipsPrivate").child(Objects.requireNonNull(publicQuipsReference.getKey())).setValue(privateQuip).addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            //all clear
+                            Log.i(TAG, "shareQuip: Success - " + uri);
+                            listener.onUploadComplete(uri.toString());
+                        } else {
+                            Log.e(TAG, "shareQuip: private fail");
+                            listener.onUploadFail(task1.getException());
+                        }
+                    });
+                } else {
+                    Log.e(TAG, "shareQuip: public fail");
+                    listener.onUploadFail(task.getException());
+                }
             });
-        }).addOnProgressListener(snapshot -> {
+        })).addOnProgressListener(snapshot -> {
             double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
             Log.i(TAG, "Handler: Upload is " + progress + "% done");
             listener.onProgress(progress);
         });
     }
 
-    public void retrieveReceivedQuips(QuipRetrieveListener listener) {
-        ArrayList<SharedQuip> list = new ArrayList<>();
-
-        mDatabase.child("SharedQuips").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
+    //retrieve quips received
+    public void getReceivedQuips(PublicQuipRetrieveListener listener) {
+        ArrayList<PublicQuip> l = new ArrayList<>();
+        mDatabase.child("QuipsPublic").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
+                Log.e(TAG, "FBH: getReceivedQuips Failed");
                 listener.onRetrieveFail(task.getException());
             } else {
-                for (DataSnapshot sharedQuip : task.getResult().getChildren()) {
-                    //retrieve all sharedQuips
-                    SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
-                    list.add(sq);
+                for (DataSnapshot child : task.getResult().getChildren()) {
+                    Log.i(TAG, "getReceivedQuips: key = " + child.getKey());
+                    l.add(child.getValue(PublicQuip.class));
                 }
-                listener.onRetrieveComplete(list);
+                listener.onRetrieveComplete(l);
             }
         });
     }
 
-    public void retrieveSentQuips(QuipRetrieveListener listener) {
-        ArrayList<SharedQuip> list = new ArrayList<>();
-        mDatabase.child("SharedQuips").orderByChild("Sender").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
+    //retrieve quips sent
+    public void getSentQuips(PublicQuipRetrieveListener listener) {
+        ArrayList<PublicQuip> l = new ArrayList<>();
+        mDatabase.child("QuipsPublic").orderByChild("Sender").equalTo(mAuth.getUid()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 listener.onRetrieveFail(task.getException());
             } else {
-                for (DataSnapshot sharedQuip : task.getResult().getChildren()) {
-
-                    SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
-                    list.add(sq);
+                for (DataSnapshot child : task.getResult().getChildren()) {
+                    Log.i(TAG, "getReceivedQuips: key = " + child.getKey());
+                    l.add(child.getValue(PublicQuip.class));
                 }
-                listener.onRetrieveComplete(list);
+                listener.onRetrieveComplete(l);
             }
         });
     }
 
-    public void retrieveReceivedRequests(@NonNull RequestRetrieveListener listener) {
-        ArrayList<FriendRequest> list = new ArrayList<>();
-
-        //retrieve friend requests and populate
-        mDatabase.child("FriendRequests").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnSuccessListener(requestSnapshot -> {
-            for (DataSnapshot child : requestSnapshot.getChildren()) {
-                FriendRequest fr = child.getValue(FriendRequest.class);
-                Objects.requireNonNull(fr).setKey(child.getKey());
-                list.add(fr);
-            }
-            listener.onRequestsRetrieved(list);
-        }).addOnFailureListener(listener::onRequestsFailed);
-
-    }
-
-    public void retrieveSentRequests(@NonNull RequestRetrieveListener listener) {
-        ArrayList<FriendRequest> list = new ArrayList<>();
-
-        //retrieve friend requests
-        mDatabase.child("FriendRequests").orderByChild("Sender").equalTo(mAuth.getUid()).get().addOnSuccessListener(dataSnapshot -> {
-            for (DataSnapshot child : dataSnapshot.getChildren()) {
-                FriendRequest fr = child.getValue(FriendRequest.class);
-                Objects.requireNonNull(fr).setKey(child.getKey());
-                list.add(fr);
-            }
-            listener.onRequestsRetrieved(list);
-        }).addOnFailureListener(listener::onRequestsFailed);
-    }
-
-    public void retrieveUser(String UID, @NonNull UserRetrievedListener listener) {
-        mDatabase.child("Users").child(UID).get().addOnSuccessListener(dataSnapshot -> {
-            User user = (dataSnapshot.getValue(User.class));
-            if (user != null) {
-                Log.i(TAG, user.toString());
-                listener.onUserRetrieved(user);
+    //retrieve incoming friend requests
+    public void getFriendRequests(GetRequestsListener listener) {
+        UIDtoUsername(mAuth.getUid(), ownUsername -> mDatabase.child("FriendRequests").child(ownUsername).child("Incoming").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<String> l = new ArrayList<>();
+                for (DataSnapshot child : task.getResult().getChildren()) {
+                    Log.i(TAG, "FriendUID Retrieved: " + child.getKey());
+                    l.add(child.getKey());
+                }
+                listener.onRequests(l);
             } else {
-                Log.i(TAG, "retrieveUser problem");
+                Log.e(TAG, "getFriendRequests: Failed");
+                listener.onGetFail(task.getException());
             }
-        }).addOnFailureListener(listener::onRetrieveFailed);
+        }));
     }
 
-    public void tryAddFriend(String friendUsername, FriendAddListener listener) {
-        //validate, try to add friend according to rules
-        resolveUsername(friendUsername, resolvedUID -> {
-            //must exist
-            if (resolvedUID == null) {
-                listener.onResult("User does not exist");
-                return;
-            }
-            //prevent self add
-            if (resolvedUID.equals(mAuth.getUid())) {
-                //Log.i(TAG, "Self-add detected");
+    //add a friend to self
+    public void acceptFriend(String username, AddFriendListener listener) {
+        UIDtoUsername(mAuth.getUid(), ownUsername -> {
+            Long time = System.currentTimeMillis();
+            //add the friend to the system
+            mDatabase.child("Friends").child(username).child(ownUsername).setValue(time);
+            mDatabase.child("Friends").child(ownUsername).child(username).setValue(time);
+            //remove the friend request from the system
+            denyFriend(username);
+            listener.onAdd();
+        });
+    }
+
+    //delete a friend request
+    public void denyFriend(String username) {
+        UIDtoUsername(mAuth.getUid(), ownUsername -> {
+            mDatabase.child("FriendRequests").child(username).child("Outgoing").child(ownUsername).removeValue();
+            mDatabase.child("FriendRequests").child(ownUsername).child("Incoming").child(username).removeValue();
+        });
+    }
+
+    //try to add a user as a friend
+    //Requires a string of usernames as the friendsList argument
+    public void trySendFriendRequest(ArrayList<String> friendsList, String username, FriendAddListener listener) {
+        //retrieve own username
+        UIDtoUsername(mAuth.getUid(), ownUsername -> {
+            if (ownUsername.equals(username)) {
+                //prevent self-add
+                Log.e(TAG, "trySendFriendRequest: Self Add detected");
                 listener.onResult("You cannot add yourself");
-                return;
-            }
-            //prevent add if already outgoing
-            retrieveSentRequests(new RequestRetrieveListener() {
-                @Override
-                public void onRequestsRetrieved(ArrayList<FriendRequest> sentRequests) {
-                    for (FriendRequest request : sentRequests) {
-                        if (request.getRecipient().equals(resolvedUID)) {
-                            listener.onResult("Already sent request");
-                            return;
-                        }
-                    }
-                    //prevent if already incoming
-                    retrieveReceivedRequests(new RequestRetrieveListener() {
-                        @Override
-                        public void onRequestsRetrieved(ArrayList<FriendRequest> retrievedRequests) {
-                            for (FriendRequest request : retrievedRequests) {
-                                if (request.getSender().equals(resolvedUID)) {
-                                    listener.onResult("Accept the pending request instead");
-                                    return;
+            } else {
+                //check if user exists
+                isTaken(username, taken -> {
+                    if (taken == null) {
+                        //only allow adding users that exist
+                        Log.e(TAG, "trySendFriendRequest: User DNE");
+                        listener.onResult("User does not exist");
+                    } else if (friendsList.contains(username)) {
+                        Log.e(TAG, "trySendFriendRequest: Friend already exists");
+                        listener.onResult("Already friends with this user");
+                    } else {
+                        mDatabase.child("FriendRequests").child(username).child("Outgoing").child(ownUsername).get().addOnCompleteListener(outgoingTask -> {
+                            if (outgoingTask.isSuccessful()) {
+                                //prevent duplicate requests
+                                if (outgoingTask.getResult().getValue() != null) {
+                                    Log.e(TAG, "trySendFriendRequest: Accept the incoming request instead");
+                                    listener.onResult("Accept the incoming request instead");
+                                } else {
+                                    mDatabase.child("FriendRequests").child(ownUsername).child("Outgoing").child(username).get().addOnCompleteListener(incomingTask -> {
+                                        if (incomingTask.isSuccessful()) {
+                                            //prevent cross-send
+                                            if (incomingTask.getResult().getValue() != null) {
+                                                Log.e(TAG, "trySendFriendRequest: Request already sent");
+                                                listener.onResult("Request already sent");
+                                            } else {
+                                                //all clear
+                                                Log.i(TAG, "trySendFriendRequest: Sending Request");//mark outgoing in our list
+                                                mDatabase.child("FriendRequests").child(ownUsername).child("Outgoing").child(username).setValue(true);//mark incoming in theirs
+                                                mDatabase.child("FriendRequests").child(username).child("Incoming").child(ownUsername).setValue(true);//mark outgoing in ours
+                                                listener.onResult("");
+                                            }
+                                        } else {
+                                            listener.onDatabaseException(incomingTask.getException());
+                                            Log.e(TAG, "trySendFriendRequest: incoming requests check failed");
+                                        }
+                                    });
                                 }
+                            } else {
+                                listener.onDatabaseException(outgoingTask.getException());
+                                Log.e(TAG, "trySendFriendRequest: outgoing requests check failed");
                             }
-                            retrieveFriends(friendsList -> {
-                                for (Friendship friend : friendsList) {
-                                    if (friend.getUser1().equals(resolvedUID) || friend.getUser2().equals(resolvedUID)) {
-                                        //Log.i(TAG, "Already friends");
-                                        listener.onResult("Already friends with this user");
-                                        return;
-                                    }
-                                }
-                                //all clear
-                                //Log.i(TAG, "Request created");
-                                mDatabase.child("FriendRequests").push().setValue(new FriendRequest(mAuth.getUid(), resolvedUID));
-                                listener.onResult("");
-                            });
-                        }
+                        });
+                    }
 
-                        @Override
-                        public void onRequestsFailed(Exception e) {
-                            listener.onDatabaseException(e);
-                        }
-                    });
-                }
-
-                @Override
-                public void onRequestsFailed(Exception e) {
-                    listener.onDatabaseException(e);
-                }
-            });
+                });
+            }
         });
     }
 
-    //TODO: This solution does not scale, need to keep metadata of most recent quip and access that directly
-    //It still, however, works as a proof of concept and since this is the last thing before MVP
-    //I can accept it
-
-    public void getMostRecentQuipFromUser(String UID, @NonNull RecentQuipListener listener) {
-        Log.i(TAG, "UID: " + UID);
-        ArrayList<SharedQuip> sqs = new ArrayList<>();
+    //get most recent quip from user as a bitmap
+    public void getLatestQuip(String UID, RecentQuipListener listener) {
+        Log.i(TAG, "Latest Quip Called");
         //get all quips sent to you
-        mDatabase.child("SharedQuips").orderByChild("Recipient").equalTo(mAuth.getUid()).get().addOnSuccessListener(dataSnapshot -> {
-            //find the quips in this list that match your friend
-            for (DataSnapshot sharedQuip : dataSnapshot.getChildren()) {
-                SharedQuip sq = sharedQuip.getValue(SharedQuip.class);
-                //Log.i(TAG, "Pulled quip: " + sq.toString());
-                //add the quips that are to you AND from the desired user
-                if (sq != null && sq.Sender.equals(UID)) {
-                    Log.i(TAG, "Adding");
-                    sqs.add(sq);
+        getReceivedQuips(new PublicQuipRetrieveListener() {
+            @Override
+            public void onRetrieveComplete(ArrayList<PublicQuip> quipList) {
+                if (quipList.isEmpty()) {
+                    Log.i(TAG, "getLatestQuip: Quip List is empty");
+                    listener.onRetrieved(null);
+                    return;
                 }
-            }
-            if (sqs.isEmpty()) {
-                Log.i(TAG, "Shared quips list is empty");
-                //if this list is empty no bitmap can exist
-                listener.onRetrieved(null);
-                return;
-            }
-            //obtain the URI of the most recent quip sent to you
-            String URI = Collections.max(sqs).URI;
-            StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl(URI);
-            final long ONE_MEGABYTE = 1024 * 1024;
+                //filter for quips from a particular user
+                ArrayList<PublicQuip> toRemove = new ArrayList<>();
+                for (PublicQuip quip : quipList) {
+                    if (!quip.getSender().equals(UID)) {
+                        toRemove.add(quip);
+                    }
+                }
+                if (!toRemove.isEmpty()) {
+                    quipList.removeAll(toRemove);
+                }
+                //quips implement comparable by timestamp
+                PublicQuip mostRecent = Collections.max(quipList);
+                mDatabase.child("QuipsPrivate").child(mostRecent.getKey()).get().addOnSuccessListener(dataSnapshot -> {
 
-            httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> listener.onRetrieved(BitmapFactory.decodeByteArray(bytes, 0, bytes.length))).addOnFailureListener(e -> {
-                Log.i(TAG, "URL Download Failed");
-                e.printStackTrace();
-            });
-        }).addOnFailureListener(listener::onFailed);
+                    String URI = Objects.requireNonNull(dataSnapshot.getValue(PrivateQuip.class)).getURI();
+                    StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl(URI);
+                    //just in case someone managed to pull something
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    Log.i(TAG, "Returning bitmap");
+                    httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> listener.onRetrieved(BitmapFactory.decodeByteArray(bytes, 0, bytes.length))).addOnFailureListener(e -> {
+                        Log.i(TAG, "getLatestQuip: URL Download Failed");
+                        e.printStackTrace();
+                    });
+                });
+            }
+
+            @Override
+            public void onRetrieveFail(Exception e) {
+                listener.onFailed(e);
+            }
+        });
+    }
+
+    //register a user
+    public void registerUser(String username, String email, String password, RegisterUserListener listener) {
+        if (mActivity == null) {
+            Log.e(TAG, "registerUser: Called with null activity");
+            return;
+        }
+        //prevent duplicate usernames
+        isTaken(username, UID -> {
+            if (UID == null) {
+                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(mActivity, task -> {
+                    if (task.isSuccessful()) {
+                        Log.i(TAG, "registerUser: User Registered");
+                        PublicUser publicUser = new PublicUser(username);
+                        PrivateUser privateUser = new PrivateUser(email, username);
+                        //set up destinations
+                        mDatabase.child("UsersPublic").child(Objects.requireNonNull(mAuth.getUid())).setValue(publicUser).addOnCompleteListener(publicTask -> {
+                            if (publicTask.isSuccessful()) {
+                                mDatabase.child("UsersPrivate").child(mAuth.getUid()).setValue(privateUser).addOnCompleteListener(privateTask -> {
+                                    if (privateTask.isSuccessful()) {
+                                        mDatabase.child("UidLookup").child(username).setValue(mAuth.getUid()).addOnCompleteListener(indexTask -> {
+                                            if (indexTask.isSuccessful()) {
+                                                mDatabase.child("TakenUsernames").child(username).setValue(true).addOnCompleteListener(takenTask -> {
+                                                    if (takenTask.isSuccessful()) {
+                                                        Log.i(TAG, "registerUser: success");
+                                                        listener.onResult("");
+                                                    } else {
+                                                        //first index failed
+                                                        Log.e(TAG, "registerUser: UID lookup index failed");
+                                                        listener.onDBFail(takenTask.getException());
+                                                    }
+                                                });
+                                            } else {
+                                                //second index failed
+                                                Log.e(TAG, "registerUser: UID lookup index failed");
+                                                listener.onDBFail(indexTask.getException());
+                                            }
+                                        });
+                                    } else {
+                                        //private record failed
+                                        Log.e(TAG, "registerUser: private write failed");
+                                        listener.onDBFail(privateTask.getException());
+                                    }
+                                });
+                            } else {
+                                //public record failed
+                                Log.e(TAG, "registerUser: public write failed");
+                                listener.onDBFail(publicTask.getException());
+                            }
+                        });
+                    } else {
+                        //create user failed
+                        Log.i(TAG, "registerUser: User not registered");
+                        listener.onDBFail(task.getException());
+                    }
+                });
+            } else {
+                //username taken
+                Log.e(TAG, "registerUser: Username Taken");
+                listener.onResult("Username already taken");
+            }
+        });
     }
 }

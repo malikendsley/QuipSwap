@@ -1,6 +1,5 @@
 package com.malikendsley.firebaseutils.secureadapters;
 
-import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.ExpandableListItem;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
 import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
+import com.malikendsley.firebaseutils.secureschema.ExpandableListItem;
 import com.malikendsley.quipswap.R;
 
 import java.lang.ref.WeakReference;
@@ -28,30 +24,26 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
     private static final String TAG = "Own";
     private final RequestClickListener listener;
     ArrayList<ExpandableListItem> list;
-    FirebaseHandler2 mdb2;
 
-    public SecureRequestAdapter(ArrayList<String> list, RequestClickListener listener, Activity mActivity) {
-        for (String UID : list) {
-            this.list.add(new ExpandableListItem(UID));
-        }
+    public SecureRequestAdapter(ArrayList<ExpandableListItem> list, RequestClickListener listener) {
+        this.list = list;
         this.listener = listener;
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mdb2 = new FirebaseHandler2(mDatabase, mActivity);
     }
 
     @NonNull
     @Override
     public SecureRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_friendrequest, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_secure_friendrequest, parent, false);
         return new SecureRequestViewHolder(v, listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SecureRequestViewHolder holder, int position) {
         //list is populated externally
-        String requestUID = (String) list.get(position).getObject();
-        mdb2.UIDtoUsername(requestUID, resolved -> holder.username.setText(resolved));
-        //search the database for this user
+        String requestUsername = (String) list.get(position).getObject();
+        Log.i(TAG, "onBind: " + requestUsername);
+
+        holder.username.setText(requestUsername);
         holder.expandingSection.setVisibility(list.get(position).isExpanded() ? View.VISIBLE : View.GONE);
     }
 
@@ -71,6 +63,7 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
 
         public SecureRequestViewHolder(@NonNull View itemView, RequestClickListener listener) {
             super(itemView);
+            Log.i("Own", "Adding..");
 
             listenerRef = new WeakReference<>(listener);
             username = itemView.findViewById(R.id.requestUsername);
@@ -88,7 +81,6 @@ public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdap
                 request.setExpanded(!request.isExpanded());
                 notifyItemChanged(getAdapterPosition());
             });
-
         }
 
         @Override

@@ -12,7 +12,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler2;
+import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.RowClickListener;
 import com.malikendsley.quipswap.R;
 
@@ -23,28 +23,27 @@ public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapte
     private static final String TAG = "Own";
     private final RowClickListener listener;
     ArrayList<String> list;
-    FirebaseHandler2 mdb2;
+    FirebaseHandler mdb2;
 
     public SecureFriendAdapter(ArrayList<String> list, RowClickListener listener, Activity mActivity) {
         this.list = list;
         this.listener = listener;
-        mdb2 = new FirebaseHandler2(FirebaseDatabase.getInstance().getReference(), mActivity);
+        mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), mActivity);
     }
 
     @NonNull
     @Override
     public SecureFriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_friend, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_secure_friend, parent, false);
         return new SecureFriendViewHolder(v, listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SecureFriendViewHolder holder, int position) {
-
         //list is populated externally
         String friend = list.get(position);
         //get username from Username async
-        mdb2.UIDtoUsername(friend, holder.username::setText);
+        holder.username.setText(friend);
     }
 
     @Override

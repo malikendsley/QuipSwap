@@ -10,5 +10,5 @@
     android:previewLayout="@layout/quip_widget"
     android:targetCellWidth="3"
     android:targetCellHeight="2"
-    android:updatePeriodMillis="1800000"
+    android:updatePeriodMillis="1860000"
     android:widgetCategory="home_screen" />

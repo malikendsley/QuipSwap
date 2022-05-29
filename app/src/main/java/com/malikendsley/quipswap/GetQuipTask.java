@@ -8,20 +8,17 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.RecentQuipListener;
 
 public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
 
-    final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private final RemoteViews views;
     private final int WidgetID;
     private final AppWidgetManager WidgetManager;
-    FirebaseHandler mdb = new FirebaseHandler(mDatabase);
+    FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference());
     Bitmap defaultBitmap;
-    //TODO Remove test URL
 
     @SuppressWarnings("deprecation")
     public GetQuipTask(RemoteViews views, int appWidgetID, AppWidgetManager appWidgetManager) {
@@ -40,7 +37,7 @@ public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
         }
 
         Log.i(TAG, "background task running");
-        mdb.getMostRecentQuipFromUser(strings[0], new RecentQuipListener() {
+        mdb2.getLatestQuip(strings[0], new RecentQuipListener() {
             @Override
             public void onRetrieved(Bitmap bitmap) {
                 if (bitmap != null) {
@@ -52,24 +49,14 @@ public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
 
             @Override
             public void onFailed(Exception e) {
+                Log.i(TAG, "GetQuipTask: Error retrieving, using standard bitmap");
+                views.setImageViewBitmap(R.id.appwidget_image, defaultBitmap);
+                WidgetManager.updateAppWidget(WidgetID, views);
                 e.printStackTrace();
             }
         });
-
-        if(defaultBitmap == null){
-            Log.i(TAG, "BITMAP IS NULL");
-        }
+        Log.i(TAG, "GetQuipTask: Task Concluding");
         return null;
     }
 
-//    @Override
-//    protected void onPostExecute(Bitmap bitmap) {
-//        if (isCancelled()) {
-//            Log.i(TAG, "cancelled");
-//            bitmap = null;
-//        }
-//        Log.i(TAG, "onPostExecute");
-//        views.setImageViewBitmap(R.id.appwidget_image, bitmap);
-//        WidgetManager.updateAppWidget(WidgetID, views);
-//    }
 }

@@ -4,26 +4,22 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.adapters.FriendAdapter;
+import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
 import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
-import com.malikendsley.firebaseutils.schema.Friendship;
+import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
 
 import java.util.ArrayList;
 
@@ -31,17 +27,14 @@ public class ShareQuipActivity extends AppCompatActivity {
 
     static final String TAG = "Own";
     //even in my own projects i can never escape him
-    FirebaseHandler mdb;
+    FirebaseHandler mdb2;
 
     RecyclerView friendRecycler;
-    FriendAdapter friendAdapter;
-    DatabaseReference mDatabase;
+    SecureFriendAdapter friendAdapter;
 
     LinearProgressIndicator progressIndicator;
 
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-    ArrayList<Friendship> friendList = new ArrayList<>();
+    ArrayList<String> friendList = new ArrayList<>();
     byte[] byteArray;
     Bitmap bitmap;
 
@@ -60,81 +53,72 @@ public class ShareQuipActivity extends AppCompatActivity {
         byteArray = intent.getByteArrayExtra("BitmapImage");
         bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         Log.i(TAG, "Bitmap retrieved");
-
         //firebase setup
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mdb = new FirebaseHandler(mDatabase);
+        mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), this);
 
         //recycler setup
         friendRecycler = findViewById(R.id.selectFriendsRecyclerView);
         friendRecycler.setHasFixedSize(true);
         friendRecycler.setLayoutManager(new LinearLayoutManager(this));
-        friendAdapter = new FriendAdapter(friendList, position -> {
+        friendAdapter = new SecureFriendAdapter(friendList, position -> {
             //show progress bar
             progressIndicator.setVisibility(View.VISIBLE);
-            ShareQuipActivity.this.shareQuip(friendList.get(position));
-        });
+            shareQuip(friendList.get(position));
+        }, this);
         friendRecycler.setAdapter(friendAdapter);
 
-        mdb.retrieveFriends(friendsList -> {
-            Log.i(TAG, "FriendAdapter: Friends Retrieved");
-            if (friendsList != null) {
-                friendList.clear();
-                friendList.addAll(friendsList);
-                //Log.i(TAG, friendList.toString());
-            } else {
-                Log.i(TAG, "Retrieved Null");
+        //populate friends
+        mdb2.getFriends(new FriendRetrieveListener() {
+            @Override
+            public void onGetFriends(ArrayList<String> friendUIDList) {
+                if (friendUIDList != null) {
+                    friendList.clear();
+                    friendList.addAll(friendUIDList);
+                    friendAdapter.notifyDataSetChanged();
+                }
             }
-            friendAdapter.notifyDataSetChanged();
+
+            @Override
+            public void onGetFailed(Exception e) {
+                e.printStackTrace();
+                Toast.makeText(ShareQuipActivity.this, "Trouble retrieving friends", Toast.LENGTH_SHORT).show();
+            }
         });
 
 
         cancelButton.setOnClickListener(view -> finish());
     }
 
-    @SuppressWarnings("unused")
-    void debugQuip(Friendship friendship) {
-        Log.i(TAG, "Displaying Dialog");
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setIcon(new BitmapDrawable(this.getResources(), bitmap));
-        builder.setTitle("Preview Quip");
-        builder.setMessage(((friendship.getUser1().equals(mAuth.getUid())) ? friendship.getUser2() : friendship.getUser1()));
-        builder.setPositiveButton("Accept", (dialog, i) -> dialog.dismiss());
-        builder.setNegativeButton("Deny", (dialog, i) -> dialog.dismiss());
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
+    void shareQuip(String recipientUsername) {
+        mdb2.usernameToUID(recipientUsername, resolved -> {
+            Log.e(TAG, "ShareQuip: " + resolved);
+            mdb2.shareQuip(resolved, byteArray, new QuipUploadListener() {
+                @Override
+                public void onUploadComplete(String URI) {
+                    Toast.makeText(ShareQuipActivity.this, "Quip Shared!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ShareQuipActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    ShareQuipActivity.this.finish();
+                    //hide progress bar
+                    progressIndicator.setVisibility(View.GONE);
 
-    void shareQuip(Friendship recipient) {
-        String UID = (recipient.getUser1().equals(mAuth.getUid())) ? recipient.getUser2() : recipient.getUser1();
-        Log.e(TAG, "ShareQuip: " + UID);
-        mdb.shareQuip(UID, byteArray, new QuipUploadListener() {
-            @Override
-            public void onUploadComplete(String URI) {
-                Toast.makeText(ShareQuipActivity.this, "Quip Shared!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ShareQuipActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                ShareQuipActivity.this.finish();
-                //hide progress bar
-                progressIndicator.setVisibility(View.GONE);
+                }
 
-            }
+                @Override
+                public void onUploadFail(Exception e) {
+                    Toast.makeText(ShareQuipActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, e.toString());
+                    e.printStackTrace();
 
-            @Override
-            public void onUploadFail(Exception e) {
-                Toast.makeText(ShareQuipActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
-                Log.e(TAG, e.toString());
-                e.printStackTrace();
+                }
 
-            }
-
-            @Override
-            public void onProgress(double progress) {
-                //update progress
-                progressIndicator.setProgressCompat((int) progress, true);
-            }
+                @Override
+                public void onProgress(double progress) {
+                    //update progress
+                    progressIndicator.setProgressCompat((int) progress, true);
+                }
+            });
         });
     }
 }

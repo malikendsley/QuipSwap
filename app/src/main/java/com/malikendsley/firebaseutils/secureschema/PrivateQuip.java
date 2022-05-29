@@ -10,7 +10,7 @@ public class PrivateQuip {
     private final String Recipient;
 
     @PropertyName("Timestamp")
-    private final long timestamp;
+    private final long Timestamp;
 
     @PropertyName("URI")
     private final String URI;
@@ -18,10 +18,18 @@ public class PrivateQuip {
     @PropertyName("Key")
     private String Key;
 
+    @SuppressWarnings("unused")
+    public PrivateQuip() {
+        Sender = "unset";
+        Recipient = "unset";
+        Timestamp = -1;
+        URI = "unset";
+    }
+
     public PrivateQuip(String sender, String recipient, long timestamp, String URI) {
         Sender = sender;
         Recipient = recipient;
-        this.timestamp = timestamp;
+        this.Timestamp = timestamp;
         this.URI = URI;
     }
 
@@ -37,7 +45,7 @@ public class PrivateQuip {
 
     @PropertyName("Timestamp")
     public long getTimestamp() {
-        return timestamp;
+        return Timestamp;
     }
 
     @PropertyName("URI")
@@ -50,7 +58,8 @@ public class PrivateQuip {
         return Key;
     }
 
+    @PropertyName("Key")
     public void setKey(String key) {
-        Key = key;
+        this.Key = key;
     }
 }

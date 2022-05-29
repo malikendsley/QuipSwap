@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_margin="8dp"
-        android:text="Received Swaps"
+        android:text="@string/received_swaps"
         android:textSize="30sp" />
 
     <TextView
@@ -19,7 +19,7 @@
         android:layout_centerInParent="true"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:text="You haven't received any swaps. Ask your friends to send you some!"
+        android:text="@string/noReceivedSwapsFlavor"
         android:textSize="16sp"
         android:visibility="visible" />
 

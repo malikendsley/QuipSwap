@@ -12,11 +12,23 @@
         android:roundIcon="@drawable/ic_app_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.QuipSwap">
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity" />
+
         <receiver
             android:name=".QuipWidget"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.appwidget.action.EXTRA_APPWIDGET_IDS" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="AUTO_UPDATE" />
             </intent-filter>
 
             <meta-data
@@ -34,8 +46,7 @@
         </activity>
         <activity
             android:name=".FriendRequestsActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:exported="false" />
         <activity
             android:name=".ShareQuipActivity"
             android:exported="false" />
