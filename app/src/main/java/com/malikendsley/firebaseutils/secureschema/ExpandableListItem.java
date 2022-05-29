@@ -2,7 +2,7 @@ package com.malikendsley.firebaseutils.secureschema;
 
 public class ExpandableListItem {
 
-    private Object object;
+    private final Object object;
     private boolean isExpanded;
 
     public ExpandableListItem(Object object) {
@@ -11,10 +11,6 @@ public class ExpandableListItem {
 
     public Object getObject() {
         return object;
-    }
-
-    public void setObject(Object object) {
-        this.object = object;
     }
 
     public boolean isExpanded() {
