@@ -113,7 +113,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
             case R.id.aboutUsOption:
                 //unlikely but if this presents a perf issue can pre-build
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.about_us).setMessage(R.string.about_us_text).setCancelable(true).show();
+                builder.setTitle(R.string.about_me).setMessage(R.string.about_us_text).setCancelable(true).show();
                 break;
             case R.id.settingsOption:
                 Snackbar.make(findViewById(android.R.id.content), "Coming Soon", Snackbar.LENGTH_SHORT).show();
