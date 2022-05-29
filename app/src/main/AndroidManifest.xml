@@ -12,6 +12,12 @@
         android:roundIcon="@drawable/ic_app_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.QuipSwap">
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity" />
+
         <receiver
             android:name=".QuipWidget"
             android:exported="true">

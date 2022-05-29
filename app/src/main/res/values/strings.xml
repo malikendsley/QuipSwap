@@ -54,4 +54,9 @@
     <string name="ok">OK</string>
     <string name="email_me">Email Me</string>
     <string name="linkedin">LinkedIn</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="update_summary">Widgets should update themselves %s. Note that updating frequently takes more battery.</string>
+    <string name="quip_quality_summary">Quality of Quips saved to disk. 0 is high compression and 100 is none.</string>
+    <string name="savedQuipQuality">Saved Quip Quality</string>
+    <string name="UpdateFrequency">Update Frequency</string>
 </resources>

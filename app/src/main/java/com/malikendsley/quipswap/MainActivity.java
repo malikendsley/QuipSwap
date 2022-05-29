@@ -17,10 +17,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.malikendsley.quipswap.navfragments.ProfileFragment;
@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("InflateParams")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, true);
+
         super.onCreate(savedInstanceState);
         SplashScreen.installSplashScreen(this);
 
@@ -168,7 +170,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.settingsOption:
-                Snackbar.make(findViewById(android.R.id.content), "Coming Soon", Snackbar.LENGTH_SHORT).show();
+                Intent myIntent = new Intent(this, SettingsActivity.class);
+                startActivity(myIntent);
                 break;
 
             case R.id.logoutOption:

@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.preference.PreferenceManager;
+
 import java.util.Calendar;
 
 public class AppWidgetAlarm {
@@ -22,7 +24,22 @@ public class AppWidgetAlarm {
     @SuppressLint("UnspecifiedImmutableFlag")
     public void startAlarm() {
         Calendar calendar = Calendar.getInstance();
-        int INTERVAL_MILLIS = 60000;
+        int INTERVAL_MILLIS;
+        String interval = PreferenceManager.getDefaultSharedPreferences(mContext).getString("pref_update_frequency", "error");
+        switch (interval) {
+            case "often":
+                INTERVAL_MILLIS = 60 * 1000;
+                break;
+            case "every10":
+                INTERVAL_MILLIS = 60 * 1000 * 10;
+                break;
+            case "every30":
+                INTERVAL_MILLIS = 60 * 1000 * 30;
+                break;
+            default:
+                INTERVAL_MILLIS = -1;
+                break;
+        }
         calendar.add(Calendar.MILLISECOND, INTERVAL_MILLIS);
 
         Intent alarmIntent = new Intent(mContext, QuipWidget.class);

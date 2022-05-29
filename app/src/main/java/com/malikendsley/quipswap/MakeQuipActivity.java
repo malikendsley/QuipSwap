@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.slider.Slider;
@@ -203,13 +204,13 @@ public class MakeQuipActivity extends AppCompatActivity {
                 return;
             }
             Intent intent = new Intent(this, ShareQuipActivity.class);
-            intent.putExtra("BitmapImage", getBitmap(100));
+            intent.putExtra("BitmapImage", getBitmap());
             Log.i(TAG, "Starting new activity");
             startActivity(intent);
         });
 
         saveButton.setOnClickListener(view -> {
-            String URI = saveImageToMyQuips(100);
+            String URI = saveImageToMyQuips();
             Toast.makeText(MakeQuipActivity.this, "Image Saved to " + URI, Toast.LENGTH_SHORT).show();
         });
     }
@@ -257,13 +258,16 @@ public class MakeQuipActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.makeQuipHelpMenuButton) {
             //unlikely but if this presents a perf issue can pre-build
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Help").setMessage("This is where I will explain how to use the quip canvas").setCancelable(true).show();
+            builder.setTitle("Help").setMessage("In order to use the canvas, draw on the top white portion of the screen.\n\n" +
+                    "To select a new color, tap the colored boxes.\n\nThe Hard, Soft, and Erase buttons affect the brush type.\n\n" +
+                    "Undo and redo can be used to fix small mistakes." +
+                    "\n\nThe clear canvas button clears the canvas back to white.").setCancelable(true).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    String saveImageToMyQuips(int quality) {
+    String saveImageToMyQuips() {
         paintView.setDrawingCacheEnabled(true);
         Bitmap bm = Bitmap.createBitmap(paintView.getDrawingCache());
         paintView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
@@ -280,7 +284,7 @@ public class MakeQuipActivity extends AppCompatActivity {
             } else {
                 fOut = new FileOutputStream(file);
                 //This line writes the Bitmap, do your compression prior to here
-                bm.compress(Bitmap.CompressFormat.JPEG, quality, fOut);
+                bm.compress(Bitmap.CompressFormat.JPEG, PreferenceManager.getDefaultSharedPreferences(this).getInt("pref_quip_quality", 100), fOut);
                 fOut.flush();
                 fOut.close();
                 Log.e(TAG, "Image written to " + file.getAbsolutePath());
@@ -294,13 +298,13 @@ public class MakeQuipActivity extends AppCompatActivity {
         return file.getAbsolutePath();
     }
 
-    private byte[] getBitmap(int quality) {
+    private byte[] getBitmap() {
         paintView.setDrawingCacheEnabled(true);
         Bitmap capture = Bitmap.createBitmap(paintView.getWidth(), paintView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas captureCanvas = new Canvas(capture);
         paintView.draw(captureCanvas);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        capture.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+        capture.compress(Bitmap.CompressFormat.JPEG, PreferenceManager.getDefaultSharedPreferences(this).getInt("pref_quip_quality", 100), outputStream);
         return outputStream.toByteArray();
     }
 
