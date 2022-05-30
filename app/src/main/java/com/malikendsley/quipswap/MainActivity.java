@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,8 +29,11 @@ import com.malikendsley.quipswap.navfragments.SignInFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "Own";
-    View customDialog;
+    //private static final String TAG = "Own";
+    View aboutView;
+    View legalView;
+    AlertDialog aboutDialog;
+    AlertDialog legalDialog;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     SentFragment sentFragment;
     ReceivedFragment recFragment;
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
         return true;
     };
-    AlertDialog.Builder builder;
+
 
     @SuppressLint("InflateParams")
     @Override
@@ -96,13 +98,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SplashScreen.installSplashScreen(this);
 
-        customDialog = getLayoutInflater().inflate(R.layout.about_dialog, null);
-
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             invalidateOptionsMenu();
         }
         setContentView(R.layout.activity_main);
+
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
@@ -112,9 +113,51 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
         }
 
-        //dialog buttons
-        Button emailMeButton = customDialog.findViewById(R.id.emailMeButton);
-        Button linkedInButton = customDialog.findViewById(R.id.linkedInButton);
+        //dialog views
+        aboutView = getLayoutInflater().inflate(R.layout.about_dialog, null);
+        legalView = getLayoutInflater().inflate(R.layout.legal_dialog, null);
+
+        //create alertdialogs
+        AlertDialog.Builder aboutBuilder = new AlertDialog.Builder(this);
+        aboutBuilder.setView(aboutView);
+        AlertDialog.Builder legalBuilder = new AlertDialog.Builder(this).setView(legalView);
+        legalBuilder.setView(legalView);
+
+        aboutDialog = aboutBuilder.create();
+        legalDialog = legalBuilder.create();
+
+
+        //about dialog buttons
+        Button emailMeButton = aboutView.findViewById(R.id.emailMeButton);
+        Button linkedInButton = aboutView.findViewById(R.id.linkedInButton);
+
+        //legal dialog buttons
+        Button privacyPolicyButton = legalView.findViewById(R.id.privacyPolicyButton);
+        Button dataInquiryButton = legalView.findViewById(R.id.dataInquiryButton);
+
+        privacyPolicyButton.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setData(Uri.parse("https://www.privacypolicies.com/live/c6452f28-3848-4b4a-8b8f-3798bcb59022"));
+            startActivity(intent);
+        });
+
+
+        dataInquiryButton.setOnClickListener(view -> {
+            String mailto = "mailto:malik.s.endsley@gmail.com" +
+                    "?cc=" +
+                    "&subject=" + Uri.encode("Data Inquiry - QuipSwap") +
+                    "&body=" + Uri.encode("");
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+            emailIntent.setData(Uri.parse(mailto));
+
+            try {
+                startActivity(emailIntent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(this, "Error opening email app", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         linkedInButton.setOnClickListener(view -> {
             Intent intent = new Intent();
@@ -160,20 +203,20 @@ public class MainActivity extends AppCompatActivity {
                     if (signInFragment == null) {
                         signInFragment = new SignInFragment();
                     }
-
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, signInFragment).commit();
                     Toast.makeText(this, "Please log in to continue", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.aboutUsOption:
-                setupDialog();
+            case R.id.legalOption:
+                legalDialog.show();
                 break;
-
+            case R.id.aboutUsOption:
+                aboutDialog.show();
+                break;
             case R.id.settingsOption:
                 Intent myIntent = new Intent(this, SettingsActivity.class);
                 startActivity(myIntent);
                 break;
-
             case R.id.logoutOption:
                 FirebaseAuth.getInstance().signOut();
                 Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
@@ -182,12 +225,5 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return true;
-    }
-
-    void setupDialog() {
-        builder = new AlertDialog.Builder(this);
-        builder.setView(customDialog);
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 }

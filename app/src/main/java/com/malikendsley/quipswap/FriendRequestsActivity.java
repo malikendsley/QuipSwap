@@ -1,13 +1,15 @@
 package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,14 +31,17 @@ import java.util.ArrayList;
 public class FriendRequestsActivity extends AppCompatActivity {
 
     TextView noFriendRequestsFlavor;
-    View customDialog;
     //recycler
     RecyclerView requestRecycler;
     SecureRequestAdapter requestAdapter;
     //firebase setup
     ArrayList<ExpandableListItem> friendRequestList = new ArrayList<>();
     FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), this);
-    AlertDialog.Builder builder;
+
+    View aboutView;
+    View legalView;
+    AlertDialog aboutDialog;
+    AlertDialog legalDialog;
 
     @SuppressLint("InflateParams")
     @Override
@@ -44,7 +49,6 @@ public class FriendRequestsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_requests);
 
-        customDialog = getLayoutInflater().inflate(R.layout.about_dialog, null);
 
         //retrieve friend requests and populate
         mdb2.getFriendRequests(new GetRequestsListener() {
@@ -83,6 +87,75 @@ public class FriendRequestsActivity extends AppCompatActivity {
         requestRecycler.setHasFixedSize(true);
         requestRecycler.setLayoutManager(new LinearLayoutManager(this));
 
+        //dialog views
+        aboutView = getLayoutInflater().inflate(R.layout.about_dialog, null);
+        legalView = getLayoutInflater().inflate(R.layout.legal_dialog, null);
+
+        //create alertdialogs
+        AlertDialog.Builder aboutBuilder = new AlertDialog.Builder(this);
+        aboutBuilder.setView(aboutView);
+        AlertDialog.Builder legalBuilder = new AlertDialog.Builder(this).setView(legalView);
+        legalBuilder.setView(legalView);
+
+        aboutDialog = aboutBuilder.create();
+        legalDialog = legalBuilder.create();
+
+
+        //about dialog buttons
+        Button emailMeButton = aboutView.findViewById(R.id.emailMeButton);
+        Button linkedInButton = aboutView.findViewById(R.id.linkedInButton);
+
+        //legal dialog buttons
+        Button privacyPolicyButton = legalView.findViewById(R.id.privacyPolicyButton);
+        Button dataInquiryButton = legalView.findViewById(R.id.dataInquiryButton);
+
+        privacyPolicyButton.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setData(Uri.parse("https://www.privacypolicies.com/live/c6452f28-3848-4b4a-8b8f-3798bcb59022"));
+            startActivity(intent);
+        });
+
+
+        dataInquiryButton.setOnClickListener(view -> {
+            String mailto = "mailto:malik.s.endsley@gmail.com" +
+                    "?cc=" +
+                    "&subject=" + Uri.encode("Data Inquiry - QuipSwap") +
+                    "&body=" + Uri.encode("");
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+            emailIntent.setData(Uri.parse(mailto));
+
+            try {
+                startActivity(emailIntent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(this, "Error opening email app", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        linkedInButton.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setData(Uri.parse("https://www.linkedin.com/in/malik-endsley/"));
+            startActivity(intent);
+        });
+
+        emailMeButton.setOnClickListener(view -> {
+            String mailto = "mailto:malik.s.endsley@gmail.com" +
+                    "?cc=" +
+                    "&subject=" + Uri.encode("Feedback About QuipSwap") +
+                    "&body=" + Uri.encode("");
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+            emailIntent.setData(Uri.parse(mailto));
+
+            try {
+                startActivity(emailIntent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(this, "Error opening email app", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         requestAdapter = new SecureRequestAdapter(friendRequestList, new RequestClickListener() {
             @Override
             public void onAcceptClicked(int position) {
@@ -115,8 +188,11 @@ public class FriendRequestsActivity extends AppCompatActivity {
             case R.id.friendRequestsAppBar:
                 finish();
                 break;
+            case R.id.legalOption:
+                legalDialog.show();
+                break;
             case R.id.aboutUsOption:
-                setupDialog();
+                aboutDialog.show();
                 break;
             case R.id.settingsOption:
                 Intent myIntent = new Intent(this, SettingsActivity.class);
@@ -144,12 +220,5 @@ public class FriendRequestsActivity extends AppCompatActivity {
         requestAdapter.notifyItemRemoved(position);
         noFriendRequestsFlavor.setVisibility(friendRequestList.isEmpty() ? View.VISIBLE : View.GONE);
 
-    }
-
-    void setupDialog() {
-        builder = new AlertDialog.Builder(this);
-        builder.setView(customDialog);
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 }

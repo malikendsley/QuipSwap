@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "451396014275",
+    "firebase_url": "https://quipswap-default-rtdb.firebaseio.com",
     "project_id": "quipswap",
     "storage_bucket": "quipswap.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "451396014275-i40jkrgk6t6a59649c97udqdeelcpuv0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.malikendsley.quipswap",
+            "certificate_hash": "757cbc230d92da03c8e41bfae023f01518793eda"
+          }
+        },
         {
           "client_id": "451396014275-r7t1n6k5afd4902c2skj5gktpvonoipo.apps.googleusercontent.com",
           "client_type": 3

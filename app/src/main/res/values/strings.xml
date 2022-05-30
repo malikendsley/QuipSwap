@@ -59,4 +59,9 @@
     <string name="quip_quality_summary">Quality of Quips saved to disk. 0 is high compression and 100 is none.</string>
     <string name="savedQuipQuality">Saved Quip Quality</string>
     <string name="UpdateFrequency">Update Frequency</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="legal">Legal</string>
+    <string name="to_view_our_privacy_policy_click_the_button_below">To view our privacy policy, click the button below.</string>
+    <string name="for_data_related_inquiries_such_as_to_request_the_deletion_of_your_account_click_the_button_below">For data-related inquiries, such as to request the deletion of your account, click the button below.</string>
+    <string name="data_inquiry">Data Inquiry</string>
 </resources>
