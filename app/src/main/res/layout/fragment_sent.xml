@@ -23,12 +23,19 @@
         android:textSize="16sp"
         android:visibility="visible" />
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/sentSwapsRecycler"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/sentSwipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/sentSwapsHeaderText" />
+        android:layout_below="@+id/sentSwapsHeaderText">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sentSwapsRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

@@ -76,12 +76,19 @@
         android:layout_below="@+id/friendsTitleText"
         android:layout_margin="8dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/friendList"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/friendListSwipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/addFriendSection"
-        android:layout_below="@id/profileDivider3" />
+        android:layout_below="@id/profileDivider3">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/friendList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <LinearLayout
         android:id="@+id/addFriendSection"

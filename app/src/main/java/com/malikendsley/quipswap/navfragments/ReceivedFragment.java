@@ -3,16 +3,15 @@ package com.malikendsley.quipswap.navfragments;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
@@ -24,49 +23,55 @@ import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
 
-public class ReceivedFragment extends Fragment {
+public class ReceivedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String TAG = "Own";
-    FirebaseHandler mdb2;
+    FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
 
     TextView noReceivedText;
     RecyclerView receivedRecycler;
     SecureSharedQuipAdapter sharedQuipAdapter;
+    SwipeRefreshLayout swipeLayout;
 
     ArrayList<PublicQuip> sharedQuipList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_received, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
+        View rootView = inflater.inflate(R.layout.fragment_received, container, false);
 
         //flavor
-        noReceivedText = requireActivity().findViewById(R.id.noReceivedSwapsText);
+        noReceivedText = rootView.findViewById(R.id.noReceivedSwapsText);
 
         //received recycler setup
-        receivedRecycler = requireActivity().findViewById(R.id.receivedSwapsRecycler);
+        receivedRecycler = rootView.findViewById(R.id.receivedSwapsRecycler);
         receivedRecycler.setHasFixedSize(true);
         receivedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         sharedQuipAdapter = new SecureSharedQuipAdapter(false, getContext(), sharedQuipList, getActivity());
         receivedRecycler.setAdapter(sharedQuipAdapter);
 
         //fab
-        requireView().findViewById(R.id.fab).setOnClickListener(view1 -> {
+        rootView.findViewById(R.id.fab).setOnClickListener(view1 -> {
             //Log.i(TAG, "Fab clicked");
             ReceivedFragment.this.startActivity(new Intent(ReceivedFragment.this.getContext(), MakeQuipActivity.class));
         });
 
+        //set up swipe to refresh
+        swipeLayout = rootView.findViewById(R.id.receivedSwipeRefresh);
+        swipeLayout.setOnRefreshListener(this);
 
+        //populate the list of received Quips
+        updateReceived();
+
+        return rootView;
+    }
+
+    void updateReceived() {
         mdb2.getReceivedQuips(new PublicQuipRetrieveListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRetrieveComplete(ArrayList<PublicQuip> quipList) {
+                if (swipeLayout.isRefreshing()) {
+                    swipeLayout.setRefreshing(false);
+                }
                 if (!quipList.isEmpty()) {
                     sharedQuipList.clear();
                     sharedQuipList.addAll(quipList);
@@ -79,9 +84,15 @@ public class ReceivedFragment extends Fragment {
 
             @Override
             public void onRetrieveFail(Exception e) {
-                //e.printStackTrace();
-                //Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
+                if (swipeLayout.isRefreshing()) {
+                    swipeLayout.setRefreshing(false);
+                }
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        updateReceived();
     }
 }

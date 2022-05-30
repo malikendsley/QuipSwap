@@ -13,11 +13,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
@@ -28,7 +29,7 @@ import com.malikendsley.firebaseutils.secureschema.ExpandableListItem;
 
 import java.util.ArrayList;
 
-public class FriendRequestsActivity extends AppCompatActivity {
+public class FriendRequestsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     TextView noFriendRequestsFlavor;
     //recycler
@@ -37,6 +38,8 @@ public class FriendRequestsActivity extends AppCompatActivity {
     //firebase setup
     ArrayList<ExpandableListItem> friendRequestList = new ArrayList<>();
     FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), this);
+
+    SwipeRefreshLayout swipeRefresh;
 
     View aboutView;
     View legalView;
@@ -51,32 +54,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
 
 
         //retrieve friend requests and populate
-        mdb2.getFriendRequests(new GetRequestsListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onRequests(ArrayList<String> requestList) {
-                //Log.i("Own", "Friends retrieved");
-                if (requestList.isEmpty()) {
-                    noFriendRequestsFlavor.setVisibility(View.VISIBLE);
-                } else {
-                    //Log.i("Own", "Friends present");
-                    noFriendRequestsFlavor.setVisibility(View.GONE);
-                    friendRequestList.clear();
-                    for (String username : requestList) {
-                        friendRequestList.add(new ExpandableListItem(username));
-                    }
-                    requestAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onGetFail(Exception e) {
-                //e.printStackTrace();
-                noFriendRequestsFlavor.setVisibility(View.VISIBLE);
-                //Log.e("Own", "Request Retrieve Failed");
-                Toast.makeText(FriendRequestsActivity.this, "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
-            }
-        });
+        updateFriends();
 
         //element setup
         findViewById(R.id.friendRequestsBackButton).setOnClickListener(view -> finish());
@@ -168,6 +146,10 @@ public class FriendRequestsActivity extends AppCompatActivity {
             }
         });
         requestRecycler.setAdapter(requestAdapter);
+
+        swipeRefresh = findViewById(R.id.friendRequestSwipe);
+        swipeRefresh.setOnRefreshListener(this);
+
     }
 
     //add options menu
@@ -182,7 +164,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
     //handle menu select
     @SuppressLint("NonConstantResourceId")
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.friendRequestsAppBar:
@@ -220,5 +202,41 @@ public class FriendRequestsActivity extends AppCompatActivity {
         requestAdapter.notifyItemRemoved(position);
         noFriendRequestsFlavor.setVisibility(friendRequestList.isEmpty() ? View.VISIBLE : View.GONE);
 
+    }
+
+    @Override
+    public void onRefresh() {
+        updateFriends();
+    }
+
+    void updateFriends(){
+        mdb2.getFriendRequests(new GetRequestsListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onRequests(ArrayList<String> requestList) {
+                if(swipeRefresh.isRefreshing()){
+                    swipeRefresh.setRefreshing(false);
+                }
+                if (requestList.isEmpty()) {
+                    noFriendRequestsFlavor.setVisibility(View.VISIBLE);
+                } else {
+                    noFriendRequestsFlavor.setVisibility(View.GONE);
+                    friendRequestList.clear();
+                    for (String username : requestList) {
+                        friendRequestList.add(new ExpandableListItem(username));
+                    }
+                    requestAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onGetFail(Exception e) {
+                if(swipeRefresh.isRefreshing()){
+                    swipeRefresh.setRefreshing(false);
+                }
+                noFriendRequestsFlavor.setVisibility(View.VISIBLE);
+                Toast.makeText(FriendRequestsActivity.this, "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

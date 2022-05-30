@@ -3,17 +3,15 @@ package com.malikendsley.quipswap.navfragments;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
@@ -25,49 +23,52 @@ import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
 
-public class SentFragment extends Fragment {
+public class SentFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String TAG = "Own";
-    FirebaseHandler mdb2;
+    FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
 
     TextView noSentText;
     RecyclerView sentRecycler;
     SecureSharedQuipAdapter sharedQuipAdapter;
+    SwipeRefreshLayout swipeLayout;
 
     ArrayList<PublicQuip> sharedQuipList = new ArrayList<>();
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sent, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_sent, container, false);
 
         //flavor
-        noSentText = requireActivity().findViewById(R.id.noSentSwapsText);
+        noSentText = rootView.findViewById(R.id.noSentSwapsText);
 
         //sent recycler setup
-        sentRecycler = requireActivity().findViewById(R.id.sentSwapsRecycler);
+        sentRecycler = rootView.findViewById(R.id.sentSwapsRecycler);
         sentRecycler.setHasFixedSize(true);
         sentRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         sharedQuipAdapter = new SecureSharedQuipAdapter(true, getContext(), sharedQuipList, getActivity());
         sentRecycler.setAdapter(sharedQuipAdapter);
 
         //fab
-        requireView().findViewById(R.id.fab).setOnClickListener(view1 -> {
-            Log.i(TAG, "Fab clicked");
-            SentFragment.this.startActivity(new Intent(SentFragment.this.getContext(), MakeQuipActivity.class));
-        });
+        rootView.findViewById(R.id.fab).setOnClickListener(view1 -> SentFragment.this.startActivity(new Intent(SentFragment.this.getContext(), MakeQuipActivity.class)));
 
+        //set up swipe to refresh
+        swipeLayout = rootView.findViewById(R.id.sentSwipeRefresh);
+        swipeLayout.setOnRefreshListener(this);
+
+        //populate sent quips
+        updateSent();
+
+        return rootView;
+    }
+
+    void updateSent() {
         mdb2.getSentQuips(new PublicQuipRetrieveListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRetrieveComplete(ArrayList<PublicQuip> quipList) {
+                if (swipeLayout.isRefreshing()) {
+                    swipeLayout.setRefreshing(false);
+                }
                 if (!quipList.isEmpty()) {
                     sharedQuipList.clear();
                     sharedQuipList.addAll(quipList);
@@ -80,9 +81,15 @@ public class SentFragment extends Fragment {
 
             @Override
             public void onRetrieveFail(Exception e) {
-                //e.printStackTrace();
-                //Toast.makeText(getContext(), "Trouble connecting to the database", Toast.LENGTH_SHORT).show();
+                if (swipeLayout.isRefreshing()) {
+                    swipeLayout.setRefreshing(false);
+                }
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        updateSent();
     }
 }
