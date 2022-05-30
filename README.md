@@ -2,6 +2,10 @@
 
 QuipSwap is a WIP image-sharing app where you can draw images to be shown directly on your friends' homescreens. Users can create an account, add their friends, and use the app's built in canvas system to draw pictures to send to their friends. They also have the option of saving the images for later. When configuring the companion widget for QuipSwap, users have the option of choosing which friend's Quips they would like to see.
 
+![Light mode canvas screenshot](https://firebasestorage.googleapis.com/v0/b/quipswap.appspot.com/o/showcase-images%2Flight-mode-canvas.jpg?alt=media&token=aa7b3fcb-1d04-4593-b616-b0a57b05abab) &emsp; &emsp; ![Dark mode canvas screenshot](https://firebasestorage.googleapis.com/v0/b/quipswap.appspot.com/o/showcase-images%2Fdark-mode-canvas.jpg?alt=media&token=73a62e7e-1b3d-4bc5-9752-7fe7a777a29f)
+
+^ The canvas in action
+
 # Built With
 
 ### Native Android/AndroidX
