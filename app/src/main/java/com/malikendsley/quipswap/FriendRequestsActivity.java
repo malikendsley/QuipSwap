@@ -1,6 +1,7 @@
 package com.malikendsley.quipswap;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 //import android.util.Log;
 import android.view.Menu;
@@ -16,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.firebaseutils.FirebaseHandler;
 import com.malikendsley.firebaseutils.interfaces.GetRequestsListener;
@@ -29,17 +29,22 @@ import java.util.ArrayList;
 public class FriendRequestsActivity extends AppCompatActivity {
 
     TextView noFriendRequestsFlavor;
+    View customDialog;
     //recycler
     RecyclerView requestRecycler;
     SecureRequestAdapter requestAdapter;
     //firebase setup
     ArrayList<ExpandableListItem> friendRequestList = new ArrayList<>();
     FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), this);
+    AlertDialog.Builder builder;
 
+    @SuppressLint("InflateParams")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_requests);
+
+        customDialog = getLayoutInflater().inflate(R.layout.about_dialog, null);
 
         //retrieve friend requests and populate
         mdb2.getFriendRequests(new GetRequestsListener() {
@@ -111,12 +116,11 @@ public class FriendRequestsActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.aboutUsOption:
-                //unlikely but if this presents a perf issue can pre-build
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.about_me).setMessage(R.string.about_us_text).setCancelable(true).show();
+                setupDialog();
                 break;
             case R.id.settingsOption:
-                Snackbar.make(findViewById(android.R.id.content), "Coming Soon", Snackbar.LENGTH_SHORT).show();
+                Intent myIntent = new Intent(this, SettingsActivity.class);
+                startActivity(myIntent);
                 break;
         }
         return true;
@@ -140,5 +144,12 @@ public class FriendRequestsActivity extends AppCompatActivity {
         requestAdapter.notifyItemRemoved(position);
         noFriendRequestsFlavor.setVisibility(friendRequestList.isEmpty() ? View.VISIBLE : View.GONE);
 
+    }
+
+    void setupDialog() {
+        builder = new AlertDialog.Builder(this);
+        builder.setView(customDialog);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
