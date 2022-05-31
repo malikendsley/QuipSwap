@@ -112,7 +112,8 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         if (username == null || username.equals("")) {
             Toast.makeText(getContext(), "Please specify a user", Toast.LENGTH_SHORT).show();
         } else {
-            onAddFriend(username);
+            //Credit to Jennifer Wang my loyal tester
+            onAddFriend(username.trim());
         }
     }
 

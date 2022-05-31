@@ -71,7 +71,8 @@ public class SignupActivity extends AppCompatActivity {
 
 
     void registerUser(String username, String email, String password) {
-        mdb2.registerUser(username, email, password, new RegisterUserListener() {
+        //Credit to Jennifer Wang my loyal tester
+        mdb2.registerUser(username.trim(), email.trim(), password, new RegisterUserListener() {
             @Override
             public void onResult(String result) {
                 if (result.equals("")) {
