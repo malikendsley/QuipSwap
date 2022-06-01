@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.malikendsley.quipswap">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.malikendsley.quipswap"
+    tools:ignore="LockedOrientationActivity">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="     android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -14,9 +16,11 @@
         android:theme="@style/Theme.QuipSwap">
         <activity
             android:name=".SettingsActivity"
+            android:configChanges="orientation"
             android:exported="false"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".QuipWidget"
@@ -38,7 +42,9 @@
 
         <activity
             android:name=".QuipWidgetConfigureActivity"
+            android:configChanges="orientation"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.QuipSwap">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
@@ -46,20 +52,30 @@
         </activity>
         <activity
             android:name=".FriendRequestsActivity"
-            android:exported="false" />
+            android:configChanges="orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ShareQuipActivity"
-            android:exported="false" />
+            android:configChanges="orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MakeQuipActivity"
+            android:configChanges="orientation"
             android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SignupActivity"
-            android:exported="false" />
+            android:configChanges="orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppSplash"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

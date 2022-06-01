@@ -8,8 +8,15 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/mainHelpOption"
+        android:title="@string/help"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_baseline_help_outline_24">
+    </item>
+
+    <item
         android:id="@+id/aboutUsOption"
-        android:title="@string/about_me"
+        android:title="@string/about"
         app:showAsAction="never" />
 
     <item
@@ -21,6 +28,7 @@
         android:id="@+id/settingsOption"
         android:title="@string/settings"
         app:showAsAction="never" />
+
     <item
         android:id="@+id/logoutOption"
         android:title="@string/log_out"

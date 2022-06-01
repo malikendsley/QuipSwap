@@ -14,11 +14,14 @@
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_app_logo.xml" value="0.196" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.196" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_baseline_add_reaction_24.xml" value="0.196" />
+        <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_baseline_arrow_downward_24.xml" value="0.1595" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_baseline_arrow_upward_24.xml" value="0.196" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_baseline_circle_24.xml" value="0.248" />
+        <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_baseline_help_outline_24.xml" value="0.266" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_baseline_notifications_24.xml" value="0.196" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_baseline_notifications_none_24.xml" value="0.196" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.196" />
+        <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_close_black_24dp.xml" value="0.265" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_export_2022_03_27_062653.xml" value="0.196" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_launcher_background.xml" value="0.196" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.2515" />
@@ -34,12 +37,14 @@
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/activity_make_quip.xml" value="0.2941427960666952" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/activity_share_quip.xml" value="0.33" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/activity_sign_up.xml" value="0.2321504916631039" />
+        <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/activity_tutorial.xml" value="0.2026507054296708" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_friends.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_new_profile.xml" value="0.5" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_received.xml" value="0.1" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_sent.xml" value="0.1" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_sign_in.xml" value="0.3009833262077811" />
+        <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/fragment_tutorial.xml" value="0.2026507054296708" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/legal_dialog.xml" value="0.33" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/list_item_friend.xml" value="0.2321504916631039" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/list_item_friendrequest.xml" value="0.2321504916631039" />
@@ -47,6 +52,7 @@
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/quip_widget.xml" value="0.33" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/quip_widget_configure.xml" value="0.2321504916631039" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/settings_activity.xml" value="0.2864471996579735" />
+        <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/tut_fullscreen_dialog.xml" value="0.21419410004275333" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/widget_item.xml" value="0.2321504916631039" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/layout/widget_layout.xml" value="0.2321504916631039" />
         <entry key="..\:/Users/ifigh/AndroidStudioProjects/QuipSwap/app/src/main/res/menu/appbarbuttons.xml" value="0.3009833262077811" />

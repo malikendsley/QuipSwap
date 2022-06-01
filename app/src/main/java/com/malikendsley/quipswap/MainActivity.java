@@ -3,6 +3,7 @@ package com.malikendsley.quipswap;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,7 +17,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -29,59 +29,56 @@ import com.malikendsley.quipswap.navfragments.SignInFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private static final String TAG = "Own";
+    //for first time startup
+    private static final String PREFS_NAME = "com.malikendsley.quipswap.QuipWidget";
+    final String PREF_VERSION_CODE_KEY = "version_code";
+    final int DOESNT_EXIST = -1;
+
+    //for menu buttons
     View aboutView;
     View legalView;
     AlertDialog aboutDialog;
     AlertDialog legalDialog;
+
+    //firebase authentication
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+    //this activity contains the fragments that create the dashboard
     SentFragment sentFragment;
     ReceivedFragment recFragment;
     ProfileFragment loggedInFragment;
     SignInFragment signInFragment;
-    @SuppressLint("NonConstantResourceId")
+
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
         Fragment selectedFragment = new ReceivedFragment();
 
         //when a navigation item is selected, set the selected fragment to the one whose ID is a match so that fragment can be displayed
-        switch (item.getItemId()) {
-            case R.id.nav_received_swaps:
-                //Log.i(TAG, "Received selected");
-                if (recFragment == null) {
-                    //Log.i(TAG, "Generating");
-                    recFragment = new ReceivedFragment();
+        //resource IDs will be non-constant eventually, so if-else is necessary
+        int itemId = item.getItemId();
+        if (itemId == R.id.nav_received_swaps) {
+            if (recFragment == null) {
+                recFragment = new ReceivedFragment();
+            }
+            selectedFragment = recFragment;
+        } else if (itemId == R.id.nav_sent_swaps) {
+            if (sentFragment == null) {
+                sentFragment = new SentFragment();
+            }
+            selectedFragment = sentFragment;
+        } else if (itemId == R.id.nav_profile) {
+            if (user != null) {
+                if (loggedInFragment == null) {
+                    loggedInFragment = new ProfileFragment();
                 }
-                selectedFragment = recFragment;
-                break;
-            case R.id.nav_sent_swaps:
-                //Log.i(TAG, "Sent selected");
-                if (sentFragment == null) {
-                    //Log.i(TAG, "Generating");
-                    sentFragment = new SentFragment();
+                //User is Logged in
+                selectedFragment = loggedInFragment;
+            } else {
+                if (signInFragment == null) {
+                    signInFragment = new SignInFragment();
                 }
-                selectedFragment = sentFragment;
-                break;
-            case R.id.nav_profile:
-                //Log.i(TAG, "Profile Selected");
-                //send the right fragment based on whether user is logged in
-                if (user != null) {
-                    if (loggedInFragment == null) {
-                        //Log.i(TAG, "Generating");
-                        loggedInFragment = new ProfileFragment();
-                    }
-                    //User is Logged in
-                    //Log.d(TAG, "onNavigationItemSelected User logged in");
-                    selectedFragment = loggedInFragment;
-                } else {
-                    if (signInFragment == null) {
-                        //Log.i(TAG, "Generating");
-                        signInFragment = new SignInFragment();
-                    }
-                    //Log.d(TAG, "onNavigationItemSelected No user logged in");
-                    //No User is Logged in
-                    selectedFragment = signInFragment;
-                }
-                break;
+                //No User is Logged in
+                selectedFragment = signInFragment;
+            }
         }
 
         //place the selected fragment in the FrameView created under Layouts
@@ -93,22 +90,25 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("InflateParams")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, true);
-
+        //TODO only run this on startup
         super.onCreate(savedInstanceState);
         SplashScreen.installSplashScreen(this);
 
+        //does what it says on the tin
+        displayTutorialIfFirstRun();
+
+        //do not display the login button if the user is not signed in
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             invalidateOptionsMenu();
         }
         setContentView(R.layout.activity_main);
 
-
+        //link the navigation buttons
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
-        //try to run this as late as possible to check whether to display friends tab
-        //save tab on screen rotation
+
+        //save tab on screen rotation (should never run, unless the user forces landscape)
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
         }
@@ -120,12 +120,10 @@ public class MainActivity extends AppCompatActivity {
         //create alertdialogs
         AlertDialog.Builder aboutBuilder = new AlertDialog.Builder(this);
         aboutBuilder.setView(aboutView);
-        AlertDialog.Builder legalBuilder = new AlertDialog.Builder(this).setView(legalView);
+        AlertDialog.Builder legalBuilder = new AlertDialog.Builder(this);
         legalBuilder.setView(legalView);
-
         aboutDialog = aboutBuilder.create();
         legalDialog = legalBuilder.create();
-
 
         //about dialog buttons
         Button emailMeButton = aboutView.findViewById(R.id.emailMeButton);
@@ -135,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         Button privacyPolicyButton = legalView.findViewById(R.id.privacyPolicyButton);
         Button dataInquiryButton = legalView.findViewById(R.id.dataInquiryButton);
 
+        //button listeners
         privacyPolicyButton.setOnClickListener(view -> {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
@@ -142,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
             intent.setData(Uri.parse("https://www.privacypolicies.com/live/c6452f28-3848-4b4a-8b8f-3798bcb59022"));
             startActivity(intent);
         });
-
 
         dataInquiryButton.setOnClickListener(view -> {
             String mailto = "mailto:malik.s.endsley@gmail.com" +
@@ -207,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "Please log in to continue", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.mainHelpOption:
+                break;
             case R.id.legalOption:
                 legalDialog.show();
                 break;
@@ -225,5 +225,18 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return true;
+    }
+
+    //this method also accounts for upgrades, so tutorial will re-display if a user persists their SharedPrefs via
+    void displayTutorialIfFirstRun() {
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
+
+        if (savedVersionCode == DOESNT_EXIST || currentVersionCode > savedVersionCode) {
+            //new or upgraded user
+            prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+
+        }
     }
 }
