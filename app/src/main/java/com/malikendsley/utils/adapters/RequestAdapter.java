@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils.secureadapters;
+package com.malikendsley.utils.adapters;
 
 //import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,21 +11,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
-import com.malikendsley.firebaseutils.secureschema.ExpandableListItem;
+import com.malikendsley.utils.interfaces.RequestClickListener;
+import com.malikendsley.utils.schema.ExpandableListItem;
 import com.malikendsley.quipswap.R;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 
-public class SecureRequestAdapter extends RecyclerView.Adapter<SecureRequestAdapter.SecureRequestViewHolder> {
+public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.SecureRequestViewHolder> {
 
     private static final String TAG = "Own";
     private final RequestClickListener listener;
     ArrayList<ExpandableListItem> list;
 
-    public SecureRequestAdapter(ArrayList<ExpandableListItem> list, RequestClickListener listener) {
+    public RequestAdapter(ArrayList<ExpandableListItem> list, RequestClickListener listener) {
         this.list = list;
         this.listener = listener;
     }

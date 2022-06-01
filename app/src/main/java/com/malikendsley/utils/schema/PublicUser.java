@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils.secureschema;
+package com.malikendsley.utils.schema;
 
 import com.google.firebase.database.PropertyName;
 

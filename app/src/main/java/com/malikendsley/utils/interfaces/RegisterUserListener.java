@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils.interfaces;
+package com.malikendsley.utils.interfaces;
 
 public interface RegisterUserListener {
 

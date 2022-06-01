@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils.secureadapters;
+package com.malikendsley.utils.adapters;
 
 import android.app.Activity;
 //import android.util.Log;
@@ -12,20 +12,20 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.RowClickListener;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.interfaces.RowClickListener;
 import com.malikendsley.quipswap.R;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class SecureFriendAdapter extends RecyclerView.Adapter<SecureFriendAdapter.SecureFriendViewHolder> {
+public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.SecureFriendViewHolder> {
     private static final String TAG = "Own";
     private final RowClickListener listener;
     ArrayList<String> list;
     FirebaseHandler mdb2;
 
-    public SecureFriendAdapter(ArrayList<String> list, RowClickListener listener, Activity mActivity) {
+    public FriendAdapter(ArrayList<String> list, RowClickListener listener, Activity mActivity) {
         this.list = list;
         this.listener = listener;
         mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), mActivity);

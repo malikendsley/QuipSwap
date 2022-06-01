@@ -1,6 +1,6 @@
-package com.malikendsley.firebaseutils.interfaces;
+package com.malikendsley.utils.interfaces;
 
-import com.malikendsley.firebaseutils.secureschema.PublicQuip;
+import com.malikendsley.utils.schema.PublicQuip;
 
 import java.util.ArrayList;
 

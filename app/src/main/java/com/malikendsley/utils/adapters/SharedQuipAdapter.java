@@ -1,4 +1,4 @@
-package com.malikendsley.firebaseutils.secureadapters;
+package com.malikendsley.utils.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,15 +17,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.PrivateQuipRetrievedListener;
-import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
-import com.malikendsley.firebaseutils.secureschema.PublicQuip;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.interfaces.PrivateQuipRetrievedListener;
+import com.malikendsley.utils.schema.PrivateQuip;
+import com.malikendsley.utils.schema.PublicQuip;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
 
-public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQuipAdapter.SecureSharedQuipViewHolder> {
+public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.SecureSharedQuipViewHolder> {
 
     static final String TAG = "Own";
     ArrayList<PublicQuip> list;
@@ -34,7 +34,7 @@ public class SecureSharedQuipAdapter extends RecyclerView.Adapter<SecureSharedQu
     FirebaseHandler mdb2;
 
     //if isSending = 1, populate with outgoing data, else incoming data
-    public SecureSharedQuipAdapter(boolean isSent, Context context, ArrayList<PublicQuip> list, Activity mActivity) {
+    public SharedQuipAdapter(boolean isSent, Context context, ArrayList<PublicQuip> list, Activity mActivity) {
         this.isSent = isSent;
         this.list = list;
         this.context = context;

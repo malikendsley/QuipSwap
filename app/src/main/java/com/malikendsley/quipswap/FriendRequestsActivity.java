@@ -21,11 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.GetRequestsListener;
-import com.malikendsley.firebaseutils.interfaces.RequestClickListener;
-import com.malikendsley.firebaseutils.secureadapters.SecureRequestAdapter;
-import com.malikendsley.firebaseutils.secureschema.ExpandableListItem;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.interfaces.GetRequestsListener;
+import com.malikendsley.utils.interfaces.RequestClickListener;
+import com.malikendsley.utils.adapters.RequestAdapter;
+import com.malikendsley.utils.schema.ExpandableListItem;
 
 import java.util.ArrayList;
 
@@ -34,7 +34,7 @@ public class FriendRequestsActivity extends AppCompatActivity implements SwipeRe
     TextView noFriendRequestsFlavor;
     //recycler
     RecyclerView requestRecycler;
-    SecureRequestAdapter requestAdapter;
+    RequestAdapter requestAdapter;
     //firebase setup
     ArrayList<ExpandableListItem> friendRequestList = new ArrayList<>();
     FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), this);
@@ -134,7 +134,7 @@ public class FriendRequestsActivity extends AppCompatActivity implements SwipeRe
             }
         });
 
-        requestAdapter = new SecureRequestAdapter(friendRequestList, new RequestClickListener() {
+        requestAdapter = new RequestAdapter(friendRequestList, new RequestClickListener() {
             @Override
             public void onAcceptClicked(int position) {
                 acceptFriend(position);

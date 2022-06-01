@@ -14,10 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.PublicQuipRetrieveListener;
-import com.malikendsley.firebaseutils.secureadapters.SecureSharedQuipAdapter;
-import com.malikendsley.firebaseutils.secureschema.PublicQuip;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.interfaces.PublicQuipRetrieveListener;
+import com.malikendsley.utils.adapters.SharedQuipAdapter;
+import com.malikendsley.utils.schema.PublicQuip;
 import com.malikendsley.quipswap.MakeQuipActivity;
 import com.malikendsley.quipswap.R;
 
@@ -29,7 +29,7 @@ public class ReceivedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     TextView noReceivedText;
     RecyclerView receivedRecycler;
-    SecureSharedQuipAdapter sharedQuipAdapter;
+    SharedQuipAdapter sharedQuipAdapter;
     SwipeRefreshLayout swipeLayout;
 
     ArrayList<PublicQuip> sharedQuipList = new ArrayList<>();
@@ -45,7 +45,7 @@ public class ReceivedFragment extends Fragment implements SwipeRefreshLayout.OnR
         receivedRecycler = rootView.findViewById(R.id.receivedSwapsRecycler);
         receivedRecycler.setHasFixedSize(true);
         receivedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        sharedQuipAdapter = new SecureSharedQuipAdapter(false, getContext(), sharedQuipList, getActivity());
+        sharedQuipAdapter = new SharedQuipAdapter(false, getContext(), sharedQuipList, getActivity());
         receivedRecycler.setAdapter(sharedQuipAdapter);
 
         //fab

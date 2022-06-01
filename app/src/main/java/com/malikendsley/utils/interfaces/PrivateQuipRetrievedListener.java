@@ -1,6 +1,6 @@
-package com.malikendsley.firebaseutils.interfaces;
+package com.malikendsley.utils.interfaces;
 
-import com.malikendsley.firebaseutils.secureschema.PrivateQuip;
+import com.malikendsley.utils.schema.PrivateQuip;
 
 public interface PrivateQuipRetrievedListener {
 

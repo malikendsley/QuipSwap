@@ -18,10 +18,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.FriendAddListener;
-import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
-import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.interfaces.FriendAddListener;
+import com.malikendsley.utils.interfaces.FriendRetrieveListener;
+import com.malikendsley.utils.adapters.FriendAdapter;
 import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
     FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     RecyclerView friendRecycler;
-    SecureFriendAdapter friendAdapter;
+    FriendAdapter friendAdapter;
     SwipeRefreshLayout swipeLayout;
     TextView username;
 
@@ -72,7 +72,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         friendRecycler = rootView.findViewById(R.id.friendList);
         friendRecycler.setHasFixedSize(true);
         friendRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        friendAdapter = new SecureFriendAdapter(friendUIDList, position -> {
+        friendAdapter = new FriendAdapter(friendUIDList, position -> {
             //unused
         }, getActivity());
         friendRecycler.setAdapter(friendAdapter);

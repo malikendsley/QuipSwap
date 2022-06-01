@@ -13,8 +13,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.RegisterUserListener;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.interfaces.RegisterUserListener;
 
 public class SignupActivity extends AppCompatActivity {
 

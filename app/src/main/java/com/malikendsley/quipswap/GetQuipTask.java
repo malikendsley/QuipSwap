@@ -7,8 +7,8 @@ import android.os.AsyncTask;
 import android.widget.RemoteViews;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.RecentQuipListener;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.interfaces.RecentQuipListener;
 
 public class GetQuipTask extends AsyncTask<String, Void, Bitmap> {
 

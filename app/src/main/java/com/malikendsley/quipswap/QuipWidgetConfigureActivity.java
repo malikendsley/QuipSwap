@@ -18,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
-import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.interfaces.FriendRetrieveListener;
+import com.malikendsley.utils.adapters.FriendAdapter;
 import com.malikendsley.quipswap.databinding.QuipWidgetConfigureBinding;
 import com.malikendsley.quipswap.navfragments.SignInFragment;
 
@@ -35,7 +35,7 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "com.malikendsley.quipswap.QuipWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
     RecyclerView friendRecycler;
-    SecureFriendAdapter friendAdapter;
+    FriendAdapter friendAdapter;
     ArrayList<String> friendList = new ArrayList<>();
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     String username;
@@ -134,7 +134,7 @@ public class QuipWidgetConfigureActivity extends AppCompatActivity {
             initFriendRecycler();
 
             //when a friend is selected, store their UID in preferences for the QuipWidget.java class to use
-            friendAdapter = new SecureFriendAdapter(friendList, position -> {
+            friendAdapter = new FriendAdapter(friendList, position -> {
 
                 username = friendList.get(position);
                 mdb2.usernameToUID(username, mFriendUID -> {

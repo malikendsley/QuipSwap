@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.firebaseutils.FirebaseHandler;
-import com.malikendsley.firebaseutils.interfaces.FriendRetrieveListener;
-import com.malikendsley.firebaseutils.interfaces.QuipUploadListener;
-import com.malikendsley.firebaseutils.secureadapters.SecureFriendAdapter;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.interfaces.FriendRetrieveListener;
+import com.malikendsley.utils.interfaces.QuipUploadListener;
+import com.malikendsley.utils.adapters.FriendAdapter;
 
 import java.util.ArrayList;
 
@@ -30,7 +30,7 @@ public class ShareQuipActivity extends AppCompatActivity {
     FirebaseHandler mdb2;
 
     RecyclerView friendRecycler;
-    SecureFriendAdapter friendAdapter;
+    FriendAdapter friendAdapter;
 
     LinearProgressIndicator progressIndicator;
 
@@ -60,7 +60,7 @@ public class ShareQuipActivity extends AppCompatActivity {
         friendRecycler = findViewById(R.id.selectFriendsRecyclerView);
         friendRecycler.setHasFixedSize(true);
         friendRecycler.setLayoutManager(new LinearLayoutManager(this));
-        friendAdapter = new SecureFriendAdapter(friendList, position -> {
+        friendAdapter = new FriendAdapter(friendList, position -> {
             //show progress bar
             progressIndicator.setVisibility(View.VISIBLE);
             shareQuip(friendList.get(position));
