@@ -19,14 +19,26 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
-
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
+-allowaccessmodification
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
 -forceprocessing
 -optimizationpasses 5
-
+-repackageclasses ''
 -keep class * extends android.app.Activity
+-keep class com.firebase.** { *; }
+-keep class org.apache.** { *; }
+-keepnames class com.fasterxml.jackson.** { *; }
+-keepnames class javax.servlet.** { *; }
+-keepnames class org.ietf.jgss.** { *; }
+-dontwarn org.apache.**
+-dontwarn org.w3c.dom.**
+ -keepclassmembers class * extends android.content.Context {
+    public void *(android.view.View);
+    public void *(android.view.MenuItem);
+ }
+
 -assumenosideeffects class android.util.Log {
   public static *** v(...);
   public static *** d(...);
