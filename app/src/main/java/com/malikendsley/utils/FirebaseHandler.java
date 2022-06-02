@@ -191,7 +191,6 @@ public class FirebaseHandler {
         }));
     }
 
-    //TODO for some reason this won't allow more than one friend per account
     //add a friend to self
     public void acceptFriend(String username, AddFriendListener listener) {
         UIDtoUsername(mAuth.getUid(), ownUsername -> {

@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("InflateParams")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO only run this on startup
         super.onCreate(savedInstanceState);
         SplashScreen.installSplashScreen(this);
 
@@ -206,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.mainHelpOption:
+                //TODO literally any tutorial, please
                 break;
             case R.id.legalOption:
                 legalDialog.show();
@@ -235,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedVersionCode == DOESNT_EXIST || currentVersionCode > savedVersionCode) {
             //new or upgraded user
+            //TODO tutorial
             prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
-
         }
     }
 }

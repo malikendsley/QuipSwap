@@ -3,7 +3,6 @@ package com.malikendsley.utils.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
-//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.malikendsley.quipswap.R;
 import com.malikendsley.utils.FirebaseHandler;
 import com.malikendsley.utils.interfaces.PrivateQuipRetrievedListener;
 import com.malikendsley.utils.schema.PrivateQuip;
 import com.malikendsley.utils.schema.PublicQuip;
-import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
 
 public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.SecureSharedQuipViewHolder> {
 
-    static final String TAG = "Own";
     ArrayList<PublicQuip> list;
     boolean isSent;
     Context context;
@@ -53,12 +51,10 @@ public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.Se
     public void onBindViewHolder(@NonNull SecureSharedQuipViewHolder holder, int position) {
         //list is populated externally
         PublicQuip sq = list.get(position);
-        //Log.i("Own", "onBind: Quip from " + sq.getSender() + " to " + sq.getRecipient());
-
 
         mdb2.UIDtoUsername(isSent ? sq.getRecipient() : sq.getSender(), holder.username::setText);
-
-        mdb2.getQuipByKey(sq.getKey(), new PrivateQuipRetrievedListener() {
+        String key = sq.getKey();
+        mdb2.getQuipByKey(key, new PrivateQuipRetrievedListener() {
             @Override
             public void onRetrieveComplete(PrivateQuip quip) {
                 StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl(quip.getURI());
@@ -68,6 +64,7 @@ public class SharedQuipAdapter extends RecyclerView.Adapter<SharedQuipAdapter.Se
                     //Log.i(TAG, "URL Download Failed");
                     //e.printStackTrace();
                 });
+
             }
 
             @Override

@@ -29,6 +29,8 @@
 -keep class * extends android.app.Activity
 -keep class com.firebase.** { *; }
 -keep class org.apache.** { *; }
+-keep class com.malikendsley.utils.FirebaseHandler
+
 -keepnames class com.fasterxml.jackson.** { *; }
 -keepnames class javax.servlet.** { *; }
 -keepnames class org.ietf.jgss.** { *; }
@@ -38,11 +40,3 @@
     public void *(android.view.View);
     public void *(android.view.MenuItem);
  }
-
--assumenosideeffects class android.util.Log {
-  public static *** v(...);
-  public static *** d(...);
-  public static *** i(...);
-  public static *** w(...);
-  public static *** e(...);
-}
