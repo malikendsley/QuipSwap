@@ -14,12 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.utils.FirebaseHandler;
-import com.malikendsley.utils.interfaces.PublicQuipRetrieveListener;
-import com.malikendsley.utils.adapters.SharedQuipAdapter;
-import com.malikendsley.utils.schema.PublicQuip;
 import com.malikendsley.quipswap.MakeQuipActivity;
 import com.malikendsley.quipswap.R;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.adapters.SharedQuipAdapter;
+import com.malikendsley.utils.interfaces.PublicQuipRetrieveListener;
+import com.malikendsley.utils.schema.PublicQuip;
 
 import java.util.ArrayList;
 

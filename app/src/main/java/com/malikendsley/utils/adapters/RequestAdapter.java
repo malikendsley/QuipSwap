@@ -1,6 +1,7 @@
 package com.malikendsley.utils.adapters;
 
 //import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.malikendsley.quipswap.R;
 import com.malikendsley.utils.interfaces.RequestClickListener;
 import com.malikendsley.utils.schema.ExpandableListItem;
-import com.malikendsley.quipswap.R;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

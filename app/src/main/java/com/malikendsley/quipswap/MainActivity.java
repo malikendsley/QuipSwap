@@ -15,9 +15,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
 
+import com.elconfidencial.bubbleshowcase.BubbleShowCase;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseListener;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,12 +32,13 @@ import com.malikendsley.quipswap.navfragments.ReceivedFragment;
 import com.malikendsley.quipswap.navfragments.SentFragment;
 import com.malikendsley.quipswap.navfragments.SignInFragment;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
 
-    //for first time startup
-    private static final String PREFS_NAME = "com.malikendsley.quipswap.QuipWidget";
-    final String PREF_VERSION_CODE_KEY = "version_code";
-    final int DOESNT_EXIST = -1;
+    //nav
+    BottomNavigationView bottomNav;
+    int currentFragment = 0;
 
     //for menu buttons
     View aboutView;
@@ -43,46 +49,50 @@ public class MainActivity extends AppCompatActivity {
     //firebase authentication
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+    //bubbles
+    BubbleShowCaseBuilder BSC1 = new BubbleShowCaseBuilder(this);
+    BubbleShowCaseBuilder BSC2 = new BubbleShowCaseBuilder(this);
+    BubbleShowCaseBuilder BSC3 = new BubbleShowCaseBuilder(this);
+    BubbleShowCaseBuilder BSC4 = new BubbleShowCaseBuilder(this);
+    BubbleShowCaseBuilder BSC5 = new BubbleShowCaseBuilder(this);
+
+    boolean showHelp = true;
+
     //this activity contains the fragments that create the dashboard
-    SentFragment sentFragment;
-    ReceivedFragment recFragment;
-    ProfileFragment loggedInFragment;
-    SignInFragment signInFragment;
+    Fragment selectedFragment;
+
+    Fragment sentFragment;
+    Fragment recFragment;
+    Fragment loggedInFragment;
+    Fragment signInFragment;
 
     private final NavigationBarView.OnItemSelectedListener navListener = item -> {
-        Fragment selectedFragment = new ReceivedFragment();
-
         //when a navigation item is selected, set the selected fragment to the one whose ID is a match so that fragment can be displayed
         //resource IDs will be non-constant eventually, so if-else is necessary
         int itemId = item.getItemId();
         if (itemId == R.id.nav_received_swaps) {
-            if (recFragment == null) {
-                recFragment = new ReceivedFragment();
-            }
             selectedFragment = recFragment;
+            currentFragment = 0;
+            showHelp = true;
         } else if (itemId == R.id.nav_sent_swaps) {
-            if (sentFragment == null) {
-                sentFragment = new SentFragment();
-            }
             selectedFragment = sentFragment;
+            currentFragment = 1;
+            showHelp = true;
         } else if (itemId == R.id.nav_profile) {
             if (user != null) {
-                if (loggedInFragment == null) {
-                    loggedInFragment = new ProfileFragment();
-                }
                 //User is Logged in
                 selectedFragment = loggedInFragment;
             } else {
-                if (signInFragment == null) {
-                    signInFragment = new SignInFragment();
-                }
                 //No User is Logged in
                 selectedFragment = signInFragment;
             }
+            currentFragment = 2;
+            showHelp = false;
         }
 
         //place the selected fragment in the FrameView created under Layouts
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+        invalidateOptionsMenu();
         return true;
     };
 
@@ -93,8 +103,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SplashScreen.installSplashScreen(this);
 
-        //does what it says on the tin
-        displayTutorialIfFirstRun();
+        //set up fragments (the bubble system necessitates this)
+        recFragment = new ReceivedFragment();
+        sentFragment = new SentFragment();
+        loggedInFragment = new ProfileFragment();
+        signInFragment = new SignInFragment();
+        selectedFragment = sentFragment;
+
 
         //do not display the login button if the user is not signed in
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -104,13 +119,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //link the navigation buttons
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
 
-        //save tab on screen rotation (should never run, unless the user forces landscape)
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SentFragment()).commit();
-        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
 
         //dialog views
         aboutView = getLayoutInflater().inflate(R.layout.about_dialog, null);
@@ -178,12 +190,17 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Error opening email app", Toast.LENGTH_SHORT).show();
             }
         });
+
+        //does what it says on the tin
+        displayTutorialIfFirstRun();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menu.findItem(R.id.logoutOption).setVisible(user != null);
+        menu.findItem(R.id.mainHelpOption).setVisible(showHelp);
         return true;
     }
 
@@ -205,6 +222,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.mainHelpOption:
+                if (currentFragment == 0) {
+                    initBubbles();
+                } else if (currentFragment == 1) {
+                    initBubbles();
+                }
+
+                new BubbleShowCaseSequence().addShowCase(BSC1).addShowCase(BSC2).addShowCase(BSC3).addShowCase(BSC4).addShowCase(BSC5).show();
+
                 //TODO literally any tutorial, please
                 break;
             case R.id.legalOption:
@@ -227,16 +252,138 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+
     //this method also accounts for upgrades, so tutorial will re-display if a user persists their SharedPrefs via
     void displayTutorialIfFirstRun() {
-        int currentVersionCode = BuildConfig.VERSION_CODE;
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
 
-        if (savedVersionCode == DOESNT_EXIST || currentVersionCode > savedVersionCode) {
-            //new or upgraded user
-            //TODO tutorial
-            prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+        final String PREFS_NAME = "MyPrefsFile";
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+
+        if (settings.getBoolean("my_first_time", true)) {
+            //the app is being launched for first time, do something
+            initBubbles();
+            new BubbleShowCaseSequence().addShowCase(BSC1).addShowCase(BSC2).addShowCase(BSC3).addShowCase(BSC4).addShowCase(BSC5).show();
+            // first time task
+
+            // record the fact that the app has been started at least once
+            settings.edit().putBoolean("my_first_time", false).apply();
+        }
+    }
+
+    void initBubbles() {
+        BSC1.title("Welcome to QuipSwap!").listener(new BubbleShowCaseListener() {
+            @Override
+            public void onTargetClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+
+            @Override
+            public void onCloseActionImageClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+
+            @Override
+            public void onBackgroundDimClick(@NonNull BubbleShowCase bubbleShowCase) {
+                bubbleShowCase.dismiss();
+            }
+
+            @Override
+            public void onBubbleClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+        });
+
+        BSC2.title("Use these buttons to navigate the dashboard!").targetView(bottomNav).listener(new BubbleShowCaseListener() {
+            @Override
+            public void onTargetClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+
+            @Override
+            public void onCloseActionImageClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+
+            @Override
+            public void onBackgroundDimClick(@NonNull BubbleShowCase bubbleShowCase) {
+                bubbleShowCase.dismiss();
+            }
+
+            @Override
+            public void onBubbleClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+        });
+        BSC3.title("Tap here to create a Quip!").targetView(findViewById(R.id.fab)).description("Note that you must be logged in to share them.").listener(new BubbleShowCaseListener() {
+            @Override
+            public void onTargetClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+
+            @Override
+            public void onCloseActionImageClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+
+            @Override
+            public void onBackgroundDimClick(@NonNull BubbleShowCase bubbleShowCase) {
+                bubbleShowCase.dismiss();
+            }
+
+            @Override
+            public void onBubbleClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+        });
+        BSC4.title("Tap the three dots at the upper right corner for more options!").listener(new BubbleShowCaseListener() {
+            @Override
+            public void onTargetClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+
+            @Override
+            public void onCloseActionImageClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+
+            @Override
+            public void onBackgroundDimClick(@NonNull BubbleShowCase bubbleShowCase) {
+                bubbleShowCase.dismiss();
+            }
+
+            @Override
+            public void onBubbleClick(@NonNull BubbleShowCase bubbleShowCase) {
+            }
+        });
+        View view = findViewById(R.id.mainHelpOption);
+        if (view == null) {
+            BSC5 = new BubbleShowCaseBuilder(this).title("Tap this icon at the top of the screen to see this guide again!").image(Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_help_outline_24, null))).listener(new BubbleShowCaseListener() {
+                @Override
+                public void onTargetClick(@NonNull BubbleShowCase bubbleShowCase) {
+                }
+
+                @Override
+                public void onCloseActionImageClick(@NonNull BubbleShowCase bubbleShowCase) {
+                }
+
+                @Override
+                public void onBackgroundDimClick(@NonNull BubbleShowCase bubbleShowCase) {
+                    bubbleShowCase.dismiss();
+                }
+
+                @Override
+                public void onBubbleClick(@NonNull BubbleShowCase bubbleShowCase) {
+                }
+            });
+        } else {
+            BSC5 = new BubbleShowCaseBuilder(this).title("Tap here to see this guide again!").targetView(view).listener(new BubbleShowCaseListener() {
+                @Override
+                public void onTargetClick(@NonNull BubbleShowCase bubbleShowCase) {
+                }
+
+                @Override
+                public void onCloseActionImageClick(@NonNull BubbleShowCase bubbleShowCase) {
+                }
+
+                @Override
+                public void onBackgroundDimClick(@NonNull BubbleShowCase bubbleShowCase) {
+                    bubbleShowCase.dismiss();
+                }
+
+                @Override
+                public void onBubbleClick(@NonNull BubbleShowCase bubbleShowCase) {
+                }
+            });
         }
     }
 }

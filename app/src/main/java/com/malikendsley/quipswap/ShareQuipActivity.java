@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-//import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,9 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.adapters.FriendAdapter;
 import com.malikendsley.utils.interfaces.FriendRetrieveListener;
 import com.malikendsley.utils.interfaces.QuipUploadListener;
-import com.malikendsley.utils.adapters.FriendAdapter;
 
 import java.util.ArrayList;
 

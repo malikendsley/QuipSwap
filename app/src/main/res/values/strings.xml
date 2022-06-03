@@ -65,4 +65,5 @@
     <string name="for_data_related_inquiries_such_as_to_request_the_deletion_of_your_account_click_the_button_below">For data-related inquiries, such as to request the deletion of your account, click the button below.</string>
     <string name="data_inquiry">Data Inquiry</string>
     <string name="next">Next</string>
+    <string name="title">Title</string>
 </resources>

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-//import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -18,11 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.utils.FirebaseHandler;
-import com.malikendsley.utils.interfaces.FriendRetrieveListener;
-import com.malikendsley.utils.adapters.FriendAdapter;
 import com.malikendsley.quipswap.databinding.QuipWidgetConfigureBinding;
 import com.malikendsley.quipswap.navfragments.SignInFragment;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.adapters.FriendAdapter;
+import com.malikendsley.utils.interfaces.FriendRetrieveListener;
 
 import java.util.ArrayList;
 

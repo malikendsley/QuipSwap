@@ -9,10 +9,9 @@
 
     <item
         android:id="@+id/mainHelpOption"
+        android:icon="@drawable/ic_baseline_help_outline_24"
         android:title="@string/help"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_baseline_help_outline_24">
-    </item>
+        app:showAsAction="ifRoom"></item>
 
     <item
         android:id="@+id/aboutUsOption"

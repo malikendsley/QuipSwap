@@ -18,11 +18,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.malikendsley.quipswap.R;
 import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.adapters.FriendAdapter;
 import com.malikendsley.utils.interfaces.FriendAddListener;
 import com.malikendsley.utils.interfaces.FriendRetrieveListener;
-import com.malikendsley.utils.adapters.FriendAdapter;
-import com.malikendsley.quipswap.R;
 
 import java.util.ArrayList;
 

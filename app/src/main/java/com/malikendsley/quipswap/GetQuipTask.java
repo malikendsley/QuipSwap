@@ -3,7 +3,6 @@ package com.malikendsley.quipswap;
 import android.appwidget.AppWidgetManager;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-//import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.google.firebase.database.FirebaseDatabase;

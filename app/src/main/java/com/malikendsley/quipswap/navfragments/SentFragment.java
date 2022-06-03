@@ -14,19 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.malikendsley.utils.FirebaseHandler;
-import com.malikendsley.utils.interfaces.PublicQuipRetrieveListener;
-import com.malikendsley.utils.adapters.SharedQuipAdapter;
-import com.malikendsley.utils.schema.PublicQuip;
 import com.malikendsley.quipswap.MakeQuipActivity;
 import com.malikendsley.quipswap.R;
+import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.adapters.SharedQuipAdapter;
+import com.malikendsley.utils.interfaces.PublicQuipRetrieveListener;
+import com.malikendsley.utils.schema.PublicQuip;
 
 import java.util.ArrayList;
 
 public class SentFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
-
     TextView noSentText;
     RecyclerView sentRecycler;
     SharedQuipAdapter sharedQuipAdapter;
@@ -36,29 +35,29 @@ public class SentFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_sent, container, false);
+        View mView = inflater.inflate(R.layout.fragment_sent, container, false);
 
         //flavor
-        noSentText = rootView.findViewById(R.id.noSentSwapsText);
+        noSentText = mView.findViewById(R.id.noSentSwapsText);
 
         //sent recycler setup
-        sentRecycler = rootView.findViewById(R.id.sentSwapsRecycler);
+        sentRecycler = mView.findViewById(R.id.sentSwapsRecycler);
         sentRecycler.setHasFixedSize(true);
         sentRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         sharedQuipAdapter = new SharedQuipAdapter(true, getContext(), sharedQuipList, getActivity());
         sentRecycler.setAdapter(sharedQuipAdapter);
 
         //fab
-        rootView.findViewById(R.id.fab).setOnClickListener(view1 -> SentFragment.this.startActivity(new Intent(SentFragment.this.getContext(), MakeQuipActivity.class)));
+        mView.findViewById(R.id.fab).setOnClickListener(view1 -> SentFragment.this.startActivity(new Intent(SentFragment.this.getContext(), MakeQuipActivity.class)));
 
         //set up swipe to refresh
-        swipeLayout = rootView.findViewById(R.id.sentSwipeRefresh);
+        swipeLayout = mView.findViewById(R.id.sentSwipeRefresh);
         swipeLayout.setOnRefreshListener(this);
 
         //populate sent quips
         updateSent();
 
-        return rootView;
+        return mView;
     }
 
     void updateSent() {

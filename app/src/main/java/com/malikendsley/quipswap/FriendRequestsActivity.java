@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,9 +21,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikendsley.utils.FirebaseHandler;
+import com.malikendsley.utils.adapters.RequestAdapter;
 import com.malikendsley.utils.interfaces.GetRequestsListener;
 import com.malikendsley.utils.interfaces.RequestClickListener;
-import com.malikendsley.utils.adapters.RequestAdapter;
 import com.malikendsley.utils.schema.ExpandableListItem;
 
 import java.util.ArrayList;
@@ -209,12 +208,12 @@ public class FriendRequestsActivity extends AppCompatActivity implements SwipeRe
         updateFriends();
     }
 
-    void updateFriends(){
+    void updateFriends() {
         mdb2.getFriendRequests(new GetRequestsListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onRequests(ArrayList<String> requestList) {
-                if(swipeRefresh.isRefreshing()){
+                if (swipeRefresh.isRefreshing()) {
                     swipeRefresh.setRefreshing(false);
                 }
                 if (requestList.isEmpty()) {
@@ -231,7 +230,7 @@ public class FriendRequestsActivity extends AppCompatActivity implements SwipeRe
 
             @Override
             public void onGetFail(Exception e) {
-                if(swipeRefresh.isRefreshing()){
+                if (swipeRefresh.isRefreshing()) {
                     swipeRefresh.setRefreshing(false);
                 }
                 noFriendRequestsFlavor.setVisibility(View.VISIBLE);
