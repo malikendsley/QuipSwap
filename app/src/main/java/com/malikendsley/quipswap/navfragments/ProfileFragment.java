@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    //private static final String TAG = "Own";
     FirebaseHandler mdb2 = new FirebaseHandler(FirebaseDatabase.getInstance().getReference(), getActivity());
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     RecyclerView friendRecycler;

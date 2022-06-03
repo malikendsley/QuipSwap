@@ -41,9 +41,9 @@
     <string name="set_the_pen_to_blue">Set the pen to Blue</string>
     <string name="set_the_pen_to_purple">Set the pen to Purple</string>
     <string name="pen_size">Pen Size</string>
-    <string name="share">Share</string>
+    <string name="share">Share Quip</string>
     <string name="save">Save</string>
-    <string name="clear_canvas">Clear Canvas</string>
+    <string name="clear_canvas">Clear</string>
     <string name="soft">Soft</string>
     <string name="erase">Erase</string>
     <string name="help">Help</string>
@@ -63,4 +63,5 @@
     <string name="for_data_related_inquiries_such_as_to_request_the_deletion_of_your_account_click_the_button_below">For data-related inquiries, such as to request the deletion of your account, click the button below.</string>
     <string name="data_inquiry">Data Inquiry</string>
     <string name="title">Title</string>
+    <string name="change_the_size_of_the_brush">Change the size of the brush</string>
 </resources>
