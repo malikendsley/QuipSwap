@@ -3,16 +3,20 @@
     <item
         android:id="@+id/nav_sent_swaps"
         android:icon="@drawable/ic_baseline_arrow_upward_24"
-        android:title="Sent Swaps"
+        android:importantForAccessibility="no"
+        android:title="@string/sent_swaps"
         android:visible="true" />
     <item
         android:id="@+id/nav_received_swaps"
+
         android:icon="@drawable/ic_baseline_arrow_downward_24"
-        android:title="Received Swaps"
+        android:importantForAccessibility="no"
+        android:title="@string/received_swaps"
         android:visible="true" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_baseline_person_24"
-        android:title="Profile"
+        android:importantForAccessibility="no"
+        android:title="@string/profile"
         android:visible="true" />
 </menu>

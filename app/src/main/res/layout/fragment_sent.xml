@@ -32,7 +32,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/sentSwapsRecycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/a_list_of_your_sent_quips" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

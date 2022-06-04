@@ -73,11 +73,11 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation"
+            android:configChanges="screenSize|orientation"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppSplash"
-            android:windowSoftInputMode="stateVisible|adjustResize">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

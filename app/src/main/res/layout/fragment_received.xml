@@ -32,7 +32,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/receivedSwapsRecycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:contentDescription="@string/a_list_of_your_received_quips" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 

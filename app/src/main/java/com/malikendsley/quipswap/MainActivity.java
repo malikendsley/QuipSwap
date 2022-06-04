@@ -229,8 +229,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 new BubbleShowCaseSequence().addShowCase(BSC1).addShowCase(BSC2).addShowCase(BSC3).addShowCase(BSC4).addShowCase(BSC5).show();
-
-                //TODO literally any tutorial, please
                 break;
             case R.id.legalOption:
                 legalDialog.show();

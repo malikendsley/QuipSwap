@@ -64,4 +64,8 @@
     <string name="data_inquiry">Data Inquiry</string>
     <string name="title">Title</string>
     <string name="change_the_size_of_the_brush">Change the size of the brush</string>
+    <string name="close_this_tutorial_bubble">Close this tutorial bubble</string>
+    <string name="tutorial_bubble">Tutorial bubble</string>
+    <string name="a_list_of_your_received_quips">A list of your received Quips</string>
+    <string name="a_list_of_your_sent_quips">A list of your sent Quips</string>
 </resources>

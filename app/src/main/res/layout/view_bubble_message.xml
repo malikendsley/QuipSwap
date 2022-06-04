@@ -17,6 +17,7 @@
         android:layout_height="48dp"
         android:layout_marginStart="0dp"
         android:layout_marginTop="16dp"
+        android:contentDescription="@string/tutorial_bubble"
         android:src="@drawable/rounded_rectangle"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -62,8 +63,9 @@
 
     <ImageView
         android:id="@+id/imageViewShowCaseClose"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/close_this_tutorial_bubble"
         android:padding="11dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_close_black_24dp"
